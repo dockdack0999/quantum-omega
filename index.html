@@ -381,12 +381,12 @@
             "cl_news", "cl_levels", "cl_trend", "cl_candle", "cl_rr", "cl_sl", "cl_risk"
         ];
 
-        // --- UPDATED API CALL FUNCTION (Reverted to 1.5-flash for free tier) ---
+        // --- UPDATED API CALL FUNCTION (Fixed: Using specific version -001 to resolve 'not found' error) ---
         const callGeminiLLM = async (messages, systemPrompt, userKey) => {
             if(!userKey) throw new Error("Please enter API Key in the settings.");
             
-            // Reverted to gemini-1.5-flash because gemini-2.0-flash has 'limit: 0' (no quota) for free accounts currently.
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userKey}`;
+            // Fix: Changed 'gemini-1.5-flash' to 'gemini-1.5-flash-001' (Pinned version is more stable for API detection)
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${userKey}`;
             
             const payload = {
                 contents: messages,
