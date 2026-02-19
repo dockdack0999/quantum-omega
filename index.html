@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM OMEGA: v4.1 (Stable Core)</title>
+    <title>QUANTUM OMEGA: v4.2 (Stable 1.5 Core)</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -381,12 +381,12 @@
             "cl_news", "cl_levels", "cl_trend", "cl_candle", "cl_rr", "cl_sl", "cl_risk"
         ];
 
-        // --- UPDATED API CALL FUNCTION ---
+        // --- UPDATED API CALL FUNCTION (Reverted to 1.5-flash for free tier) ---
         const callGeminiLLM = async (messages, systemPrompt, userKey) => {
             if(!userKey) throw new Error("Please enter API Key in the settings.");
             
-            // Updated to gemini-2.0-flash as requested
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${userKey}`;
+            // Reverted to gemini-1.5-flash because gemini-2.0-flash has 'limit: 0' (no quota) for free accounts currently.
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${userKey}`;
             
             const payload = {
                 contents: messages,
@@ -407,8 +407,7 @@
                 if(!res.ok) {
                     const errorData = await res.json().catch(() => ({}));
                     console.error("API Error Data:", errorData);
-                    // Show specific error message for debugging
-                    throw new Error(errorData.error?.message || `API Error: ${res.status} (Check Model Availability)`);
+                    throw new Error(errorData.error?.message || `API Connection Failed: ${res.status}`);
                 }
 
                 const data = await res.json();
