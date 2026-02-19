@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM OMEGA: v4.2 (Stable 1.5 Core)</title>
+    <title>QUANTUM OMEGA: v4.3 (Legacy Pro Core)</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -381,12 +381,12 @@
             "cl_news", "cl_levels", "cl_trend", "cl_candle", "cl_rr", "cl_sl", "cl_risk"
         ];
 
-        // --- UPDATED API CALL FUNCTION (Fixed: Using specific version -001 to resolve 'not found' error) ---
+        // --- UPDATED API CALL FUNCTION (Fixed: Fallback to gemini-pro 1.0 which is the most compatible free model) ---
         const callGeminiLLM = async (messages, systemPrompt, userKey) => {
             if(!userKey) throw new Error("Please enter API Key in the settings.");
             
-            // Fix: Changed 'gemini-1.5-flash' to 'gemini-1.5-flash-001' (Pinned version is more stable for API detection)
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-001:generateContent?key=${userKey}`;
+            // Fix: Fallback to 'gemini-pro' (1.0 Pro) because 1.5/2.0 seem restricted or unavailable for this key/region
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${userKey}`;
             
             const payload = {
                 contents: messages,
