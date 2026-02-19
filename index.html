@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM OMEGA: v4.3 (Legacy Pro Core)</title>
+    <title>QUANTUM OMEGA: v4.1 (Stable Core)</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -381,12 +381,12 @@
             "cl_news", "cl_levels", "cl_trend", "cl_candle", "cl_rr", "cl_sl", "cl_risk"
         ];
 
-        // --- UPDATED API CALL FUNCTION (Fixed: Fallback to gemini-pro 1.0 which is the most compatible free model) ---
+        // --- UPDATED API CALL FUNCTION ---
         const callGeminiLLM = async (messages, systemPrompt, userKey) => {
             if(!userKey) throw new Error("Please enter API Key in the settings.");
             
-            // Fix: Fallback to 'gemini-pro' (1.0 Pro) because 1.5/2.0 seem restricted or unavailable for this key/region
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${userKey}`;
+            // Updated to gemini-2.0-flash as requested
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${userKey}`;
             
             const payload = {
                 contents: messages,
@@ -407,7 +407,8 @@
                 if(!res.ok) {
                     const errorData = await res.json().catch(() => ({}));
                     console.error("API Error Data:", errorData);
-                    throw new Error(errorData.error?.message || `API Connection Failed: ${res.status}`);
+                    // Show specific error message for debugging
+                    throw new Error(errorData.error?.message || `API Error: ${res.status} (Check Model Availability)`);
                 }
 
                 const data = await res.json();
