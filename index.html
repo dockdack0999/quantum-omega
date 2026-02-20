@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM OMEGA</title>
+    <title>QUANTUM OMEGA: v4.1 (Stable Core)</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -379,7 +379,8 @@
             Lock: <g><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></g>,
             ArrowLeft: <line x1="19" y1="12" x2="5" y2="12"></line>,
             ArrowRight: <line x1="5" y1="12" x2="19" y2="12"></line>,
-            Trash: <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>
+            Trash: <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>,
+            List: <g><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></g>
         };
 
         const STRATEGIES = ["Trend Following", "Reversal", "Breakout", "Scalping", "News Trade", "Other"];
@@ -710,53 +711,76 @@
                 category: 'Psychology',
                 levelRequired: 1,
                 excerpt: 'ในโลกการเงินที่หมุนด้วยความเร็วแสง "ความรู้" คือบัตรผ่านประตู แต่ "การตัดสินใจภายใต้แรงกดดัน" คือสิ่งที่แยกผู้ชนะออกจากซากศพ...',
-                content: `
-# The Poker DNA: ทำไมสมรภูมิพันล้าน ถึงต้องการ "นักเลงไพ่" มากกว่า "นักเรียนทุน"?
-
-ในโลกการเงินที่หมุนด้วยความเร็วแสง **"ความรู้"** คือบัตรผ่านประตู แต่ **"การตัดสินใจภายใต้แรงกดดัน"** คือสิ่งที่แยกผู้ชนะออกจากซากศพ นี่คือเหตุผลที่ลึกกว่าเดิมว่าทำไม Poker ถึงเป็นวิชาบังคับของเหล่า Market Makers ระดับโลก
-
-### 1. การบริหาร "ความคลุมเครือ" (Embracing the Fog)
-หมากรุกคือเกมของ "ข้อมูลสมบูรณ์" (Perfect Information) ทุกอย่างอยู่บนกระดาน ใครคำนวณเก่งกว่าคือผู้ชนะ แต่ตลาดหุ้นคือ **"ขยะข้อมูล"**
-
-* **The Sharp Point:** ในตลาดจริง ข้อมูลที่ "ชัดเจน 100%" คือข้อมูลที่ไม่มีค่า เพราะราคามันสะท้อนไปหมดแล้ว
-* **Deep Detail:** โปรโป๊กเกอร์ไม่ได้รอให้เห็นไพ่ครบ 5 ใบแล้วค่อยลงเงิน แต่เขา "เดิมพันกับความเป็นไปได้" (Probabilities) พวกเขาถูกฝึกมาเพื่อประมวลผลข้อมูลที่ขาดวิ่น แล้วกล้า Action ในขณะที่คนอื่นยังยืนงงในหมอกควัน 
-> "คนเก่งรอความชัวร์... แต่คนรวยกินส่วนต่างของความไม่แน่นอน"
-
-### 2. กับดักของการตัดสินใจ (The Resulting Trap)
-คนทั่วไปตัดสิน "การตัดสินใจ" จาก "ผลลัพธ์" ถ้าขาดทุน = ตัดสินใจผิด แต่ในโลกพันล้าน นี่คือตรรกะที่อันตรายที่สุด
-
-* **The Sharp Point:** คุณสามารถ "ทำถูก" แต่ "แพ้" ได้ และคุณสามารถ "ทำผิด" แต่ "ชนะ" ได้ในระยะสั้น
-* **Deep Detail:** ในทางสถิติเรียกสิ่งนี้ว่า Expected Value (EV) หากคุณมีโอกาสชนะ 70% แล้วคุณเทหมดหน้าตักแต่ดันแพ้ นั่นคือ "Bad Luck" ไม่ใช่ "Bad Decision" โปรโป๊กเกอร์แยกแยะกระบวนการออกจากดวงได้อย่างเด็ดขาด วินัยเหล็กแบบนี้แหละที่รักษาพอร์ตพันล้านไม่ให้พังทลาย
-
-### 3. ศิลปะการ "เดิมพัน" ไม่ใช่แค่การ "เลือกหุ้น" (Bet Sizing is King)
-เทรดเดอร์มือสมัครเล่นมักหมกมุ่นว่าจะซื้อตัวไหน (What to buy) แต่โปรโป๊กเกอร์ถามว่าจะลงเงินเท่าไหร่ (How much to bet)
-
-* **The Sharp Point:** ต่อให้คุณเดาถูก 9 ใน 10 ครั้ง แต่ถ้าครั้งที่ 10 คุณลงเงินผิดขนาด คุณก็ล้มละลายได้
-* **Deep Detail:** พวกเขาจะ "หมอบ" (Fold) อย่างรวดเร็วเมื่อความได้เปรียบต่ำ เพื่อรักษาหน้าตักไว้รอจังหวะที่มี Edge สูงๆ แล้วค่อย "กระแทก" (Heavy Bet) นี่คือหัวใจของการ Let Profit Run
-
-### 4. การควบคุม "สภาวะหลุด" (Mastering the Tilt)
-"Tilt" คือสภาวะที่อารมณ์เข้าครอบงำสมองส่วนเหตุผล เมื่อความโกรธ ความกลัว หรือความโลภเข้าตา คุณจะเริ่มเทรดเพื่อ "แก้แค้น" ตลาด
-
-* **The Sharp Point:** ตลาดหุ้นไม่มีหัวใจ มันไม่สนว่าคุณจะเสียใจแค่ไหน และมันจะเหยียบย่ำคนที่สติแตกเสมอ
-* **Deep Detail:** สิ่งที่ Wall Street ซื้อจากโปรโป๊กเกอร์ไม่ใช่สูตรคำนวณ แต่คือ "ความนิ่งเหมือนหิน" ในขณะที่พอร์ตติดลบตัวแดงเดือด พวกเขาจะไม่เทรดมั่วเพื่อเอาคืน แต่จะเดินออกจากโต๊ะหรือทำตามแผนเดิมอย่างเคร่งครัด
-
----
-
-### บทวิเคราะห์เชิงลึก (System Analysis)
-บทความนี้ให้ Mindset ที่ถูกต้อง 100% สำหรับคนที่อยากอยู่รอดในตลาดระยะยาว มันคือการเปลี่ยนชุดความคิดจากการพยายาม **"ทำนายอนาคต" (Prediction)** มาเป็นการ **"บริหารความน่าจะเป็นและความเสี่ยง" (Probability & Risk Management)** ซึ่งเป็น DNA ของผู้ชนะในสมรภูมิพันล้านอย่างแท้จริง
-
-> "จงเทรดหุ้นให้เหมือนเล่นโป๊กเกอร์... มองให้ออกว่าใครคือเหยื่อบนโต๊ะ ถ้าคุณมองไม่ออก แสดงว่าเหยื่อคนนั้นคือคุณ"
-                `
+                chapters: [
+                    {
+                        id: 'intro',
+                        title: 'บทนำ: ทำไมต้อง Poker?',
+                        content: '# The Poker DNA\n\nในโลกการเงินที่หมุนด้วยความเร็วแสง **"ความรู้"** คือบัตรผ่านประตู แต่ **"การตัดสินใจภายใต้แรงกดดัน"** คือสิ่งที่แยกผู้ชนะออกจากซากศพ นี่คือเหตุผลที่ลึกกว่าเดิมว่าทำไม Poker ถึงเป็นวิชาบังคับของเหล่า Market Makers ระดับโลก'
+                    },
+                    {
+                        id: 'chap1',
+                        title: '1. การบริหาร "ความคลุมเครือ"',
+                        content: '### การบริหาร "ความคลุมเครือ" (Embracing the Fog)\n\nหมากรุกคือเกมของ "ข้อมูลสมบูรณ์" (Perfect Information) ทุกอย่างอยู่บนกระดาน ใครคำนวณเก่งกว่าคือผู้ชนะ แต่ตลาดหุ้นคือ **"ขยะข้อมูล"**\n\n* **The Sharp Point:** ในตลาดจริง ข้อมูลที่ "ชัดเจน 100%" คือข้อมูลที่ไม่มีค่า เพราะราคามันสะท้อนไปหมดแล้ว\n* **Deep Detail:** โปรโป๊กเกอร์ไม่ได้รอให้เห็นไพ่ครบ 5 ใบแล้วค่อยลงเงิน แต่เขา "เดิมพันกับความเป็นไปได้" (Probabilities) พวกเขาถูกฝึกมาเพื่อประมวลผลข้อมูลที่ขาดวิ่น แล้วกล้า Action ในขณะที่คนอื่นยังยืนงงในหมอกควัน \n> "คนเก่งรอความชัวร์... แต่คนรวยกินส่วนต่างของความไม่แน่นอน"'
+                    },
+                    {
+                        id: 'chap2',
+                        title: '2. กับดักของการตัดสินใจ',
+                        content: '### กับดักของการตัดสินใจ (The Resulting Trap)\n\nคนทั่วไปตัดสิน "การตัดสินใจ" จาก "ผลลัพธ์" ถ้าขาดทุน = ตัดสินใจผิด แต่ในโลกพันล้าน นี่คือตรรกะที่อันตรายที่สุด\n\n* **The Sharp Point:** คุณสามารถ "ทำถูก" แต่ "แพ้" ได้ และคุณสามารถ "ทำผิด" แต่ "ชนะ" ได้ในระยะสั้น\n* **Deep Detail:** ในทางสถิติเรียกสิ่งนี้ว่า Expected Value (EV) หากคุณมีโอกาสชนะ 70% แล้วคุณเทหมดหน้าตักแต่ดันแพ้ นั่นคือ "Bad Luck" ไม่ใช่ "Bad Decision" โปรโป๊กเกอร์แยกแยะกระบวนการออกจากดวงได้อย่างเด็ดขาด วินัยเหล็กแบบนี้แหละที่รักษาพอร์ตพันล้านไม่ให้พังทลาย'
+                    },
+                    {
+                        id: 'chap3',
+                        title: '3. ศิลปะการ "เดิมพัน"',
+                        content: '### ศิลปะการ "เดิมพัน" ไม่ใช่แค่การ "เลือกหุ้น" (Bet Sizing is King)\n\nเทรดเดอร์มือสมัครเล่นมักหมกมุ่นว่าจะซื้อตัวไหน (What to buy) แต่โปรโป๊กเกอร์ถามว่าจะลงเงินเท่าไหร่ (How much to bet)\n\n* **The Sharp Point:** ต่อให้คุณเดาถูก 9 ใน 10 ครั้ง แต่ถ้าครั้งที่ 10 คุณลงเงินผิดขนาด คุณก็ล้มละลายได้\n* **Deep Detail:** พวกเขาจะ "หมอบ" (Fold) อย่างรวดเร็วเมื่อความได้เปรียบต่ำ เพื่อรักษาหน้าตักไว้รอจังหวะที่มี Edge สูงๆ แล้วค่อย "กระแทก" (Heavy Bet) นี่คือหัวใจของการ Let Profit Run'
+                    },
+                    {
+                        id: 'chap4',
+                        title: '4. การควบคุม "สภาวะหลุด"',
+                        content: '### การควบคุม "สภาวะหลุด" (Mastering the Tilt)\n\n"Tilt" คือสภาวะที่อารมณ์เข้าครอบงำสมองส่วนเหตุผล เมื่อความโกรธ ความกลัว หรือความโลภเข้าตา คุณจะเริ่มเทรดเพื่อ "แก้แค้น" ตลาด\n\n* **The Sharp Point:** ตลาดหุ้นไม่มีหัวใจ มันไม่สนว่าคุณจะเสียใจแค่ไหน และมันจะเหยียบย่ำคนที่สติแตกเสมอ\n* **Deep Detail:** สิ่งที่ Wall Street ซื้อจากโปรโป๊กเกอร์ไม่ใช่สูตรคำนวณ แต่คือ "ความนิ่งเหมือนหิน" ในขณะที่พอร์ตติดลบตัวแดงเดือด พวกเขาจะไม่เทรดมั่วเพื่อเอาคืน แต่จะเดินออกจากโต๊ะหรือทำตามแผนเดิมอย่างเคร่งครัด\n\n---\n\n### บทสรุป\n> "จงเทรดหุ้นให้เหมือนเล่นโป๊กเกอร์... มองให้ออกว่าใครคือเหยื่อบนโต๊ะ ถ้าคุณมองไม่ออก แสดงว่าเหยื่อคนนั้นคือคุณ"'
+                    }
+                ]
             }
         ];
 
         // --- NEW: Article Modals (Read & Edit) ---
         const ArticleEditorModal = ({ article, onSave, onCancel, onDelete, t }) => {
-            const [formData, setFormData] = useState(article || { title: '', category: 'Strategy', levelRequired: 1, excerpt: '', content: '' });
+            const [formData, setFormData] = useState(() => {
+                const init = article || { title: '', category: 'Strategy', levelRequired: 1, excerpt: '', chapters: [{ id: Date.now().toString(), title: 'บทที่ 1', content: '' }] };
+                // Migration logic for old structure
+                if (init.content && (!init.chapters || init.chapters.length === 0)) {
+                    init.chapters = [{ id: Date.now().toString(), title: 'เนื้อหาหลัก', content: init.content }];
+                    delete init.content;
+                } else if (!init.chapters || init.chapters.length === 0) {
+                    init.chapters = [{ id: Date.now().toString(), title: 'บทที่ 1', content: '' }];
+                }
+                return init;
+            });
+            const [activeIdx, setActiveIdx] = useState(0);
+
+            const updateChapter = (field, value) => {
+                const newChaps = [...formData.chapters];
+                newChaps[activeIdx] = { ...newChaps[activeIdx], [field]: value };
+                setFormData({ ...formData, chapters: newChaps });
+            };
+
+            const addChapter = () => {
+                const newChaps = [...formData.chapters, { id: Date.now().toString(), title: `บทที่ ${formData.chapters.length + 1}`, content: '' }];
+                setFormData({ ...formData, chapters: newChaps });
+                setActiveIdx(newChaps.length - 1);
+            };
+
+            const removeChapter = (idx, e) => {
+                e.stopPropagation();
+                if (formData.chapters.length <= 1) return alert('ต้องมีอย่างน้อย 1 บท');
+                if (confirm('ยืนยันการลบบทนี้?')) {
+                    const newChaps = formData.chapters.filter((_, i) => i !== idx);
+                    setFormData({ ...formData, chapters: newChaps });
+                    setActiveIdx(Math.max(0, activeIdx > idx ? activeIdx - 1 : activeIdx === idx ? 0 : activeIdx));
+                }
+            };
 
             return (
-                <div className="fixed inset-0 z-[310] bg-black/95 backdrop-blur-3xl flex justify-center overflow-hidden animate-fade-in p-4 md:p-10">
-                    <div className="w-full max-w-5xl h-full flex flex-col relative glass-card rounded-3xl border border-[var(--theme-color)]/30 overflow-hidden shadow-2xl">
+                <div className="fixed inset-0 z-[310] bg-black/95 backdrop-blur-3xl flex justify-center overflow-hidden animate-fade-in p-2 md:p-6">
+                    <div className="w-full max-w-6xl h-full flex flex-col relative glass-card rounded-2xl md:rounded-3xl border border-[var(--theme-color)]/30 overflow-hidden shadow-2xl">
                         <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#050b18]/80">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-[var(--theme-color)]/20 text-[var(--theme-color)] rounded-lg"><Icon p={Paths.Edit} s={16}/></div>
@@ -766,8 +790,8 @@
                             </div>
                             <div className="flex items-center gap-4">
                                 {article && (
-                                    <button onClick={() => { if(confirm('Erase this data?')) onDelete(article.id); }} className="text-rose-400 hover:text-rose-300 flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
-                                        <Icon p={Paths.Trash} s={14}/> {t('btn_delete')}
+                                    <button onClick={() => { if(confirm('ต้องการลบข้อมูลชุดนี้ทั้งหมดใช่หรือไม่?')) onDelete(article.id); }} className="text-rose-400 hover:text-rose-300 flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
+                                        <Icon p={Paths.Trash} s={14}/> <span className="hidden md:inline">{t('btn_delete')}</span>
                                     </button>
                                 )}
                                 <button onClick={onCancel} className="p-2 text-slate-400 hover:text-white rounded-full transition-all">
@@ -776,47 +800,68 @@
                             </div>
                         </div>
                         
-                        <div className="flex-1 overflow-y-auto no-scrollbar p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Editor Form */}
-                            <div className="space-y-4 flex flex-col">
-                                <div>
-                                    <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] block mb-1">Title</label>
-                                    <input type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-sm text-white outline-none focus:border-[var(--theme-color)] font-sci" placeholder="Data Title..."/>
-                                </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] block mb-1">Category</label>
-                                        <input type="text" value={formData.category} onChange={e=>setFormData({...formData, category: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono" placeholder="e.g. Psychology"/>
+                        <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+                            {/* Editor Area */}
+                            <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto no-scrollbar border-r border-white/5 space-y-4">
+                                
+                                {/* Info Section */}
+                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-black/40 rounded-xl border border-white/5">
+                                    <div className="sm:col-span-3">
+                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Book Title (ชื่อหนังสือ)</label>
+                                        <input type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-sm text-[var(--theme-color)] outline-none focus:border-[var(--theme-color)] font-sci font-bold placeholder-slate-700" placeholder="ตั้งชื่อหนังสือ..."/>
                                     </div>
                                     <div>
-                                        <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] block mb-1">Req. Level</label>
-                                        <input type="number" min="1" value={formData.levelRequired} onChange={e=>setFormData({...formData, levelRequired: parseInt(e.target.value)||1})} className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono"/>
+                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Category (หมวดหมู่)</label>
+                                        <input type="text" value={formData.category} onChange={e=>setFormData({...formData, category: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono" placeholder="e.g. Psychology"/>
+                                    </div>
+                                    <div>
+                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Level Required (ต้องการเลเวล)</label>
+                                        <input type="number" min="1" value={formData.levelRequired} onChange={e=>setFormData({...formData, levelRequired: parseInt(e.target.value)||1})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono"/>
+                                    </div>
+                                    <div className="sm:col-span-3">
+                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Excerpt (คำโปรยสั้นๆ)</label>
+                                        <textarea value={formData.excerpt} onChange={e=>setFormData({...formData, excerpt: e.target.value})} className="w-full h-16 bg-transparent border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none focus:border-[var(--theme-color)] font-sans resize-none" placeholder="คำโปรยย่อๆ เพื่อดึงดูดให้อ่าน..."></textarea>
                                     </div>
                                 </div>
-                                <div>
-                                    <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] block mb-1">Excerpt (Short Preview)</label>
-                                    <textarea value={formData.excerpt} onChange={e=>setFormData({...formData, excerpt: e.target.value})} className="w-full h-20 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-slate-300 outline-none focus:border-[var(--theme-color)] font-sans resize-none" placeholder="A brief summary..."></textarea>
+
+                                {/* Chapters Manager */}
+                                <div className="flex-1 flex flex-col min-h-0">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] flex items-center gap-2"><Icon p={Paths.List} s={14}/> Table of Contents</label>
+                                        <button onClick={addChapter} className="text-[9px] uppercase tracking-widest font-bold bg-[var(--theme-color)]/20 text-[var(--theme-color)] px-3 py-1 rounded-md hover:bg-[var(--theme-color)] hover:text-black transition-all">+ เพิ่มบทใหม่</button>
+                                    </div>
+
+                                    {/* Chapter Tabs */}
+                                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-2">
+                                        {formData.chapters.map((chap, idx) => (
+                                            <div key={chap.id} onClick={() => setActiveIdx(idx)} className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg font-mono cursor-pointer transition-all border whitespace-nowrap shrink-0 ${activeIdx === idx ? 'bg-[var(--theme-color)]/10 border-[var(--theme-color)] text-[var(--theme-color)]' : 'bg-black/40 border-white/5 text-slate-400 hover:bg-white/5'}`}>
+                                                <span>{chap.title || `บทที่ ${idx + 1}`}</span>
+                                                {formData.chapters.length > 1 && (
+                                                    <button onClick={(e) => removeChapter(idx, e)} className="text-slate-500 hover:text-rose-400"><Icon p={Paths.Close} s={12}/></button>
+                                                )}
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Active Chapter Editor */}
+                                    <div className="flex-1 flex flex-col bg-black/30 border border-white/5 rounded-xl p-4">
+                                        <input type="text" value={formData.chapters[activeIdx]?.title || ''} onChange={e=>updateChapter('title', e.target.value)} className="w-full bg-transparent border-b border-white/10 px-2 py-2 text-sm text-white outline-none focus:border-[var(--theme-color)] font-bold mb-4" placeholder="ตั้งชื่อบทนี้..."/>
+                                        <textarea value={formData.chapters[activeIdx]?.content || ''} onChange={e=>updateChapter('content', e.target.value)} className="w-full flex-1 bg-transparent text-xs text-slate-300 outline-none font-mono resize-none leading-relaxed" placeholder="# พิมพ์เนื้อหาของบทนี้ด้วย Markdown\n\nเริ่มพิมพ์ข้อความของคุณที่นี่..."></textarea>
+                                    </div>
                                 </div>
-                                <div className="flex-1 flex flex-col min-h-[200px]">
-                                    <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] block mb-1">Content (Markdown)</label>
-                                    <textarea value={formData.content} onChange={e=>setFormData({...formData, content: e.target.value})} className="w-full flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-3 text-xs text-slate-300 outline-none focus:border-[var(--theme-color)] font-mono resize-none" placeholder="# Header\n\nWrite your insights here..."></textarea>
-                                </div>
-                                <button onClick={() => onSave(formData)} className="w-full py-4 bg-[var(--theme-color)] text-black rounded-xl font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_var(--theme-shadow)] transition-all mt-4">
+                                
+                                <button onClick={() => onSave(formData)} className="w-full py-4 bg-[var(--theme-color)] text-black rounded-xl font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_var(--theme-shadow)] transition-all shrink-0">
                                     {t('btn_save')}
                                 </button>
                             </div>
 
-                            {/* Live Preview */}
-                            <div className="hidden md:flex flex-col border-l border-white/5 pl-6 h-full overflow-hidden">
-                                <label className="text-[10px] uppercase font-bold text-slate-500 block mb-3 shrink-0">Live Preview</label>
-                                <div className="flex-1 overflow-y-auto pr-2 no-scrollbar">
-                                    <h1 className="text-2xl font-sci font-bold text-white mb-2">{formData.title || 'Untitled'}</h1>
-                                    <div className="flex gap-2 mb-6">
-                                        <span className="px-2 py-1 bg-[var(--theme-color)]/10 text-[var(--theme-color)] rounded text-[9px] font-mono border border-[var(--theme-color)]/20">{formData.category || 'Category'}</span>
-                                        <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded text-[9px] font-mono">LVL {formData.levelRequired}</span>
-                                    </div>
-                                    <div className="prose prose-invert prose-sm prose-cyan prose-headings:font-sci prose-headings:text-[var(--theme-color)] prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg max-w-none" 
-                                        dangerouslySetInnerHTML={{ __html: marked.parse(formData.content || '*No content yet...*') }}>
+                            {/* Live Preview Pane */}
+                            <div className="hidden md:flex flex-col flex-1 p-6 bg-[#03060c] overflow-y-auto no-scrollbar">
+                                <label className="text-[10px] uppercase font-bold text-slate-600 block mb-6 shrink-0 border-b border-white/5 pb-2">Live Preview (หน้าตาที่แสดงจริง)</label>
+                                <div className="max-w-2xl mx-auto w-full">
+                                    <h1 className="text-3xl font-sci font-bold text-[var(--theme-color)] mb-2">{formData.chapters[activeIdx]?.title || 'ไม่มีชื่อบท'}</h1>
+                                    <div className="prose prose-invert prose-sm prose-cyan max-w-none prose-headings:font-sci prose-headings:text-white prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg mt-6" 
+                                        dangerouslySetInnerHTML={{ __html: marked.parse(formData.chapters[activeIdx]?.content || '*เนื้อหาว่างเปล่า...*') }}>
                                     </div>
                                 </div>
                             </div>
@@ -827,29 +872,88 @@
         };
 
         const ArticleModal = ({ article, close, onEdit, t }) => {
+            const [activeChapIdx, setActiveChapIdx] = useState(0);
+
+            // Extract chapters safely
+            const chapters = useMemo(() => {
+                if (!article) return [];
+                if (article.chapters && article.chapters.length > 0) return article.chapters;
+                return [{ id: 'default', title: 'เนื้อหาหลัก', content: article.content || '' }];
+            }, [article]);
+
+            // Reset chapter when article changes
+            useEffect(() => { setActiveChapIdx(0); }, [article]);
+
             if(!article) return null;
+
             return (
                 <div className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-2xl flex justify-center overflow-hidden animate-fade-in">
-                    <div className="w-full max-w-4xl h-full flex flex-col relative">
-                        <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#050b18]/80 backdrop-blur-md relative z-10">
+                    <div className="w-full max-w-6xl h-full flex flex-col relative">
+                        {/* Header */}
+                        <div className="h-16 shrink-0 flex items-center justify-between px-4 md:px-6 border-b border-white/10 bg-[#050b18]/80 backdrop-blur-md relative z-10">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-[var(--theme-color)]/20 text-[var(--theme-color)] rounded-lg"><Icon p={Paths.Book} s={16}/></div>
-                                <span className="font-mono text-[10px] uppercase text-[var(--theme-color)] tracking-widest">{article.category}</span>
+                                <div className="flex flex-col">
+                                    <span className="font-mono text-[9px] uppercase text-[var(--theme-color)] tracking-widest">{article.category}</span>
+                                    <span className="font-bold text-white text-xs md:text-sm line-clamp-1">{article.title}</span>
+                                </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={onEdit} className="px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg text-[10px] uppercase tracking-widest font-bold transition-all flex items-center gap-2">
-                                    <Icon p={Paths.Edit} s={12}/> Edit
+                                <button onClick={onEdit} className="px-3 md:px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg text-[10px] uppercase tracking-widest font-bold transition-all flex items-center gap-2">
+                                    <Icon p={Paths.Edit} s={12}/> <span className="hidden md:inline">Edit</span>
                                 </button>
-                                <button onClick={close} className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-full transition-all">
-                                    <Icon p={Paths.Close} s={20} />
+                                <button onClick={close} className="p-2 text-slate-400 hover:text-[var(--theme-color)] bg-white/5 hover:bg-[var(--theme-color)]/10 rounded-lg transition-all">
+                                    <Icon p={Paths.Close} s={18} />
                                 </button>
                             </div>
                         </div>
-                        <div className="flex-1 overflow-y-auto no-scrollbar p-6 md:p-12 relative">
-                            <div className="max-w-3xl mx-auto prose prose-invert prose-cyan prose-headings:font-sci prose-headings:text-[var(--theme-color)] prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg" 
-                                dangerouslySetInnerHTML={{ __html: marked.parse(article.content) }}>
+
+                        <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
+                            {/* Table of Contents (Sidebar) */}
+                            <div className="md:w-72 bg-black/50 border-r border-white/5 flex flex-col overflow-y-auto shrink-0 no-scrollbar max-h-40 md:max-h-none border-b md:border-b-0">
+                                <div className="p-4 sticky top-0 bg-black/80 backdrop-blur-sm z-10 border-b border-white/5">
+                                    <h4 className="text-[10px] uppercase text-slate-400 font-bold tracking-widest flex items-center gap-2"><Icon p={Paths.List} s={14}/> สารบัญ (Index)</h4>
+                                </div>
+                                <div className="p-2 space-y-1">
+                                    {chapters.map((chap, idx) => (
+                                        <button 
+                                            key={chap.id || idx} 
+                                            onClick={() => setActiveChapIdx(idx)} 
+                                            className={`w-full text-left px-4 py-3 rounded-xl text-xs font-mono transition-all ${activeChapIdx === idx ? 'bg-[var(--theme-color)]/10 border border-[var(--theme-color)]/30 text-[var(--theme-color)] font-bold shadow-inner' : 'text-slate-400 hover:bg-white/5 hover:text-white border border-transparent'}`}
+                                        >
+                                            <div className="line-clamp-2">{chap.title}</div>
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                            <div className="h-24"></div>
+
+                            {/* Content Reading Area */}
+                            <div className="flex-1 overflow-y-auto p-6 md:p-12 no-scrollbar bg-[#020408]">
+                                <div className="max-w-3xl mx-auto w-full pb-24">
+                                    <h1 className="text-3xl md:text-4xl font-sci font-bold text-white mb-8 pb-4 border-b border-white/10">{chapters[activeChapIdx]?.title}</h1>
+                                    <div className="prose prose-invert md:prose-lg prose-cyan max-w-none prose-headings:font-sci prose-headings:text-[var(--theme-color)] prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-xl prose-blockquote:text-slate-300 prose-blockquote:not-italic prose-li:text-slate-300" 
+                                        dangerouslySetInnerHTML={{ __html: marked.parse(chapters[activeChapIdx]?.content || '') }}>
+                                    </div>
+                                    
+                                    {/* Pagination Buttons at bottom */}
+                                    <div className="flex justify-between mt-16 pt-8 border-t border-white/5">
+                                        <button 
+                                            onClick={() => setActiveChapIdx(activeChapIdx - 1)}
+                                            disabled={activeChapIdx === 0}
+                                            className={`px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${activeChapIdx === 0 ? 'opacity-30 cursor-not-allowed text-slate-500' : 'bg-white/5 text-slate-300 hover:bg-white/10 hover:text-white'}`}
+                                        >
+                                            <Icon p={Paths.ArrowLeft} s={14}/> ก่อนหน้า
+                                        </button>
+                                        <button 
+                                            onClick={() => setActiveChapIdx(activeChapIdx + 1)}
+                                            disabled={activeChapIdx === chapters.length - 1}
+                                            className={`px-4 py-2 rounded-lg font-mono text-[10px] uppercase tracking-widest flex items-center gap-2 transition-all ${activeChapIdx === chapters.length - 1 ? 'opacity-30 cursor-not-allowed text-slate-500' : 'bg-[var(--theme-color)]/20 text-[var(--theme-color)] hover:bg-[var(--theme-color)] hover:text-black border border-[var(--theme-color)]/30'}`}
+                                        >
+                                            ถัดไป <Icon p={Paths.ArrowRight} s={14}/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
