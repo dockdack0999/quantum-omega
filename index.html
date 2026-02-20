@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QUANTUM OMEGA: v4.1 (Stable Core)</title>
+    <title>QUANTUM OMEGA: v4.2 (Admin Injection Protocol)</title>
     
     <!-- Libraries -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -193,14 +193,13 @@
                 archive_title: 'Knowledge Vault',
                 btn_read: 'Access Data',
                 txt_locked: 'Locked - Requires Level',
-                btn_add_archive: 'Upload New Data',
+                btn_add_archive: 'Upload Data',
                 btn_edit: 'Edit Data',
                 btn_save: 'Save Sequence',
                 lang_sel: 'Language / ภาษา',
                 status_open: 'OPEN',
                 status_closed: 'CLOSED',
                 status_thai_time: 'TH Time',
-                cal_mon: 'Mon', cal_tue: 'Tue', cal_wed: 'Wed', cal_thu: 'Thu', cal_fri: 'Fri', cal_sat: 'Sat', cal_sun: 'Sun',
                 cl_news: 'Check High Impact News?',
                 cl_levels: 'Identify Key Levels (S/R)?',
                 cl_trend: 'Confirm Trend Direction?',
@@ -380,7 +379,9 @@
             ArrowLeft: <line x1="19" y1="12" x2="5" y2="12"></line>,
             ArrowRight: <line x1="5" y1="12" x2="19" y2="12"></line>,
             Trash: <g><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></g>,
-            List: <g><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></g>
+            List: <g><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></g>,
+            Code: <g><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></g>,
+            Unlock: <g><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></g>
         };
 
         const STRATEGIES = ["Trend Following", "Reversal", "Breakout", "Scalping", "News Trade", "Other"];
@@ -590,7 +591,6 @@
             );
         };
 
-        // --- PnL Calendar Component ---
         const PnLCalendar = ({ cur, stats, t, lang }) => {
             const [viewDate, setViewDate] = useState(new Date());
 
@@ -703,7 +703,106 @@
             );
         };
 
-        // --- DEFAULT ARCHIVES ---
+        // --- Interactive Chart Components for Books ---
+        const PortfolioGrowthChart = () => {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+            useEffect(() => {
+                if (!canvasRef.current) return;
+                const ctx = canvasRef.current.getContext('2d');
+                if (chartRef.current) chartRef.current.destroy();
+
+                const labels = Array.from({length: 20}, (_, i) => `Trade ${i+1}`);
+                const safeData = labels.map((_, i) => 1000 * Math.pow(1.03, i)); 
+                const aggData = labels.map((_, i) => {
+                    let v = 1000;
+                    for(let j=0; j<=i; j++) v = v * (Math.random() > 0.4 ? 1.25 : 0.70); 
+                    return v;
+                });
+
+                chartRef.current = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [
+                            { label: 'Safe & Consistent (Kelly)', data: safeData, borderColor: '#22d3ee', backgroundColor: 'rgba(34, 211, 238, 0.1)', fill: true, tension: 0.4 },
+                            { label: 'Aggressive / Gambler', data: aggData, borderColor: '#f43f5e', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono' } } } },
+                        scales: {
+                            x: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+                            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        }
+                    }
+                });
+                return () => chartRef.current?.destroy();
+            }, []);
+            return (
+                <div className="w-full my-8 bg-[#050b18] border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.05)]">
+                    <div className="px-4 py-2 border-b border-white/5 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-[var(--theme-color)] flex items-center gap-2">
+                        <Icon p={Paths.Chart} s={12}/> Interactive Chart: Portfolio Growth
+                    </div>
+                    <div className="h-64 p-4"><canvas ref={canvasRef}></canvas></div>
+                </div>
+            );
+        };
+
+        const ReturnsComparisonChart = () => {
+            const canvasRef = useRef(null);
+            const chartRef = useRef(null);
+            useEffect(() => {
+                if (!canvasRef.current) return;
+                const ctx = canvasRef.current.getContext('2d');
+                if (chartRef.current) chartRef.current.destroy();
+
+                chartRef.current = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Win Rate (%)', 'Avg RR (x)', 'Max Drawdown (%)', 'Yearly Return (%)'],
+                        datasets: [
+                            { label: 'Poker Player DNA', data: [55, 2.5, -12, 45], backgroundColor: '#22d3ee', borderRadius: 4 },
+                            { label: 'Standard Trader', data: [65, 0.8, -35, 12], backgroundColor: '#64748b', borderRadius: 4 }
+                        ]
+                    },
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono' } } } },
+                        scales: {
+                            x: { ticks: { color: '#64748b' }, grid: { display: false } },
+                            y: { ticks: { color: '#64748b' }, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        }
+                    }
+                });
+                return () => chartRef.current?.destroy();
+            }, []);
+            return (
+                <div className="w-full my-8 bg-[#050b18] border border-white/10 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(34,211,238,0.05)]">
+                    <div className="px-4 py-2 border-b border-white/5 bg-white/5 text-[10px] font-bold uppercase tracking-widest text-[var(--theme-color)] flex items-center gap-2">
+                        <Icon p={Paths.Chart} s={12}/> Interactive Chart: Stats Comparison
+                    </div>
+                    <div className="h-64 p-4"><canvas ref={canvasRef}></canvas></div>
+                </div>
+            );
+        };
+
+        const ContentRenderer = ({ content }) => {
+            if (!content) return null;
+            const parts = content.split(/(\[CHART_PORTFOLIO\]|\[CHART_RETURNS\])/g);
+            return (
+                <div className="prose prose-invert md:prose-lg prose-cyan max-w-none prose-headings:font-sci prose-headings:text-[var(--theme-color)] prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-xl prose-blockquote:text-slate-300 prose-blockquote:not-italic prose-li:text-slate-300">
+                    {parts.map((part, index) => {
+                        if (part === '[CHART_PORTFOLIO]') return <PortfolioGrowthChart key={index} />;
+                        if (part === '[CHART_RETURNS]') return <ReturnsComparisonChart key={index} />;
+                        if (part.trim() === '') return null;
+                        return <div key={index} dangerouslySetInnerHTML={{ __html: marked.parse(part) }} />;
+                    })}
+                </div>
+            );
+        };
+
         const DEFAULT_ARCHIVES = [
             {
                 id: 'poker-dna',
@@ -730,22 +829,29 @@
                     {
                         id: 'chap3',
                         title: '3. ศิลปะการ "เดิมพัน"',
-                        content: '### ศิลปะการ "เดิมพัน" ไม่ใช่แค่การ "เลือกหุ้น" (Bet Sizing is King)\n\nเทรดเดอร์มือสมัครเล่นมักหมกมุ่นว่าจะซื้อตัวไหน (What to buy) แต่โปรโป๊กเกอร์ถามว่าจะลงเงินเท่าไหร่ (How much to bet)\n\n* **The Sharp Point:** ต่อให้คุณเดาถูก 9 ใน 10 ครั้ง แต่ถ้าครั้งที่ 10 คุณลงเงินผิดขนาด คุณก็ล้มละลายได้\n* **Deep Detail:** พวกเขาจะ "หมอบ" (Fold) อย่างรวดเร็วเมื่อความได้เปรียบต่ำ เพื่อรักษาหน้าตักไว้รอจังหวะที่มี Edge สูงๆ แล้วค่อย "กระแทก" (Heavy Bet) นี่คือหัวใจของการ Let Profit Run'
+                        content: '### ศิลปะการ "เดิมพัน" ไม่ใช่แค่การ "เลือกหุ้น" (Bet Sizing is King)\n\nเทรดเดอร์มือสมัครเล่นมักหมกมุ่นว่าจะซื้อตัวไหน (What to buy) แต่โปรโป๊กเกอร์ถามว่าจะลงเงินเท่าไหร่ (How much to bet)\n\n* **The Sharp Point:** ต่อให้คุณเดาถูก 9 ใน 10 ครั้ง แต่ถ้าครั้งที่ 10 คุณลงเงินผิดขนาด คุณก็ล้มละลายได้\n* **Deep Detail:** พวกเขาจะ "หมอบ" (Fold) อย่างรวดเร็วเมื่อความได้เปรียบต่ำ เพื่อรักษาหน้าตักไว้รอจังหวะที่มี Edge สูงๆ แล้วค่อย "กระแทก" (Heavy Bet) นี่คือหัวใจของการ Let Profit Run\n\nลองดูกราฟจำลองความแตกต่างระหว่างการบริหารเงินแบบโปรโป๊กเกอร์ กับมือสมัครเล่นดูสิครับ:\n\n[CHART_PORTFOLIO]'
                     },
                     {
                         id: 'chap4',
                         title: '4. การควบคุม "สภาวะหลุด"',
-                        content: '### การควบคุม "สภาวะหลุด" (Mastering the Tilt)\n\n"Tilt" คือสภาวะที่อารมณ์เข้าครอบงำสมองส่วนเหตุผล เมื่อความโกรธ ความกลัว หรือความโลภเข้าตา คุณจะเริ่มเทรดเพื่อ "แก้แค้น" ตลาด\n\n* **The Sharp Point:** ตลาดหุ้นไม่มีหัวใจ มันไม่สนว่าคุณจะเสียใจแค่ไหน และมันจะเหยียบย่ำคนที่สติแตกเสมอ\n* **Deep Detail:** สิ่งที่ Wall Street ซื้อจากโปรโป๊กเกอร์ไม่ใช่สูตรคำนวณ แต่คือ "ความนิ่งเหมือนหิน" ในขณะที่พอร์ตติดลบตัวแดงเดือด พวกเขาจะไม่เทรดมั่วเพื่อเอาคืน แต่จะเดินออกจากโต๊ะหรือทำตามแผนเดิมอย่างเคร่งครัด\n\n---\n\n### บทสรุป\n> "จงเทรดหุ้นให้เหมือนเล่นโป๊กเกอร์... มองให้ออกว่าใครคือเหยื่อบนโต๊ะ ถ้าคุณมองไม่ออก แสดงว่าเหยื่อคนนั้นคือคุณ"'
+                        content: '### การควบคุม "สภาวะหลุด" (Mastering the Tilt)\n\n"Tilt" คือสภาวะที่อารมณ์เข้าครอบงำสมองส่วนเหตุผล เมื่อความโกรธ ความกลัว หรือความโลภเข้าตา คุณจะเริ่มเทรดเพื่อ "แก้แค้น" ตลาด\n\n* **The Sharp Point:** ตลาดหุ้นไม่มีหัวใจ มันไม่สนว่าคุณจะเสียใจแค่ไหน และมันจะเหยียบย่ำคนที่สติแตกเสมอ\n* **Deep Detail:** สิ่งที่ Wall Street ซื้อจากโปรโป๊กเกอร์ไม่ใช่สูตรคำนวณ แต่คือ "ความนิ่งเหมือนหิน" ในขณะที่พอร์ตติดลบตัวแดงเดือด พวกเขาจะไม่เทรดมั่วเพื่อเอาคืน แต่จะเดินออกจากโต๊ะหรือทำตามแผนเดิมอย่างเคร่งครัด'
+                    },
+                    {
+                        id: 'chap5',
+                        title: 'บทสรุปและสถิติ',
+                        content: '### สถิติความแตกต่าง\n\nนี่คือการเปรียบเทียบค่าสถิติเชิงลึกระหว่างเทรดเดอร์ที่มี Mindset แบบนักโป๊กเกอร์ กับเทรดเดอร์ทั่วไป\n\n[CHART_RETURNS]\n\n> "จงเทรดหุ้นให้เหมือนเล่นโป๊กเกอร์... มองให้ออกว่าใครคือเหยื่อบนโต๊ะ ถ้าคุณมองไม่ออก แสดงว่าเหยื่อคนนั้นคือคุณ"'
                     }
                 ]
             }
         ];
 
-        // --- NEW: Article Modals (Read & Edit) ---
         const ArticleEditorModal = ({ article, onSave, onCancel, onDelete, t }) => {
+            const [mode, setMode] = useState('gui');
+            const [rawJson, setRawJson] = useState('');
+            const [jsonError, setJsonError] = useState('');
+
             const [formData, setFormData] = useState(() => {
                 const init = article || { title: '', category: 'Strategy', levelRequired: 1, excerpt: '', chapters: [{ id: Date.now().toString(), title: 'บทที่ 1', content: '' }] };
-                // Migration logic for old structure
                 if (init.content && (!init.chapters || init.chapters.length === 0)) {
                     init.chapters = [{ id: Date.now().toString(), title: 'เนื้อหาหลัก', content: init.content }];
                     delete init.content;
@@ -755,6 +861,13 @@
                 return init;
             });
             const [activeIdx, setActiveIdx] = useState(0);
+
+            useEffect(() => {
+                if(mode === 'json') {
+                    setRawJson(JSON.stringify(formData, null, 2));
+                    setJsonError('');
+                }
+            }, [mode, formData]);
 
             const updateChapter = (field, value) => {
                 const newChaps = [...formData.chapters];
@@ -778,16 +891,35 @@
                 }
             };
 
+            const handleJsonParse = () => {
+                try {
+                    const parsed = JSON.parse(rawJson);
+                    if(!parsed.title || !parsed.chapters) throw new Error("Missing required fields (title, chapters)");
+                    setFormData(parsed);
+                    setJsonError('');
+                    setMode('gui');
+                } catch(e) {
+                    setJsonError(e.message);
+                }
+            };
+
             return (
                 <div className="fixed inset-0 z-[310] bg-black/95 backdrop-blur-3xl flex justify-center overflow-hidden animate-fade-in p-2 md:p-6">
                     <div className="w-full max-w-6xl h-full flex flex-col relative glass-card rounded-2xl md:rounded-3xl border border-[var(--theme-color)]/30 overflow-hidden shadow-2xl">
+                        
                         <div className="h-16 shrink-0 flex items-center justify-between px-6 border-b border-white/10 bg-[#050b18]/80">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-[var(--theme-color)]/20 text-[var(--theme-color)] rounded-lg"><Icon p={Paths.Edit} s={16}/></div>
                                 <span className="font-mono text-[10px] uppercase text-[var(--theme-color)] tracking-widest">
-                                    {article ? t('btn_edit') : t('btn_add_archive')}
+                                    Data Editor Protocol
                                 </span>
                             </div>
+                            
+                            <div className="flex bg-black/50 rounded-lg p-1 border border-white/10">
+                                <button onClick={()=>setMode('gui')} className={`px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-all ${mode==='gui' ? 'bg-[var(--theme-color)] text-black' : 'text-slate-400 hover:text-white'}`}>GUI Editor</button>
+                                <button onClick={()=>setMode('json')} className={`px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded transition-all flex items-center gap-2 ${mode==='json' ? 'bg-indigo-500 text-white' : 'text-slate-400 hover:text-white'}`}><Icon p={Paths.Code} s={12}/> JSON Inject</button>
+                            </div>
+
                             <div className="flex items-center gap-4">
                                 {article && (
                                     <button onClick={() => { if(confirm('ต้องการลบข้อมูลชุดนี้ทั้งหมดใช่หรือไม่?')) onDelete(article.id); }} className="text-rose-400 hover:text-rose-300 flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold bg-rose-500/10 px-3 py-1.5 rounded-lg border border-rose-500/20">
@@ -801,70 +933,88 @@
                         </div>
                         
                         <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-                            {/* Editor Area */}
-                            <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto no-scrollbar border-r border-white/5 space-y-4">
-                                
-                                {/* Info Section */}
-                                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-black/40 rounded-xl border border-white/5">
-                                    <div className="sm:col-span-3">
-                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Book Title (ชื่อหนังสือ)</label>
-                                        <input type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-sm text-[var(--theme-color)] outline-none focus:border-[var(--theme-color)] font-sci font-bold placeholder-slate-700" placeholder="ตั้งชื่อหนังสือ..."/>
-                                    </div>
-                                    <div>
-                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Category (หมวดหมู่)</label>
-                                        <input type="text" value={formData.category} onChange={e=>setFormData({...formData, category: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono" placeholder="e.g. Psychology"/>
-                                    </div>
-                                    <div>
-                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Level Required (ต้องการเลเวล)</label>
-                                        <input type="number" min="1" value={formData.levelRequired} onChange={e=>setFormData({...formData, levelRequired: parseInt(e.target.value)||1})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono"/>
-                                    </div>
-                                    <div className="sm:col-span-3">
-                                        <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Excerpt (คำโปรยสั้นๆ)</label>
-                                        <textarea value={formData.excerpt} onChange={e=>setFormData({...formData, excerpt: e.target.value})} className="w-full h-16 bg-transparent border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none focus:border-[var(--theme-color)] font-sans resize-none" placeholder="คำโปรยย่อๆ เพื่อดึงดูดให้อ่าน..."></textarea>
-                                    </div>
-                                </div>
-
-                                {/* Chapters Manager */}
-                                <div className="flex-1 flex flex-col min-h-0">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] flex items-center gap-2"><Icon p={Paths.List} s={14}/> Table of Contents</label>
-                                        <button onClick={addChapter} className="text-[9px] uppercase tracking-widest font-bold bg-[var(--theme-color)]/20 text-[var(--theme-color)] px-3 py-1 rounded-md hover:bg-[var(--theme-color)] hover:text-black transition-all">+ เพิ่มบทใหม่</button>
-                                    </div>
-
-                                    {/* Chapter Tabs */}
-                                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-2">
-                                        {formData.chapters.map((chap, idx) => (
-                                            <div key={chap.id} onClick={() => setActiveIdx(idx)} className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg font-mono cursor-pointer transition-all border whitespace-nowrap shrink-0 ${activeIdx === idx ? 'bg-[var(--theme-color)]/10 border-[var(--theme-color)] text-[var(--theme-color)]' : 'bg-black/40 border-white/5 text-slate-400 hover:bg-white/5'}`}>
-                                                <span>{chap.title || `บทที่ ${idx + 1}`}</span>
-                                                {formData.chapters.length > 1 && (
-                                                    <button onClick={(e) => removeChapter(idx, e)} className="text-slate-500 hover:text-rose-400"><Icon p={Paths.Close} s={12}/></button>
-                                                )}
+                            {mode === 'gui' ? (
+                                <>
+                                    <div className="flex-1 flex flex-col p-4 md:p-6 overflow-y-auto no-scrollbar border-r border-white/5 space-y-4">
+                                        
+                                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-black/40 rounded-xl border border-white/5">
+                                            <div className="sm:col-span-3">
+                                                <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Book Title (ชื่อหนังสือ)</label>
+                                                <input type="text" value={formData.title} onChange={e=>setFormData({...formData, title: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-sm text-[var(--theme-color)] outline-none focus:border-[var(--theme-color)] font-sci font-bold placeholder-slate-700" placeholder="ตั้งชื่อหนังสือ..."/>
                                             </div>
-                                        ))}
+                                            <div>
+                                                <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Category (หมวดหมู่)</label>
+                                                <input type="text" value={formData.category} onChange={e=>setFormData({...formData, category: e.target.value})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono" placeholder="e.g. Psychology"/>
+                                            </div>
+                                            <div>
+                                                <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Level Required (ต้องการเลเวล)</label>
+                                                <input type="number" min="1" value={formData.levelRequired} onChange={e=>setFormData({...formData, levelRequired: parseInt(e.target.value)||1})} className="w-full bg-transparent border-b border-white/20 px-2 py-1 text-xs text-white outline-none focus:border-[var(--theme-color)] font-mono"/>
+                                            </div>
+                                            <div className="sm:col-span-3">
+                                                <label className="text-[9px] uppercase font-bold text-slate-500 block mb-1">Excerpt (คำโปรยสั้นๆ)</label>
+                                                <textarea value={formData.excerpt} onChange={e=>setFormData({...formData, excerpt: e.target.value})} className="w-full h-16 bg-transparent border border-white/10 rounded-lg px-3 py-2 text-xs text-slate-300 outline-none focus:border-[var(--theme-color)] font-sans resize-none" placeholder="คำโปรยย่อๆ เพื่อดึงดูดให้อ่าน..."></textarea>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1 flex flex-col min-h-0">
+                                            <div className="flex items-center justify-between mb-2">
+                                                <label className="text-[10px] uppercase font-bold text-[var(--theme-color)] flex items-center gap-2"><Icon p={Paths.List} s={14}/> Table of Contents</label>
+                                                <button onClick={addChapter} className="text-[9px] uppercase tracking-widest font-bold bg-[var(--theme-color)]/20 text-[var(--theme-color)] px-3 py-1 rounded-md hover:bg-[var(--theme-color)] hover:text-black transition-all">+ เพิ่มบทใหม่</button>
+                                            </div>
+
+                                            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 mb-2">
+                                                {formData.chapters.map((chap, idx) => (
+                                                    <div key={chap.id} onClick={() => setActiveIdx(idx)} className={`flex items-center gap-2 px-3 py-1.5 text-xs rounded-lg font-mono cursor-pointer transition-all border whitespace-nowrap shrink-0 ${activeIdx === idx ? 'bg-[var(--theme-color)]/10 border-[var(--theme-color)] text-[var(--theme-color)]' : 'bg-black/40 border-white/5 text-slate-400 hover:bg-white/5'}`}>
+                                                        <span>{chap.title || `บทที่ ${idx + 1}`}</span>
+                                                        {formData.chapters.length > 1 && (
+                                                            <button onClick={(e) => removeChapter(idx, e)} className="text-slate-500 hover:text-rose-400"><Icon p={Paths.Close} s={12}/></button>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            <div className="flex-1 flex flex-col bg-black/30 border border-white/5 rounded-xl p-4">
+                                                <input type="text" value={formData.chapters[activeIdx]?.title || ''} onChange={e=>updateChapter('title', e.target.value)} className="w-full bg-transparent border-b border-white/10 px-2 py-2 text-sm text-white outline-none focus:border-[var(--theme-color)] font-bold mb-4" placeholder="ตั้งชื่อบทนี้..."/>
+                                                <textarea value={formData.chapters[activeIdx]?.content || ''} onChange={e=>updateChapter('content', e.target.value)} className="w-full flex-1 bg-transparent text-xs text-slate-300 outline-none font-mono resize-none leading-relaxed" placeholder="# พิมพ์เนื้อหาของบทนี้ด้วย Markdown\n\n* คุณสามารถแทรกกราฟจำลองได้โดยการพิมพ์ Shortcode ต่อไปนี้:\n[CHART_PORTFOLIO] = กราฟเส้นเปรียบเทียบพอร์ต\n[CHART_RETURNS] = กราฟแท่งเปรียบเทียบผลตอบแทน\n\nเริ่มพิมพ์ข้อความของคุณที่นี่..."></textarea>
+                                            </div>
+                                        </div>
+                                        
+                                        <button onClick={() => onSave(formData)} className="w-full py-4 bg-[var(--theme-color)] text-black rounded-xl font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_var(--theme-shadow)] transition-all shrink-0">
+                                            {t('btn_save')}
+                                        </button>
                                     </div>
 
-                                    {/* Active Chapter Editor */}
-                                    <div className="flex-1 flex flex-col bg-black/30 border border-white/5 rounded-xl p-4">
-                                        <input type="text" value={formData.chapters[activeIdx]?.title || ''} onChange={e=>updateChapter('title', e.target.value)} className="w-full bg-transparent border-b border-white/10 px-2 py-2 text-sm text-white outline-none focus:border-[var(--theme-color)] font-bold mb-4" placeholder="ตั้งชื่อบทนี้..."/>
-                                        <textarea value={formData.chapters[activeIdx]?.content || ''} onChange={e=>updateChapter('content', e.target.value)} className="w-full flex-1 bg-transparent text-xs text-slate-300 outline-none font-mono resize-none leading-relaxed" placeholder="# พิมพ์เนื้อหาของบทนี้ด้วย Markdown\n\nเริ่มพิมพ์ข้อความของคุณที่นี่..."></textarea>
+                                    <div className="hidden md:flex flex-col flex-1 p-6 bg-[#03060c] overflow-y-auto no-scrollbar">
+                                        <label className="text-[10px] uppercase font-bold text-slate-600 block mb-6 shrink-0 border-b border-white/5 pb-2">Live Preview (หน้าตาที่แสดงจริง)</label>
+                                        <div className="max-w-2xl mx-auto w-full pb-24">
+                                            <h1 className="text-3xl font-sci font-bold text-[var(--theme-color)] mb-2">{formData.chapters[activeIdx]?.title || 'ไม่มีชื่อบท'}</h1>
+                                            <div className="flex gap-2 mb-6">
+                                                <span className="px-2 py-1 bg-[var(--theme-color)]/10 text-[var(--theme-color)] rounded text-[9px] font-mono border border-[var(--theme-color)]/20">{formData.category || 'Category'}</span>
+                                                <span className="px-2 py-1 bg-slate-800 text-slate-400 rounded text-[9px] font-mono">LVL {formData.levelRequired}</span>
+                                            </div>
+                                            <ContentRenderer content={formData.chapters[activeIdx]?.content || '*เนื้อหาว่างเปล่า...*'} />
+                                        </div>
                                     </div>
-                                </div>
-                                
-                                <button onClick={() => onSave(formData)} className="w-full py-4 bg-[var(--theme-color)] text-black rounded-xl font-bold uppercase tracking-widest text-xs hover:shadow-[0_0_20px_var(--theme-shadow)] transition-all shrink-0">
-                                    {t('btn_save')}
-                                </button>
-                            </div>
-
-                            {/* Live Preview Pane */}
-                            <div className="hidden md:flex flex-col flex-1 p-6 bg-[#03060c] overflow-y-auto no-scrollbar">
-                                <label className="text-[10px] uppercase font-bold text-slate-600 block mb-6 shrink-0 border-b border-white/5 pb-2">Live Preview (หน้าตาที่แสดงจริง)</label>
-                                <div className="max-w-2xl mx-auto w-full">
-                                    <h1 className="text-3xl font-sci font-bold text-[var(--theme-color)] mb-2">{formData.chapters[activeIdx]?.title || 'ไม่มีชื่อบท'}</h1>
-                                    <div className="prose prose-invert prose-sm prose-cyan max-w-none prose-headings:font-sci prose-headings:text-white prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-4 prose-blockquote:py-1 prose-blockquote:rounded-r-lg mt-6" 
-                                        dangerouslySetInnerHTML={{ __html: marked.parse(formData.chapters[activeIdx]?.content || '*เนื้อหาว่างเปล่า...*') }}>
+                                </>
+                            ) : (
+                                <div className="flex-1 flex flex-col p-6 bg-[#050b18]">
+                                    <div className="mb-4 flex justify-between items-end">
+                                        <div>
+                                            <h3 className="text-indigo-400 font-bold uppercase tracking-widest text-sm mb-1 flex items-center gap-2"><Icon p={Paths.Code} s={16}/> Raw Data Injection</h3>
+                                            <p className="text-xs text-slate-500">Copy the JSON response from Gemini and paste it below.</p>
+                                        </div>
+                                        <button onClick={handleJsonParse} className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold text-[10px] uppercase tracking-widest transition-all">Parse & Apply</button>
                                     </div>
+                                    {jsonError && <div className="p-3 mb-4 bg-rose-500/20 border border-rose-500/50 text-rose-400 text-xs rounded-xl font-mono">Error: {jsonError}</div>}
+                                    <textarea 
+                                        value={rawJson} 
+                                        onChange={e=>setRawJson(e.target.value)} 
+                                        className="flex-1 w-full bg-black border border-white/10 rounded-xl p-4 text-[#a5b4fc] font-mono text-xs outline-none focus:border-indigo-500 resize-none"
+                                        spellCheck="false"
+                                        placeholder={`{\n  "title": "Book Title",\n  "category": "Trading",\n  "levelRequired": 1,\n  "excerpt": "Short text...",\n  "chapters": [\n    { "title": "Chap 1", "content": "Markdown here..." }\n  ]\n}`}
+                                    ></textarea>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -874,14 +1024,12 @@
         const ArticleModal = ({ article, close, onEdit, t }) => {
             const [activeChapIdx, setActiveChapIdx] = useState(0);
 
-            // Extract chapters safely
             const chapters = useMemo(() => {
                 if (!article) return [];
                 if (article.chapters && article.chapters.length > 0) return article.chapters;
                 return [{ id: 'default', title: 'เนื้อหาหลัก', content: article.content || '' }];
             }, [article]);
 
-            // Reset chapter when article changes
             useEffect(() => { setActiveChapIdx(0); }, [article]);
 
             if(!article) return null;
@@ -889,7 +1037,6 @@
             return (
                 <div className="fixed inset-0 z-[300] bg-black/95 backdrop-blur-2xl flex justify-center overflow-hidden animate-fade-in">
                     <div className="w-full max-w-6xl h-full flex flex-col relative">
-                        {/* Header */}
                         <div className="h-16 shrink-0 flex items-center justify-between px-4 md:px-6 border-b border-white/10 bg-[#050b18]/80 backdrop-blur-md relative z-10">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-[var(--theme-color)]/20 text-[var(--theme-color)] rounded-lg"><Icon p={Paths.Book} s={16}/></div>
@@ -899,8 +1046,8 @@
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <button onClick={onEdit} className="px-3 md:px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 rounded-lg text-[10px] uppercase tracking-widest font-bold transition-all flex items-center gap-2">
-                                    <Icon p={Paths.Edit} s={12}/> <span className="hidden md:inline">Edit</span>
+                                <button onClick={onEdit} className="px-3 md:px-4 py-1.5 bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-indigo-500/20 hover:text-indigo-400 hover:border-indigo-500/50 rounded-lg text-[10px] uppercase tracking-widest font-bold transition-all flex items-center gap-2">
+                                    <Icon p={Paths.Edit} s={12}/> <span className="hidden md:inline">Edit Data</span>
                                 </button>
                                 <button onClick={close} className="p-2 text-slate-400 hover:text-[var(--theme-color)] bg-white/5 hover:bg-[var(--theme-color)]/10 rounded-lg transition-all">
                                     <Icon p={Paths.Close} s={18} />
@@ -909,7 +1056,6 @@
                         </div>
 
                         <div className="flex-1 flex flex-col md:flex-row overflow-hidden relative">
-                            {/* Table of Contents (Sidebar) */}
                             <div className="md:w-72 bg-black/50 border-r border-white/5 flex flex-col overflow-y-auto shrink-0 no-scrollbar max-h-40 md:max-h-none border-b md:border-b-0">
                                 <div className="p-4 sticky top-0 bg-black/80 backdrop-blur-sm z-10 border-b border-white/5">
                                     <h4 className="text-[10px] uppercase text-slate-400 font-bold tracking-widest flex items-center gap-2"><Icon p={Paths.List} s={14}/> สารบัญ (Index)</h4>
@@ -927,15 +1073,12 @@
                                 </div>
                             </div>
 
-                            {/* Content Reading Area */}
                             <div className="flex-1 overflow-y-auto p-6 md:p-12 no-scrollbar bg-[#020408]">
                                 <div className="max-w-3xl mx-auto w-full pb-24">
                                     <h1 className="text-3xl md:text-4xl font-sci font-bold text-white mb-8 pb-4 border-b border-white/10">{chapters[activeChapIdx]?.title}</h1>
-                                    <div className="prose prose-invert md:prose-lg prose-cyan max-w-none prose-headings:font-sci prose-headings:text-[var(--theme-color)] prose-a:text-[var(--theme-color)] prose-blockquote:border-l-[var(--theme-color)] prose-blockquote:bg-[var(--theme-color)]/5 prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-xl prose-blockquote:text-slate-300 prose-blockquote:not-italic prose-li:text-slate-300" 
-                                        dangerouslySetInnerHTML={{ __html: marked.parse(chapters[activeChapIdx]?.content || '') }}>
-                                    </div>
                                     
-                                    {/* Pagination Buttons at bottom */}
+                                    <ContentRenderer content={chapters[activeChapIdx]?.content || ''} />
+                                    
                                     <div className="flex justify-between mt-16 pt-8 border-t border-white/5">
                                         <button 
                                             onClick={() => setActiveChapIdx(activeChapIdx - 1)}
@@ -993,8 +1136,9 @@
                                 </h2>
                                 <p className="text-xs text-slate-400 mt-2 font-mono">Current Clearance Level: <span className="text-white font-bold text-sm">LVL {level}</span></p>
                             </div>
+                            
                             <button 
-                                onClick={() => setEditingArticle({title:'', category:'Tactical', levelRequired:1, excerpt:'', content:''})}
+                                onClick={() => setEditingArticle({title:'', category:'Tactical', levelRequired:1, excerpt:'', chapters: [{id:Date.now().toString(), title:'บทที่ 1', content:''}]})}
                                 className="px-4 py-3 bg-[var(--theme-color)]/20 border border-[var(--theme-color)]/50 text-[var(--theme-color)] hover:bg-[var(--theme-color)] hover:text-black rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-2 shadow-[0_0_15px_var(--theme-shadow)]"
                             >
                                 <Icon p={Paths.Plus} s={16}/> <span className="hidden md:inline">{t('btn_add_archive')}</span>
@@ -1004,12 +1148,12 @@
                         <div className="flex-1 overflow-y-auto no-scrollbar relative z-10">
                             {archives.length === 0 ? (
                                 <div className="text-center py-20 text-slate-500 font-mono text-xs border border-dashed border-white/10 rounded-2xl bg-black/20">
-                                    No data found in the vault. Upload new data to begin.
+                                    No data found in the vault.
                                 </div>
                             ) : (
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {archives.map(doc => {
-                                        const isLocked = level < doc.levelRequired;
+                                        const isLocked = level < doc.levelRequired; 
                                         return (
                                             <div key={doc.id} className={`glass p-6 rounded-2xl flex flex-col relative transition-all duration-500 overflow-hidden border ${isLocked ? 'border-white/5 opacity-70 grayscale' : 'border-[var(--theme-color)]/20 hover:border-[var(--theme-color)]/60 hover:shadow-[0_0_30px_var(--theme-shadow)] group'}`}>
                                                 
@@ -1028,7 +1172,7 @@
                                                 <h3 className="text-lg font-bold text-white mb-3 font-sci leading-snug line-clamp-2">{doc.title}</h3>
                                                 <p className="text-xs text-slate-400 mb-6 flex-1 line-clamp-3">{doc.excerpt}</p>
                                                 
-                                                <div className="flex gap-2 mt-auto">
+                                                <div className="flex gap-2 mt-auto relative z-30">
                                                     <button 
                                                         onClick={() => !isLocked && setOpenArticle(doc)}
                                                         className={`flex-1 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center justify-center gap-2 ${isLocked ? 'bg-slate-800/50 text-slate-600' : 'bg-[var(--theme-color)]/10 text-[var(--theme-color)] group-hover:bg-[var(--theme-color)] group-hover:text-black'}`}
@@ -1038,7 +1182,7 @@
                                                     {!isLocked && (
                                                         <button 
                                                             onClick={(e) => { e.stopPropagation(); setEditingArticle(doc); }}
-                                                            className="px-3 py-3 rounded-xl bg-white/5 text-slate-400 hover:bg-white/20 hover:text-white border border-transparent hover:border-white/20 transition-all flex items-center justify-center" title="Edit Data"
+                                                            className="px-3 py-3 rounded-xl bg-white/5 text-slate-400 hover:bg-indigo-500/20 hover:text-indigo-400 border border-transparent hover:border-indigo-500/30 transition-all flex items-center justify-center" title="Edit Data"
                                                         >
                                                             <Icon p={Paths.Edit} s={14}/>
                                                         </button>
@@ -1071,7 +1215,6 @@
                 </div>
             );
         };
-
 
         const TimeDilation = ({ t }) => {
             const [bal, setBal] = useState(1000);
@@ -1136,7 +1279,6 @@
             );
         };
 
-        // --- NEW: MARKET CHART (TradingView Embedded) ---
         const MarketChart = ({ theme, lang }) => {
             const container = useRef();
             
@@ -1180,7 +1322,6 @@
             );
         };
 
-        // --- News Terminal (Economic Calendar) ---
         const NewsTerminal = ({ lang }) => {
             const container = useRef();
             
@@ -1212,8 +1353,6 @@
                 </div>
             );
         };
-
-        // --- CORE COMPONENTS ---
 
         const Heatmap = ({ stats, days, t }) => {
             return (
@@ -1292,7 +1431,6 @@
             const [openLogId, setOpenLogId] = useState(null);
             const [openImgId, setOpenImgId] = useState(null);
             
-            // --- Mobile Card View ---
             if (isMobile) {
                 return (
                     <div className="flex flex-col h-full animate-fade-in pb-24">
@@ -1342,7 +1480,6 @@
                 );
             }
 
-            // --- Desktop Table View ---
             return (
                 <div className="flex flex-col h-full animate-fade-in pb-24 lg:pb-0">
                     <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-4 glass p-4 rounded-xl border border-white/5 items-end">
@@ -1355,7 +1492,6 @@
                         ].map(f=>(
                             <div key={f.k}><label className="text-[8px] uppercase font-bold text-slate-400 block mb-1">{f.l}</label><input type={f.type} value={cur.config[f.k] || (f.k==='slPips'?50:'')} onChange={e=>updateCur('config', {...cur.config, [f.k]: parseFloat(e.target.value)||0})} className="bg-transparent border-b border-white/10 text-xs w-full outline-none text-white focus:border-[var(--theme-color)] font-mono"/></div>
                         ))}
-                        {/* Start Date Input */}
                          <div>
                             <label className="text-[8px] uppercase font-bold text-slate-400 block mb-1">{t('lbl_start_date')}</label>
                             <input type="date" value={cur.config.startDate || ""} onChange={e=>updateCur('config', {...cur.config, startDate: e.target.value})} className="bg-transparent border-b border-white/10 text-xs w-full outline-none text-white focus:border-[var(--theme-color)] font-mono"/>
@@ -1650,7 +1786,6 @@
             );
         };
 
-        // --- SIDEBAR DRAWER ---
         const SidebarOverlay = ({ isOpen, onClose, setView, activePortId, setActivePortId, portfolios, createPort, deletePort, setZenActive, handleExportCSV, handleExportExcel, handleImport, t, lang, setLang }) => {
             return (
                 <div className={`fixed inset-0 z-50 sidebar-overlay ${isOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
@@ -1680,7 +1815,7 @@
                                 </button>
                             ))}
                             <div className="h-px bg-white/5 my-4"></div>
-                            <button onClick={()=>{ setZenActive(true); onClose(); }} className="w-full flex items-center p-4 rounded-2xl text-indigo-400 hover:bg-indigo-500/10 transition-all border border-indigo-500/20">
+                            <button onClick={()=>{ setZenActive(true); onClose(); }} className="w-full flex items-center p-4 rounded-2xl text-indigo-400 hover:bg-indigo-500/10 transition-all border border-indigo-500/20 mb-2">
                                 <Icon p={Paths.Pulse} s={20}/> <span className="ml-4 font-bold uppercase tracking-widest text-xs">{t('nav_zen')}</span>
                             </button>
                         </nav>
@@ -1724,8 +1859,6 @@
             );
         };
 
-        // --- MAIN APP ---
-
         const App = () => {
             const [view, setView] = useState('terminal');
             const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
@@ -1734,9 +1867,8 @@
             const [panicMode, setPanicMode] = useState(false); 
             const [riskCalc, setRiskCalc] = useState(false);
             const [checklistActive, setChecklistActive] = useState(false);
-            const [lang, setLang] = useState('en'); // Language State
+            const [lang, setLang] = useState('en'); 
             
-            // Helper function for translations
             const t = (key) => TRANSLATIONS[lang][key] || key;
 
             useEffect(() => {
@@ -1749,7 +1881,6 @@
             const [activePortId, setActivePortId] = useState(1);
             const [portfolios, setPortfolios] = useState({ 1: { id: 1, name: 'Alpha Core', config: { bal: 1000, risk: 2, rr: 2, days: 30, slPips: 50, startDate: new Date().toISOString().split('T')[0] }, journal: {}, withdrawn: 0, goal: { name: 'New Reward', amount: 500 }, xp: 0 } });
             
-            // --- Archives State ---
             const [archives, setArchives] = useState(DEFAULT_ARCHIVES);
 
             const [isSound, setIsSound] = useState(true);
@@ -1773,12 +1904,12 @@
                     if(parsed.apiKey) setApiKey(parsed.apiKey);
                     if(parsed.lang) setLang(parsed.lang);
                     if(parsed.theme) setTheme(parsed.theme);
-                    if(parsed.archives) setArchives(parsed.archives); // Load custom archives
+                    if(parsed.archives) setArchives(parsed.archives);
                 }
             }, []);
 
             useEffect(() => {
-                localStorage.setItem('fm_omega_singularity_v5_stable', JSON.stringify({ portfolios, activeId: activePortId, apiKey, lang, theme, archives })); // Save custom archives
+                localStorage.setItem('fm_omega_singularity_v5_stable', JSON.stringify({ portfolios, activeId: activePortId, apiKey, lang, theme, archives })); 
             }, [portfolios, activePortId, apiKey, lang, theme, archives]);
 
             const updateCur = (key, val) => {
@@ -1939,7 +2070,7 @@
                         if (data.portfolios) {
                             setPortfolios(data.portfolios);
                             setActivePortId(data.activeId || Object.keys(data.portfolios)[0]);
-                            if(data.archives) setArchives(data.archives); // Import archives as well
+                            if(data.archives) setArchives(data.archives); 
                             alert("Backup restored successfully. Welcome back, Commander.");
                         } else {
                             alert("Invalid backup file structure.");
