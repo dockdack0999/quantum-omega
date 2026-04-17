@@ -1,1686 +1,1034 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QUANTUM OMEGA v5.0</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@300;400;700&family=Chakra+Petch:wght@300;400;600;700&display=swap" rel="stylesheet">
+<title>Rode To 1 % - Trading OS</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Orbitron:wght@400;700;900&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
-:root{--c:#00f5ff;--c2:#ff006e;--c3:#8338ec;--c4:#06d6a0;--bg:#020408;--txt:#c8e6f0;--txt2:#5a8a9a;--txt3:#2a4a5a;}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Chakra Petch',sans-serif;cursor:crosshair}
-#bg-canvas{position:fixed;inset:0;z-index:0}
-.scanlines{position:fixed;inset:0;z-index:1;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.1) 2px,rgba(0,0,0,.1) 4px)}
-.vignette{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.8) 100%)}
-.scan-line{position:fixed;top:0;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);z-index:2;pointer-events:none;animation:scanmove 5s linear infinite;opacity:.15}
-@keyframes scanmove{from{top:0}to{top:100%}}
-@keyframes gp{0%,100%{text-shadow:0 0 10px rgba(255,0,110,.5)}50%{text-shadow:0 0 30px rgba(255,0,110,.9)}}
-@keyframes panicpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,0,110,.3)}50%{box-shadow:0 0 0 6px rgba(255,0,110,0)}}
-#app{position:relative;z-index:3;display:flex;height:100vh}
-/* SIDEBAR */
-#sidebar{width:220px;min-width:220px;height:100%;background:rgba(2,4,8,.97);border-right:1px solid rgba(0,245,255,.07);display:flex;flex-direction:column;overflow:hidden}
-.logo-area{padding:16px;border-bottom:1px solid rgba(0,245,255,.06)}
-.logo-title{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--c);letter-spacing:.1em}
-.logo-sub{font-family:'Orbitron',sans-serif;font-size:8px;color:var(--c3);letter-spacing:.4em;margin-top:2px}
-.nav-section{font-family:'Orbitron',sans-serif;font-size:7px;color:var(--txt3);letter-spacing:.2em;padding:8px 12px 4px}
-.nav-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;cursor:pointer;transition:all .2s;font-size:11px;color:var(--txt2);border:1px solid transparent;margin:1px 6px}
-.nav-item:hover{background:rgba(0,245,255,.05);color:var(--c);border-color:rgba(0,245,255,.1)}
-.nav-item.active{background:rgba(0,245,255,.08);color:var(--c);border-color:rgba(0,245,255,.2)}
-.nav-item svg{flex-shrink:0;opacity:.7}.nav-item.active svg{opacity:1}
-.sidebar-bottom{padding:10px;border-top:1px solid rgba(0,245,255,.06);display:flex;flex-direction:column;gap:6px}
-.xp-area{padding:8px 12px;border-bottom:1px solid rgba(0,245,255,.05)}
-/* MAIN */
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-#header{height:52px;background:rgba(2,4,8,.9);border-bottom:1px solid rgba(0,245,255,.07);display:flex;align-items:center;justify-content:space-between;padding:0 16px;flex-shrink:0}
-#content{flex:1;overflow:hidden;padding:12px;display:flex;flex-direction:column}
-/* VIEWS */
-.view{flex:1;display:none;flex-direction:column;gap:10px;overflow-y:auto;min-height:0}
-.view.active{display:flex}
-.view::-webkit-scrollbar{width:2px}.view::-webkit-scrollbar-thumb{background:rgba(0,245,255,.2)}
-/* GLASS CARDS */
-.g{background:rgba(0,245,255,.03);border:1px solid rgba(0,245,255,.09);border-radius:12px;transition:border .2s}
-.g:hover{border-color:rgba(0,245,255,.2)}
-.g-r{background:rgba(255,0,110,.03);border:1px solid rgba(255,0,110,.1);border-radius:12px}
-.g-p{background:rgba(131,56,236,.03);border:1px solid rgba(131,56,236,.1);border-radius:12px}
-/* TYPOGRAPHY */
-.orb{font-family:'Orbitron',sans-serif}.mono{font-family:'JetBrains Mono',monospace}
-/* BUTTONS */
-.btn{cursor:pointer;font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border-radius:7px;transition:all .2s;border:1px solid;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-.btn-c{background:rgba(0,245,255,.08);border-color:rgba(0,245,255,.25);color:var(--c)}
-.btn-c:hover{background:var(--c);color:#000;box-shadow:0 0 15px rgba(0,245,255,.35)}
-.btn-r{background:rgba(255,0,110,.08);border-color:rgba(255,0,110,.25);color:var(--c2)}
-.btn-g{background:rgba(6,214,160,.08);border-color:rgba(6,214,160,.25);color:var(--c4)}
-.btn-sm{padding:4px 8px;font-size:7px}
-/* INPUTS */
-input,select,textarea{background:rgba(0,0,0,.45);border:1px solid rgba(0,245,255,.12);color:var(--txt);font-family:'JetBrains Mono',monospace;font-size:11px;border-radius:7px;padding:7px 10px;outline:none;transition:border .2s;width:100%}
-input:focus,select:focus,textarea:focus{border-color:var(--c)}
-select option{background:#040c14}
-label{font-family:'Orbitron',sans-serif;font-size:7px;color:var(--txt2);letter-spacing:.1em;display:block;margin-bottom:3px}
-/* STAT CARDS */
-.stat-card{padding:12px 14px;border-radius:10px}
-.stat-val{font-family:'Orbitron',sans-serif;font-size:20px;font-weight:700;line-height:1}
-.stat-lbl{font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:.15em;text-transform:uppercase;color:var(--txt2);margin-top:3px}
-.stat-sub{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txt2);margin-top:2px}
-/* BADGES */
-.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:.1em;font-weight:700}
-.bw{background:rgba(6,214,160,.15);color:var(--c4);border:1px solid rgba(6,214,160,.2)}
-.bl{background:rgba(255,0,110,.15);color:var(--c2);border:1px solid rgba(255,0,110,.2)}
-.bc{background:rgba(0,245,255,.1);color:var(--c);border:1px solid rgba(0,245,255,.2)}
-/* PROGRESS */
-.pbar{height:4px;border-radius:2px;background:rgba(0,245,255,.07);overflow:hidden}
-.pbar-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--c),var(--c3));transition:width .5s}
-/* TABLES */
-.tbl-wrap{overflow:auto;border-radius:12px}
-.tbl-wrap::-webkit-scrollbar{width:2px;height:2px}
-.tbl-wrap::-webkit-scrollbar-thumb{background:rgba(0,245,255,.2)}
-table{width:100%;border-collapse:collapse;font-family:'JetBrains Mono',monospace;font-size:10px}
-thead{position:sticky;top:0;background:#030810;z-index:5}
-th{padding:8px 10px;text-align:left;color:var(--txt2);font-size:7px;letter-spacing:.15em;text-transform:uppercase;border-bottom:1px solid rgba(0,245,255,.07);font-family:'Orbitron',sans-serif;white-space:nowrap}
-td{padding:7px 10px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
-tr:hover td{background:rgba(0,245,255,.015)}
-/* CALENDAR */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
-.cal-day{border-radius:8px;padding:6px;border:1px solid rgba(255,255,255,.04);min-height:60px;display:flex;flex-direction:column}
-.cal-day-win{border-color:rgba(6,214,160,.25);background:rgba(6,214,160,.05)}
-.cal-day-loss{border-color:rgba(255,0,110,.25);background:rgba(255,0,110,.05)}
-.cal-today{border-color:rgba(0,245,255,.3)}
-/* HEATMAP */
-.heatmap{display:flex;flex-wrap:wrap;gap:3px}
-.hm-cell{width:18px;height:18px;border-radius:3px;cursor:default;transition:transform .15s;position:relative}
-.hm-cell:hover{transform:scale(1.3);z-index:10}
-/* SCROLLBAR */
-::-webkit-scrollbar{width:3px;height:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(0,245,255,.2);border-radius:2px}
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
-.modal{background:#040c14;border:1px solid rgba(0,245,255,.2);border-radius:16px;padding:20px;width:100%;max-height:90vh;overflow-y:auto}
-/* SIG CARDS */
-.sig-card{padding:12px;border-radius:10px}
-.sig-bar{height:5px;border-radius:3px;background:rgba(0,0,0,.3);overflow:hidden;margin-top:4px}
-.sig-fill{height:100%;border-radius:3px}
-/* LANG */
-.lang-btn{padding:4px 10px;border:1px solid rgba(0,245,255,.15);border-radius:5px;background:transparent;color:var(--txt2);font-family:'Orbitron',sans-serif;font-size:8px;cursor:pointer;transition:all .2s}
-.lang-btn.active{background:rgba(0,245,255,.12);border-color:rgba(0,245,255,.3);color:var(--c)}
-/* KELLY */
-.kelly-result{padding:12px;background:rgba(0,0,0,.4);border-radius:10px;border:1px solid rgba(0,245,255,.1);text-align:center}
-/* PANIC */
-#panic-overlay{display:none;position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.97);flex-direction:column;align-items:center;justify-content:center;gap:20px}
-#panic-overlay.show{display:flex}
-.breath-circle{width:160px;height:160px;border-radius:50%;border:2px solid rgba(0,245,255,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;transition:all 1s}
-/* CORR */
-.corr-cell{width:46px;height:36px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;transition:transform .15s;cursor:default}
-.corr-cell:hover{transform:scale(1.15)}
+/* =========================================
+   DESIGN SYSTEM & VARIABLES
+   ========================================= */
+:root {
+  --bg-app: #0f172a; --bg-sidebar: rgba(11, 17, 32, 0.95); --bg-card: rgba(30, 41, 59, 0.85); --bg-hover: #334155;
+  --text-main: #f8fafc; --text-muted: #94a3b8; --text-dark: #64748b;
+  --border: #334155; --border-light: rgba(71, 85, 105, 0.5);
+  --primary: #38bdf8; --primary-hover: #0284c7; --success: #10b981; --success-bg: rgba(16, 185, 129, 0.1);
+  --danger: #ef4444; --danger-bg: rgba(239, 68, 68, 0.1); --warning: #f59e0b; --purple: #8b5cf6;
+  --font-sans: 'Prompt', 'Inter', sans-serif; --font-mono: 'JetBrains Mono', monospace; --font-cyber: 'Orbitron', sans-serif;
+  --radius: 8px; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body, html { height: 100%; background: var(--bg-app); color: var(--text-main); font-family: var(--font-sans); font-size: 14px; overflow: hidden; }
+
+/* BACKGROUND EFFECTS */
+#bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.4; pointer-events: none; }
+.scanlines { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px); }
+.vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(15, 23, 42, 0.8) 100%); }
+
+/* LAYOUT */
+#app { display: flex; height: 100vh; position: relative; z-index: 3; }
+#sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; backdrop-filter: blur(10px); }
+.logo-area { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+.logo-title { font-size: 20px; font-weight: 900; color: var(--primary); font-family: var(--font-cyber); letter-spacing: 1px; }
+.logo-sub { font-size: 10px; color: var(--purple); margin-top: 4px; font-family: var(--font-sans); font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+
+nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+.nav-section { font-size: 11px; font-weight: 600; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; padding: 12px 12px 8px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius); cursor: pointer; color: var(--text-muted); font-weight: 500; transition: all 0.2s; margin-bottom: 4px; font-size: 13px; }
+.nav-item:hover { background: var(--bg-hover); color: var(--text-main); }
+.nav-item.active { background: rgba(56, 189, 248, 0.1); color: var(--primary); border-left: 3px solid var(--primary); }
+.nav-item svg { flex-shrink: 0; width: 16px; height: 16px; }
+
+.sidebar-bottom { padding: 16px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px; }
+#main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+#header { height: 64px; background: var(--bg-sidebar); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; flex-shrink: 0; backdrop-filter: blur(10px); }
+#view-title { font-size: 18px; font-weight: 600; color: var(--text-main); }
+#content { flex: 1; padding: 24px; overflow-y: auto; position: relative; }
+
+.view { display: none; flex-direction: column; gap: 20px; }
+.view.active { display: flex; }
+
+/* COMPONENTS */
+.card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; backdrop-filter: blur(5px); }
+.grid-cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-cols-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px; }
+
+.mono { font-family: var(--font-mono); }
+.cyber { font-family: var(--font-cyber); }
+.text-xs { font-size: 11px; } .text-sm { font-size: 13px; } .text-lg { font-size: 18px; } .text-xl { font-size: 24px; }
+.text-success { color: var(--success); } .text-danger { color: var(--danger); } .text-primary { color: var(--primary); } .text-warning { color: var(--warning); } .text-purple { color: var(--purple); } .text-muted { color: var(--text-muted); } .font-bold { font-weight: 700; }
+
+.stat-card { display: flex; flex-direction: column; justify-content: center; padding: 16px; }
+.stat-val { font-size: 22px; font-weight: 700; font-family: var(--font-mono); margin-bottom: 4px; }
+.stat-lbl { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.stat-sub { font-size: 11px; color: var(--text-dark); margin-top: 8px; }
+
+label { display: block; font-size: 12px; font-weight: 500; color: var(--text-muted); margin-bottom: 6px; }
+input, select, textarea { width: 100%; background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border); color: var(--text-main); font-family: var(--font-mono); font-size: 13px; padding: 8px 12px; border-radius: 6px; transition: border-color 0.2s; outline: none; }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 8px 16px; font-size: 12px; font-weight: 600; font-family: var(--font-sans); border-radius: 6px; border: 1px solid transparent; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.btn-primary { background: rgba(56, 189, 248, 0.1); color: var(--primary); border-color: rgba(56, 189, 248, 0.3); }
+.btn-primary:hover { background: var(--primary); color: #000; box-shadow: 0 0 10px rgba(56, 189, 248, 0.4); }
+.btn-outline { background: transparent; border-color: var(--border); color: var(--text-main); }
+.btn-outline:hover { background: var(--bg-hover); }
+.btn-success { background: rgba(16, 185, 129, 0.1); color: var(--success); border-color: rgba(16, 185, 129, 0.3); }
+.btn-success:hover { background: var(--success); color: #000; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); }
+.btn-sm { padding: 6px 12px; font-size: 11px; }
+
+.badge { display: inline-flex; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.badge-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
+.badge-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+
+.table-container { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); backdrop-filter: blur(5px); }
+table { width: 100%; border-collapse: collapse; text-align: left; }
+th { background: rgba(11, 17, 32, 0.8); padding: 12px 16px; font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap; }
+td { padding: 10px 16px; border-bottom: 1px solid var(--border-light); font-size: 12px; vertical-align: middle; }
+tr:hover td { background: var(--bg-hover); }
+.td-input select, .td-input input { padding: 4px 8px; font-size: 11px; height: 28px; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+/* MODALS */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
+.modal-content { background: var(--bg-sidebar); border: 1px solid var(--primary); border-radius: 12px; padding: 24px; width: 100%; max-width: 600px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); max-height: 90vh; overflow-y: auto; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-title { font-size: 16px; font-weight: 700; color: var(--primary); }
+.close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
+
+/* PANIC OVERLAY */
+#panic-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
+#panic-overlay.show { display: flex; }
+.breath-circle { width: 160px; height: 160px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: all 1s; }
+
+/* TIMER */
+#focus-timer { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+#focus-timer:hover { border-color: var(--primary); }
+#focus-timer.active { border-color: var(--success); box-shadow: 0 0 10px var(--success-bg); }
+#focus-timer.break { border-color: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+
+/* CHECKLIST */
+.check-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
+.check-item:hover { border-color: var(--primary); background: rgba(56, 189, 248, 0.05); }
+.check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+
+/* CORR GRID */
+.corr-cell { width: 40px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700; cursor: default; }
 </style>
 </head>
 <body>
+
 <canvas id="bg-canvas"></canvas>
 <div class="scanlines"></div>
 <div class="vignette"></div>
-<div class="scan-line"></div>
 
 <div id="app">
-<aside id="sidebar">
-  <div class="logo-area">
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
-      <div style="width:28px;height:28px;background:linear-gradient(135deg,rgba(0,245,255,.2),rgba(131,56,236,.2));border:1px solid rgba(0,245,255,.3);border-radius:7px;display:flex;align-items:center;justify-content:center">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00f5ff" stroke-width="1.5"><circle cx="12" cy="12" r="1"/><ellipse cx="12" cy="12" rx="10" ry="4"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"/></svg>
+  <aside id="sidebar" data-html2canvas-ignore="true">
+    <div class="logo-area">
+      <div class="logo-title">Rode To 1 %</div>
+      <div class="logo-sub">TRADING OS</div>
+    </div>
+    
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
+      <label>เลือกพอร์ตที่ใช้งาน</label>
+      <select id="port-select" style="margin-bottom: 8px; font-size: 11px; padding: 6px;"></select>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="createPortfolio()">+ สร้างพอร์ต</button>
+        <button class="btn btn-outline btn-sm" style="flex: 1; color: var(--danger)" onclick="deletePortfolio()">ลบพอร์ต</button>
       </div>
-      <div><div class="logo-title">QUANTUM</div><div class="logo-sub">OMEGA v5</div></div>
     </div>
-    <div style="margin-bottom:6px"><label>PORTFOLIO</label><select id="port-select" style="font-size:10px;padding:5px 8px"></select></div>
-    <div style="display:flex;gap:4px">
-      <button class="btn btn-c btn-sm" onclick="createPortfolio()">+ New</button>
-      <button class="btn btn-r btn-sm" onclick="deletePortfolio()">Delete</button>
-    </div>
-  </div>
-  <div class="xp-area">
-    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
-      <span class="orb" style="font-size:9px;color:var(--c)" id="xp-level">LVL 1</span>
-      <span class="mono" style="font-size:9px;color:var(--txt2)" id="xp-val">0 XP</span>
-    </div>
-    <div class="pbar"><div class="pbar-fill" id="xp-bar" style="width:0%"></div></div>
-  </div>
-  <nav style="flex:1;overflow-y:auto;padding:6px">
-    <div class="nav-section">CORE</div>
-    <div class="nav-item active" onclick="switchView('terminal',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>Battle Station</div>
-    <div class="nav-item" onclick="switchView('journal',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Mission Logs</div>
-    <div class="nav-item" onclick="switchView('analytics',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3v18h18"/><polyline points="7 16 11 11 15 14 19 8"/></svg>Deep Analytics</div>
-    <div class="nav-item" onclick="switchView('calendar',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>PnL Calendar</div>
-    <div class="nav-section">TOOLS</div>
-    <div class="nav-item" onclick="switchView('risk',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Risk Matrix</div>
-    <div class="nav-item" onclick="switchView('neural',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="5" r="3"/><circle cx="19" cy="19" r="3"/><circle cx="5" cy="19" r="3"/><path d="M12 8v8M12 16l7 3M12 16l-7 3"/></svg>Neural Link (AI)</div>
-    <div class="nav-item" onclick="switchView('vault',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>Knowledge Vault</div>
-    <div class="nav-section">INTELLIGENCE</div>
-    <div class="nav-item" onclick="switchView('swarm',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>Swarm AI</div>
-    <div class="nav-item" onclick="switchView('flow',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Inst. Flow</div>
-    <div class="nav-item" onclick="switchView('godmode',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>God-Eye View</div>
-    <div class="nav-section">MARKET</div>
-    <div class="nav-item" onclick="switchView('chart',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>Live Chart</div>
-    <div class="nav-item" onclick="switchView('news',this)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2V9"/></svg>Economic News</div>
-  </nav>
-  <div class="sidebar-bottom">
-    <div style="display:flex;gap:4px">
-      <button class="lang-btn active" id="btn-en" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" id="btn-th" onclick="setLang('th')">TH</button>
-    </div>
-    <div style="display:flex;gap:4px">
-      <button class="btn btn-c btn-sm" style="flex:1;justify-content:center" onclick="backup()">💾 Backup</button>
-      <label class="btn btn-c btn-sm" style="cursor:pointer">📂 Import<input type="file" hidden accept=".json" onchange="importData(event)"></label>
-    </div>
-    <div style="display:flex;gap:4px">
-      <button class="btn btn-sm" style="flex:1;justify-content:center;background:rgba(0,245,255,.05);border-color:rgba(0,245,255,.1);color:var(--txt2)" onclick="exportCSV()">CSV</button>
-      <button class="btn btn-sm" style="flex:1;justify-content:center;background:rgba(6,214,160,.05);border-color:rgba(6,214,160,.1);color:var(--c4)" onclick="exportXLSX()">Excel</button>
-    </div>
-    <button onclick="openPanic()" style="padding:7px;background:rgba(255,0,110,.08);border:1px solid rgba(255,0,110,.3);border-radius:7px;color:var(--c2);font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:.15em;cursor:pointer;animation:panicpulse 2s infinite">⚠ PANIC PROTOCOL</button>
-  </div>
-</aside>
 
-<main id="main">
-  <header id="header">
-    <div><div class="orb" style="font-size:13px;font-weight:700;color:var(--c);letter-spacing:.08em" id="view-title">Battle Station</div></div>
-    <div style="display:flex;gap:14px" id="clocks-container"></div>
-    <div style="display:flex;align-items:center;gap:16px">
-      <div style="display:flex;gap:16px">
-        <div style="text-align:center"><div class="orb" style="font-size:13px;font-weight:700;color:var(--c4)" id="hdr-wr">0%</div><div class="orb" style="font-size:6px;color:var(--txt2);letter-spacing:.1em">WIN RATE</div></div>
-        <div style="text-align:center"><div class="orb" style="font-size:13px;font-weight:700;color:var(--c)" id="hdr-pf">0.00</div><div class="orb" style="font-size:6px;color:var(--txt2);letter-spacing:.1em">P.FACTOR</div></div>
+    <nav>
+      <div class="nav-section">แดชบอร์ดหลัก</div>
+      <div class="nav-item active" onclick="switchView('terminal', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg> ภาพรวมพอร์ต</div>
+      <div class="nav-item" onclick="switchView('journal', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg> บันทึกการเทรด</div>
+      <div class="nav-item" onclick="switchView('analytics', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg> วิเคราะห์เชิงลึก</div>
+      
+      <div class="nav-section">เครื่องมือ & AI</div>
+      <div class="nav-item" onclick="switchView('risk', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> คำนวณความเสี่ยง</div>
+      <div class="nav-item" onclick="switchView('neural', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg> ผู้ช่วย AI (Gemini)</div>
+      <div class="nav-item" onclick="switchView('vault', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg> คลังความรู้ส่วนตัว</div>
+      <div class="nav-item" onclick="switchView('swarm', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> วิเคราะห์สัญญาณ AI</div>
+      <div class="nav-item" onclick="switchView('flow', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12"></path></svg> กระแสเงินสถาบัน</div>
+      <div class="nav-item" onclick="switchView('godmode', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg> มุมมองพระเจ้า (Macro)</div>
+      
+      <div class="nav-section">ตลาดสด</div>
+      <div class="nav-item" onclick="switchView('chart', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg> ดูกราฟสด</div>
+      <div class="nav-item" onclick="switchView('news', this)"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9.5a2.5 2.5 0 00-2.5-2.5H14"></path></svg> ข่าวเศรษฐกิจ</div>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="btn btn-success" style="width: 100%; margin-bottom: 4px;" onclick="openChecklist()">
+        ✓ เช็คลิสต์ก่อนเทรด
+      </button>
+      <div style="display: flex; gap: 6px;">
+        <label class="btn btn-outline btn-sm" style="flex:1; cursor:pointer; padding:4px;">
+          นำเข้า CSV <input type="file" hidden accept=".csv" onchange="importTradesCSV(event)">
+        </label>
+        <button class="btn btn-outline btn-sm" style="flex:1; padding:4px;" onclick="exportCSV()">ส่งออก CSV</button>
       </div>
-      <div style="width:1px;height:28px;background:rgba(0,245,255,.1)"></div>
-      <div style="text-align:right"><div class="orb" style="font-size:20px;font-weight:700;color:var(--c)" id="hdr-equity">$0.00</div><div class="orb" style="font-size:7px;color:var(--txt2);letter-spacing:.15em">NET EQUITY</div></div>
+      <div style="display: flex; gap: 6px;">
+        <button class="btn btn-outline btn-sm" style="flex:1; padding:4px;" onclick="exportToPDF()">บันทึก PDF</button>
+        <button class="btn btn-outline btn-sm" style="flex:1; padding:4px;" onclick="backup()">สำรองข้อมูล</button>
+      </div>
+      <button class="btn" style="width: 100%; padding: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); font-family: var(--font-sans); font-size: 11px; letter-spacing: 1px;" onclick="openPanic()">
+        ⚠ ระบบฉุกเฉิน (ดึงสติ)
+      </button>
     </div>
-  </header>
+  </aside>
 
-  <div id="content">
+  <main id="main">
+    <header id="header" data-html2canvas-ignore="true">
+      <h1 id="view-title">ภาพรวมพอร์ต (Dashboard)</h1>
+      
+      <div id="focus-timer" onclick="toggleTimer()">
+        <span style="font-size: 16px;">⏱</span>
+        <span id="timer-display" class="mono font-bold text-lg" style="color: var(--text-main)">45:00</span>
+      </div>
 
-    <!-- BATTLE STATION -->
-    <div class="view active" id="view-terminal">
-      <div class="g" style="padding:10px 14px;flex-shrink:0">
-        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px">
-          <div><label>Start Capital ($)</label><input type="number" id="cfg-bal" value="1000" onchange="saveConfig()" min="0"></div>
-          <div><label>Risk % per Trade</label><input type="number" id="cfg-risk" value="2" onchange="saveConfig()" step="0.1" min="0.1"></div>
-          <div><label>Target R:R</label><input type="number" id="cfg-rr" value="2" onchange="saveConfig()" step="0.1" min="0.1"></div>
-          <div><label>Duration (Days)</label><input type="number" id="cfg-days" value="30" onchange="saveConfig()" min="1" max="365"></div>
-          <div><label>Est. SL (Pips)</label><input type="number" id="cfg-slpips" value="50" onchange="saveConfig()" min="1"></div>
-          <div><label>Start Date</label><input type="date" id="cfg-date" onchange="saveConfig()"></div>
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <div style="text-align: right;">
+          <div class="text-xs text-muted">อัตราชนะ (Win Rate)</div>
+          <div class="text-lg mono text-primary font-bold" id="hdr-wr">0.0%</div>
+        </div>
+        <div style="text-align: right;">
+          <div class="text-xs text-muted">อัตราทำกำไร (P.Factor)</div>
+          <div class="text-lg mono text-primary font-bold" id="hdr-pf">0.00</div>
+        </div>
+        <div style="width: 1px; height: 32px; background: var(--border);"></div>
+        <div style="text-align: right;">
+          <div class="text-xs text-muted">ยอดเงินสุทธิ (Net Equity)</div>
+          <div class="text-xl mono font-bold text-main" id="hdr-equity">$0.00</div>
         </div>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;flex-shrink:0">
-        <div class="g stat-card" id="sc-equity"><div class="stat-val" style="color:var(--c)">$1,000</div><div class="stat-lbl">Net Equity</div><div class="stat-sub">0% total</div></div>
-        <div class="g stat-card" id="sc-wr"><div class="stat-val" style="color:var(--c)">0%</div><div class="stat-lbl">Win Rate</div><div class="stat-sub">0W / 0L</div></div>
-        <div class="g stat-card" id="sc-pf"><div class="stat-val" style="color:var(--c)">0.00</div><div class="stat-lbl">Profit Factor</div><div class="stat-sub">Kelly: 0%</div></div>
-        <div class="g stat-card" id="sc-dd"><div class="stat-val" style="color:var(--c4)">-0%</div><div class="stat-lbl">Max Drawdown</div><div class="stat-sub">Shield Active</div></div>
-        <div class="g stat-card" id="sc-ev"><div class="stat-val" style="color:var(--c4)">0.000R</div><div class="stat-lbl">Expectancy</div><div class="stat-sub">Per trade EV</div></div>
-        <div class="g stat-card" id="sc-streak"><div class="stat-val" style="color:var(--txt)">0</div><div class="stat-lbl">Current Streak</div><div class="stat-sub">---</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 300px;gap:10px;flex:1;min-height:200px">
-        <div class="g" style="padding:14px;display:flex;flex-direction:column;min-height:0">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <span class="orb" style="font-size:9px;color:var(--txt2);letter-spacing:.12em">EQUITY CURVE</span>
-            <div id="trade-badges"></div>
-          </div>
-          <div style="flex:1;position:relative;min-height:160px"><canvas id="equity-chart"></canvas></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;overflow-y:auto">
-          <div class="g" style="padding:12px;flex-shrink:0">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-              <span class="orb" style="font-size:9px;color:var(--c)">⚡ AI FORECAST</span>
-              <button class="btn btn-c btn-sm" onclick="getForecast()">Generate</button>
-            </div>
-            <div id="forecast-box" style="font-size:10px;color:var(--txt2);line-height:1.6;min-height:60px">Set Gemini API Key in Neural Link then click Generate.</div>
-          </div>
-          <div class="g-p" style="padding:12px;flex-shrink:0">
-            <div class="orb" style="font-size:9px;color:var(--c3);margin-bottom:8px">🎯 MISSION TARGET</div>
-            <input id="goal-name" placeholder="Goal name" style="margin-bottom:5px;font-size:10px" onchange="saveGoal()">
-            <input type="number" id="goal-amt" placeholder="Target ($)" style="margin-bottom:8px;font-size:10px" onchange="saveGoal()">
-            <div style="display:flex;justify-content:space-between;font-size:9px;font-family:'JetBrains Mono',monospace;margin-bottom:4px">
-              <span style="color:var(--txt2)">Withdrawn</span><span style="color:var(--c3)" id="goal-progress">$0 / $0</span>
-            </div>
-            <div class="pbar" style="height:5px;background:rgba(131,56,236,.1)"><div id="goal-bar" style="height:100%;border-radius:3px;background:linear-gradient(90deg,var(--c3),var(--c2));width:0%;transition:width .5s"></div></div>
-            <div style="display:flex;gap:5px;margin-top:7px">
-              <input type="number" id="withdraw-amt" placeholder="Withdraw..." style="flex:1;font-size:10px">
-              <button class="btn btn-c btn-sm" onclick="doWithdraw()">+</button>
-            </div>
-          </div>
-          <div class="g" style="padding:12px;flex-shrink:0">
-            <div class="orb" style="font-size:9px;color:var(--txt2);margin-bottom:8px">🕐 SESSION INTEL</div>
-            <div id="session-intel" style="font-size:9px;color:var(--txt2)">Log sessions in Mission Logs to see breakdown.</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </header>
 
-    <!-- MISSION LOGS -->
-    <div class="view" id="view-journal">
-      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0">
-        <select id="filter-asset" onchange="renderJournal()" style="width:110px;font-size:10px"><option value="">All Assets</option></select>
-        <select id="filter-outcome" onchange="renderJournal()" style="width:110px;font-size:10px"><option value="">All Outcomes</option><option value="win">WIN</option><option value="loss">LOSS</option><option value="pending">PENDING</option></select>
-        <div style="flex:1"></div>
-        <button class="btn btn-c btn-sm" onclick="exportCSV()">📄 CSV</button>
-        <button class="btn btn-g btn-sm" onclick="exportXLSX()">📊 Excel</button>
+    <div id="content">
+      <div id="pdf-header" style="display:none; text-align:center; padding: 20px 0; border-bottom: 2px solid var(--border); margin-bottom: 20px;">
+        <h1 style="color:var(--primary); font-family:var(--font-cyber); font-size: 28px;">รายงานผลการเทรด Rode To 1 %</h1>
+        <p style="color:var(--text-muted); font-family:var(--font-mono)" id="pdf-date"></p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;flex-shrink:0">
-        <div class="g" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><span class="orb" style="font-size:8px;color:var(--txt2)">Total Trades</span><span class="orb" style="font-size:16px;font-weight:700;color:var(--c)" id="j-total">0</span></div>
-        <div class="g" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><span class="orb" style="font-size:8px;color:var(--txt2)">Total P&amp;L</span><span class="mono" style="font-size:16px;font-weight:700;color:var(--c4)" id="j-pnl">$0.00</span></div>
-        <div class="g" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><span class="orb" style="font-size:8px;color:var(--txt2)">Avg Discipline</span><span class="orb" style="font-size:16px;font-weight:700;color:var(--c3)" id="j-disc">0/5</span></div>
-        <div class="g" style="padding:10px 14px;display:flex;justify-content:space-between;align-items:center"><span class="orb" style="font-size:8px;color:var(--txt2)">Best Streak</span><span class="orb" style="font-size:16px;font-weight:700;color:var(--c4)" id="j-streak">0</span></div>
-      </div>
-      <div class="g tbl-wrap" style="flex:1;min-height:0">
-        <table><thead><tr><th>Day</th><th>Start $</th><th>Setup</th><th>Action</th><th>Asset</th><th>Strategy</th><th>Session</th><th>TF</th><th>Grade</th><th>Mood</th><th>Disc</th><th>Notes</th><th>Chart</th><th>End $</th></tr></thead>
-        <tbody id="journal-body"></tbody></table>
-      </div>
-    </div>
 
-    <!-- DEEP ANALYTICS -->
-    <div class="view" id="view-analytics">
-      <div style="display:grid;grid-template-columns:1fr 200px 260px;gap:10px;height:240px;flex-shrink:0">
-        <div class="g" style="padding:14px"><div class="orb" style="font-size:8px;color:var(--txt2);margin-bottom:8px">DAILY P&amp;L MATRIX</div><div style="height:185px"><canvas id="bar-chart"></canvas></div></div>
-        <div class="g" style="padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center">
-          <div class="orb" style="font-size:8px;color:var(--txt2);margin-bottom:8px">WIN/LOSS</div>
-          <div style="position:relative;width:130px;height:130px">
-            <canvas id="pie-chart"></canvas>
-            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none">
-              <div class="orb" style="font-size:20px;font-weight:700;color:var(--c)" id="pie-wr-lbl">0%</div>
-              <div style="font-size:7px;color:var(--txt2);font-family:Orbitron">WIN RATE</div>
-            </div>
+      <div class="view active" id="view-terminal">
+        
+        <div class="card" data-html2canvas-ignore="true" style="padding: 16px 20px;">
+          <h2 class="text-xs text-muted font-bold mb-4" style="margin-bottom: 12px; letter-spacing: 1px;">ตั้งค่าพอร์ตและกฎกองทุน (Account Config)</h2>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
+            <div><label>ทุนเริ่มต้น ($)</label><input type="number" id="cfg-bal" value="100000" onchange="saveConfig()" min="0"></div>
+            <div><label>เสี่ยง/ไม้ (%)</label><input type="number" id="cfg-risk" value="1" onchange="saveConfig()" step="0.1"></div>
+            <div><label>เป้าหมาย R:R</label><input type="number" id="cfg-rr" value="2" onchange="saveConfig()" step="0.1"></div>
+            <div><label>ลิมิต DD วัน (%)</label><input type="number" id="cfg-daily-dd" value="4" onchange="saveConfig()" step="0.1"></div>
+            <div><label>ลิมิต DD รวม (%)</label><input type="number" id="cfg-max-dd" value="8" onchange="saveConfig()" step="0.1"></div>
+            <div><label>SL เฉลี่ย (Pips)</label><input type="number" id="cfg-slpips" value="30" onchange="saveConfig()" min="1"></div>
           </div>
         </div>
-        <div class="g" style="padding:14px"><div class="orb" style="font-size:8px;color:var(--txt2);margin-bottom:8px">TRADER DNA RADAR</div><div style="height:185px"><canvas id="radar-chart"></canvas></div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0">
-        <div class="g" style="padding:14px"><div class="orb" style="font-size:9px;color:var(--txt2);margin-bottom:8px">STRATEGY BREAKDOWN</div><div id="strat-breakdown" style="font-size:10px;color:var(--txt2)">Log strategies in Mission Logs.</div></div>
-        <div class="g" style="padding:14px"><div class="orb" style="font-size:9px;color:var(--txt2);margin-bottom:8px">MOOD PERFORMANCE</div><div id="mood-breakdown" style="font-size:10px;color:var(--txt2)">Log moods in Mission Logs.</div></div>
-      </div>
-      <div class="g" style="padding:14px;flex-shrink:0"><div class="orb" style="font-size:9px;color:var(--txt2);margin-bottom:8px">CONSISTENCY HEATMAP</div><div class="heatmap" id="heatmap"></div></div>
-      <div class="g" style="padding:16px;flex-shrink:0">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><span class="orb" style="font-size:10px;color:var(--c)">⚡ AI NEURAL DEBRIEF</span><button class="btn btn-c btn-sm" onclick="getDebrief()">Analyze</button></div>
-        <div id="debrief-box" style="font-size:11px;color:var(--txt2);line-height:1.7;min-height:60px">Click Analyze to generate AI-powered debrief.</div>
-      </div>
-    </div>
 
-    <!-- CALENDAR -->
-    <div class="view" id="view-calendar">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
-        <div style="display:flex;align-items:center;gap:10px">
-          <button class="btn btn-c btn-sm" onclick="calChangeMonth(-1)">&#9664;</button>
-          <span class="orb" style="font-size:16px;font-weight:700;color:var(--c);min-width:180px;text-align:center" id="cal-month-title">Month 2025</span>
-          <button class="btn btn-c btn-sm" onclick="calChangeMonth(1)">&#9654;</button>
+        <div class="grid-cols-8">
+          <div class="card stat-card"><div class="stat-lbl">เทรดทั้งหมด</div><div class="stat-val text-main" id="sc-trades">0</div><div class="stat-sub">รอผล: 0</div></div>
+          <div class="card stat-card"><div class="stat-lbl">อัตราชนะ (WR)</div><div class="stat-val text-primary" id="sc-wr">0%</div><div class="stat-sub mono" id="sc-wl">0 ชนะ / 0 แพ้</div></div>
+          <div class="card stat-card"><div class="stat-lbl">อัตราทำกำไร</div><div class="stat-val text-primary" id="sc-pf">0.00</div><div class="stat-sub">Profit Factor</div></div>
+          <div class="card stat-card"><div class="stat-lbl">Drawdown วัน</div><div class="stat-val text-success" id="sc-daily-dd">-0.0%</div><div class="stat-sub" id="sub-daily-dd">ลิมิต: 4%</div></div>
+          <div class="card stat-card"><div class="stat-lbl">Drawdown รวม</div><div class="stat-val text-success" id="sc-max-dd">-0.0%</div><div class="stat-sub" id="sub-max-dd">ลิมิต: 8%</div></div>
+          <div class="card stat-card" style="border-left: 3px solid var(--purple);"><div class="stat-lbl">ความสม่ำเสมอ</div><div class="stat-val text-purple" id="sc-consist">0.0%</div><div class="stat-sub">ไม่เกิน: 50%</div></div>
+          <div class="card stat-card"><div class="stat-lbl">ความคาดหวัง</div><div class="stat-val text-primary" id="sc-ev">0.00R</div><div class="stat-sub">ต่อ 1 ไม้ (EV)</div></div>
+          <div class="card stat-card"><div class="stat-lbl">สถิติต่อเนื่อง</div><div class="stat-val text-main" id="sc-streak">0</div><div class="stat-sub">แพ้/ชนะ ติดกัน</div></div>
         </div>
-        <div style="display:flex;gap:10px" id="cal-stats"></div>
-      </div>
-      <div class="g" style="padding:16px;flex:1">
-        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px" id="cal-day-headers"></div>
-        <div class="cal-grid" id="cal-grid"></div>
-      </div>
-    </div>
 
-    <!-- RISK MATRIX -->
-    <div class="view" id="view-risk">
-      <div style="display:flex;gap:12px;flex:1;min-height:0;overflow:auto">
-        <div style="width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
-          <div class="g" style="padding:16px">
-            <div class="orb" style="font-size:10px;color:var(--c);margin-bottom:12px">⚡ LOT SIZE CALCULATOR</div>
-            <div style="margin-bottom:8px"><label>Risk Amount ($)</label><input type="number" id="r-risk" value="100" oninput="calcLot()"></div>
-            <div style="margin-bottom:8px"><label>Stop Loss (Pips)</label><input type="number" id="r-sl" value="50" oninput="calcLot()"></div>
-            <div style="margin-bottom:12px"><label>Instrument</label>
-              <select id="r-pair" onchange="calcLot()">
-                <option value="XAUUSD">XAUUSD (Gold)</option><option value="EURUSD">EURUSD</option><option value="GBPUSD">GBPUSD</option>
-                <option value="USDJPY">USDJPY</option><option value="US30">US30 (Dow)</option><option value="NAS100">NAS100</option>
-                <option value="BTCUSD">BTCUSD</option><option value="OTHER">Other</option>
-              </select>
-            </div>
-            <div class="kelly-result">
-              <div style="font-size:8px;color:var(--txt2);font-family:Orbitron;letter-spacing:.15em;margin-bottom:4px">SUGGESTED LOT SIZE</div>
-              <div class="orb" style="font-size:36px;font-weight:900;color:var(--c)" id="lot-result">0.20</div>
-              <div class="mono" style="font-size:9px;color:var(--txt2);margin-top:4px" id="lot-detail">Risk: $100 | SL: 50 pips</div>
-            </div>
+        <div class="card" style="flex: 1; min-height: 300px; display: flex; flex-direction: column;">
+          <h2 class="text-xs text-muted font-bold mb-4" style="margin-bottom: 12px; letter-spacing: 1px;">กราฟการเติบโต (EQUITY CURVE)</h2>
+          <div style="flex: 1; position: relative;"><canvas id="equity-chart"></canvas></div>
+        </div>
+      </div>
+
+      <div class="view" id="view-journal">
+        <div style="display: flex; gap: 12px; margin-bottom: 4px;" data-html2canvas-ignore="true">
+          <button class="btn btn-primary" onclick="addTradeRow()">+ เพิ่มออเดอร์</button>
+          <div style="flex:1"></div>
+          <select id="filter-asset" onchange="renderJournal()" style="width: 120px; font-size: 11px; padding: 4px;"><option value="">สินทรัพย์ทั้งหมด</option></select>
+          <select id="filter-outcome" onchange="renderJournal()" style="width: 120px; font-size: 11px; padding: 4px;"><option value="">ผลลัพธ์ทั้งหมด</option><option value="win">ชนะ</option><option value="loss">แพ้</option><option value="pending">รอผล</option></select>
+        </div>
+        
+        <div class="table-container" style="flex: 1; min-height: 0;">
+          <table>
+            <thead><tr><th>#</th><th>ความเสี่ยง</th><th>สินทรัพย์</th><th>ทิศทาง</th><th>กลยุทธ์</th><th>ช่วงเวลา/กะ</th><th>อารมณ์</th><th style="text-align: center;">ผลลัพธ์</th><th style="text-align: right;">ยอดคงเหลือ</th><th style="text-align: center;" data-html2canvas-ignore="true">จัดการ</th></tr></thead>
+            <tbody id="journal-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="view" id="view-analytics">
+        <div class="grid-cols-4" style="height: 280px;">
+          <div class="card" style="grid-column: span 2; display:flex; flex-direction:column;">
+            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">สรุปกำไร/ขาดทุน รายวัน</h2>
+            <div style="flex:1; position:relative;"><canvas id="bar-chart"></canvas></div>
           </div>
-          <div class="g-p" style="padding:16px">
-            <div class="orb" style="font-size:10px;color:var(--c3);margin-bottom:12px">📐 KELLY CRITERION</div>
-            <div style="margin-bottom:8px"><label>Balance ($)</label><input type="number" id="k-bal" value="1000" oninput="calcKelly()"></div>
-            <div style="margin-bottom:8px"><label>Win Rate (%)</label><input type="number" id="k-wr" value="50" oninput="calcKelly()" min="0" max="100"></div>
-            <div style="margin-bottom:12px"><label>R:R Ratio</label><input type="number" id="k-rr" value="2" oninput="calcKelly()" step="0.1"></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-              <div class="kelly-result"><div style="font-size:7px;color:var(--txt2);font-family:Orbitron;margin-bottom:2px">FULL KELLY</div><div class="orb" style="font-size:16px;font-weight:700;color:var(--c3)" id="kelly-full">0%</div></div>
-              <div class="kelly-result"><div style="font-size:7px;color:var(--txt2);font-family:Orbitron;margin-bottom:2px">HALF KELLY</div><div class="orb" style="font-size:16px;font-weight:700;color:var(--c)" id="kelly-half">0%</div></div>
-              <div class="kelly-result"><div style="font-size:7px;color:var(--txt2);font-family:Orbitron;margin-bottom:2px">EXPECTANCY</div><div class="orb" style="font-size:16px;font-weight:700" id="kelly-ev">0R</div></div>
-              <div class="kelly-result"><div style="font-size:7px;color:var(--txt2);font-family:Orbitron;margin-bottom:2px">RUIN RISK</div><div class="orb" style="font-size:16px;font-weight:700" id="kelly-ruin">0%</div></div>
-            </div>
+          <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <h2 class="text-xs text-muted" style="margin-bottom: 12px; align-self: flex-start;">สัดส่วน ชนะ/แพ้</h2>
+            <div style="position:relative; width:160px; height:160px;"><canvas id="pie-chart"></canvas></div>
+          </div>
+          <div class="card" style="display:flex; flex-direction:column;">
+            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">วิเคราะห์พฤติกรรมเทรดเดอร์ (DNA)</h2>
+            <div style="flex:1; position:relative;"><canvas id="radar-chart"></canvas></div>
           </div>
         </div>
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px;min-width:0">
-          <div class="g" style="padding:16px;flex:1">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-              <span class="orb" style="font-size:10px;color:var(--c)">🎲 MONTE CARLO SIMULATION</span>
-              <div style="display:flex;gap:8px;align-items:center">
-                <input type="number" id="mc-runs" value="500" style="width:70px;font-size:10px" min="100" max="2000">
-                <button class="btn btn-c btn-sm" onclick="runMonteCarlo()">Run Sim</button>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="card">
+            <h2 class="text-xs text-muted" style="margin-bottom: 16px;">ผลงานแยกตามกลยุทธ์</h2>
+            <div id="strat-breakdown" class="text-muted text-sm">ต้องการข้อมูลเพิ่มเติม...</div>
+          </div>
+          <div class="card">
+            <h2 class="text-xs text-muted" style="margin-bottom: 16px;">ผลงานแยกตามกะเวลา (SESSION / SHIFT)</h2>
+            <div id="session-breakdown" class="text-muted text-sm">ต้องการข้อมูลเพิ่มเติม...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="view" id="view-risk">
+        <div style="display: flex; gap: 16px; height: 100%;">
+          
+          <div style="width: 320px; display: flex; flex-direction: column; gap: 16px;">
+            <div class="card">
+              <h2 class="text-xs text-primary" style="margin-bottom: 16px;">เครื่องคิดเลขคำนวณ Lot ขั้นสูง</h2>
+              <div style="margin-bottom: 10px;"><label>จำนวนเงินที่เสี่ยง ($)</label><input type="number" id="r-risk" value="100" oninput="calcLot()"></div>
+              <div style="margin-bottom: 10px;"><label>ระยะ Stop Loss (Pips)</label><input type="number" id="r-sl" value="20" oninput="calcLot()"></div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                <div><label>สเปรด (Pips)</label><input type="number" id="r-spread" value="1" step="0.1" oninput="calcLot()"></div>
+                <div><label>ค่าคอมฯ/Lot ($)</label><input type="number" id="r-comm" value="6" step="0.5" oninput="calcLot()"></div>
+              </div>
+              <div style="margin-bottom: 16px;"><label>ประเภทสินทรัพย์</label>
+                <select id="r-pair" onchange="calcLot()"><option value="10">Forex ปกติ (10$ / Pip)</option><option value="1">ดัชนี/คริปโต (1$ / Point)</option></select>
+              </div>
+              <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border);">
+                <div class="text-xs text-muted mb-1">ขนาด Lot ที่ควรเปิด (True Lot)</div>
+                <div class="text-xl font-bold text-primary mono" id="lot-result">0.00</div>
               </div>
             </div>
-            <div style="height:200px"><canvas id="monte-chart"></canvas></div>
-            <div id="mc-results" style="display:none;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px">
-              <div class="g" style="padding:10px;text-align:center"><div class="orb" style="font-size:14px;font-weight:700;color:var(--c4)" id="mc-survived">-</div><div class="orb" style="font-size:7px;color:var(--txt2);margin-top:2px">SURVIVED</div></div>
-              <div class="g" style="padding:10px;text-align:center"><div class="orb" style="font-size:14px;font-weight:700;color:var(--c)" id="mc-avg">-</div><div class="orb" style="font-size:7px;color:var(--txt2);margin-top:2px">AVG FINAL</div></div>
-              <div class="g" style="padding:10px;text-align:center"><div class="orb" style="font-size:14px;font-weight:700;color:var(--c4)" id="mc-best">-</div><div class="orb" style="font-size:7px;color:var(--txt2);margin-top:2px">BEST CASE</div></div>
-              <div class="g" style="padding:10px;text-align:center"><div class="orb" style="font-size:14px;font-weight:700;color:var(--c2)" id="mc-worst">-</div><div class="orb" style="font-size:7px;color:var(--txt2);margin-top:2px">WORST CASE</div></div>
+
+            <div class="card">
+              <h2 class="text-xs text-purple" style="margin-bottom: 16px;">คำนวณแบ่งปิดทำกำไร (Scale-Out)</h2>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                <div><label>ระยะ TP1 (Pips)</label><input type="number" id="so-tp1" value="20" oninput="calcScaleOut()"></div>
+                <div><label>ปิดกี่ %</label><input type="number" id="so-pct" value="50" oninput="calcScaleOut()"></div>
+              </div>
+              <div style="margin-bottom: 16px;"><label>ระยะ TP2 (Pips)</label><input type="number" id="so-tp2" value="40" oninput="calcScaleOut()"></div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border);">
+                <div class="text-xs text-muted mb-1">คาดการณ์กำไรสุทธิ</div>
+                <div class="text-lg font-bold text-success mono" id="so-result">$0.00</div>
+              </div>
             </div>
           </div>
-          <div class="g-r" style="padding:14px;flex-shrink:0">
-            <div class="orb" style="font-size:10px;color:var(--c2);margin-bottom:8px">🛡️ DRAWDOWN SHIELD PROTOCOL</div>
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-              <div id="dd-shield-5" style="padding:10px;border-radius:8px;border:1px solid rgba(251,191,36,.15);background:rgba(251,191,36,.04)"><div class="orb" style="font-size:16px;font-weight:700;color:#fbbf24">-5%</div><div class="mono" style="font-size:8px;color:var(--txt2);margin-top:2px">Reduce size 25%</div></div>
-              <div id="dd-shield-10" style="padding:10px;border-radius:8px;border:1px solid rgba(251,146,60,.15);background:rgba(251,146,60,.04)"><div class="orb" style="font-size:16px;font-weight:700;color:#fb923c">-10%</div><div class="mono" style="font-size:8px;color:var(--txt2);margin-top:2px">Half position size</div></div>
-              <div id="dd-shield-20" style="padding:10px;border-radius:8px;border:1px solid rgba(255,0,110,.15);background:rgba(255,0,110,.04)"><div class="orb" style="font-size:16px;font-weight:700;color:var(--c2)">-20%</div><div class="mono" style="font-size:8px;color:var(--txt2);margin-top:2px">STOP - Review strategy</div></div>
+
+          <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h2 class="text-xs text-warning">จำลองความน่าจะเป็น (Monte Carlo)</h2>
+              <button class="btn btn-outline btn-sm text-warning" onclick="runMonteCarlo()">เริ่มจำลอง</button>
             </div>
-            <div class="mono" style="font-size:9px;color:var(--txt2);margin-top:8px">Current Max DD: <span id="shield-dd" style="color:var(--c4);font-weight:700">-0%</span></div>
+            <div style="flex: 1; position: relative;"><canvas id="monte-chart"></canvas></div>
+            <div id="mc-results" style="display: none; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;">
+              <div style="background: rgba(0,0,0,0.3); padding: 12px; text-align: center; border-radius: 6px;"><div class="text-lg font-bold text-primary mono" id="mc-avg">-</div><div class="text-xs text-muted">ค่าเฉลี่ย</div></div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px; text-align: center; border-radius: 6px;"><div class="text-lg font-bold text-success mono" id="mc-best">-</div><div class="text-xs text-muted">ดีที่สุด</div></div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px; text-align: center; border-radius: 6px;"><div class="text-lg font-bold text-danger mono" id="mc-worst">-</div><div class="text-xs text-muted">แย่ที่สุด</div></div>
+              <div style="background: rgba(0,0,0,0.3); padding: 12px; text-align: center; border-radius: 6px;"><div class="text-lg font-bold text-main mono" id="mc-survived">-</div><div class="text-xs text-muted">โอกาสรอด</div></div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- NEURAL LINK -->
-    <div class="view" id="view-neural">
-      <div class="g" style="padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <label style="margin:0;white-space:nowrap">Gemini API Key</label>
-        <input type="password" id="api-key" placeholder="Enter your Gemini API key..." style="flex:1" oninput="state.apiKey=this.value;saveState()">
-        <div style="width:6px;height:6px;border-radius:50%;background:var(--c4);box-shadow:0 0 8px var(--c4)"></div>
-      </div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-        <button class="btn btn-c btn-sm" onclick="setNeuralPrompt('Analyze my trading performance and identify key weaknesses')">Analyze Performance</button>
-        <button class="btn btn-c btn-sm" onclick="setNeuralPrompt('What is my edge based on my stats?')">Find My Edge</button>
-        <button class="btn btn-c btn-sm" onclick="setNeuralPrompt('Give me 3 specific improvements for my risk management')">Risk Improvements</button>
-        <button class="btn btn-c btn-sm" onclick="setNeuralPrompt('Explain Kelly Criterion and how to apply it to my portfolio')">Kelly Criterion</button>
-        <button class="btn btn-c btn-sm" onclick="setNeuralPrompt('What trading strategy should I focus on based on my data?')">Strategy Advice</button>
-      </div>
-      <div class="g" style="flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px" id="chat-messages">
-        <div style="display:flex;justify-content:flex-start">
-          <div style="max-width:80%;padding:10px 14px;border-radius:4px 14px 14px 14px;background:rgba(8,15,26,.8);border:1px solid rgba(255,255,255,.06);font-size:11px;line-height:1.6">QUANTUM OMEGA Neural Link initialized. Enter your Gemini API key above, then ask me anything about your trading.</div>
+      <div class="view" id="view-neural">
+        <div class="card" style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
+          <label style="margin:0; font-family:var(--font-sans); font-size:11px; color:var(--primary)">Gemini API Key</label>
+          <input type="password" id="api-key" placeholder="ใส่ API Key ของคุณที่นี่..." style="flex:1; height:32px;" oninput="state.apiKey=this.value;saveState()">
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;">
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('Analyze my trading performance and identify key weaknesses')">วิเคราะห์พอร์ตให้หน่อย</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('What is my edge based on my stats?')">หาจุดแข็งของฉัน</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('Explain Kelly Criterion for my portfolio')">อธิบาย Kelly Criterion</button>
+        </div>
+        <div class="card" style="flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.4);" id="chat-messages">
+          <div style="display:flex; justify-content:flex-start;">
+            <div style="max-width:80%; padding:12px; border-radius:4px 12px 12px 12px; background:rgba(30,41,59,0.9); border:1px solid var(--border); font-size:12px; line-height:1.6">ระบบ AI พร้อมทำงาน กรุณาใส่ API Key และพิมพ์คำถามของคุณเพื่อวิเคราะห์สถิติพอร์ต</div>
+          </div>
+        </div>
+        <div style="display: flex; gap: 8px; flex-shrink: 0;">
+          <input id="chat-input" placeholder="ถาม AI..." style="flex:1" onkeydown="if(event.key==='Enter'){sendChat();event.preventDefault()}">
+          <button class="btn btn-primary" onclick="sendChat()">ส่ง</button>
         </div>
       </div>
-      <div style="display:flex;gap:8px;flex-shrink:0">
-        <input id="chat-input" placeholder="Ask the Neural Link..." style="flex:1;font-size:11px" onkeydown="if(event.key==='Enter'&&!event.shiftKey){sendChat();event.preventDefault()}">
-        <button class="btn btn-c" onclick="sendChat()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
-      </div>
-    </div>
 
-    <!-- SWARM AI -->
-    <div class="view" id="view-swarm">
-      <div class="g" style="padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-        <span class="orb" style="font-size:10px;color:var(--c);flex:1">SWARM AI MULTI-MODEL SIGNALS</span>
-        <select id="swarm-asset" style="width:110px;font-size:10px"><option>XAUUSD</option><option>BTCUSD</option><option>EURUSD</option><option>GBPUSD</option><option>US30</option><option>NAS100</option></select>
-        <select id="swarm-tf" style="width:80px;font-size:10px"><option>M15</option><option>H1</option><option>H4</option><option>D1</option></select>
-        <button class="btn btn-c btn-sm" onclick="generateSwarm()">⚡ Generate</button>
-      </div>
-      <div id="swarm-consensus" style="display:none;padding:16px;border-radius:12px;text-align:center;flex-shrink:0">
-        <div class="orb" style="font-size:8px;color:var(--txt2);letter-spacing:.2em;margin-bottom:6px">SWARM CONSENSUS</div>
-        <div class="orb" style="font-size:36px;font-weight:900" id="consensus-text">BULL</div>
-        <div class="mono" style="font-size:10px;color:var(--txt2);margin-top:4px" id="consensus-conf"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex-shrink:0" id="swarm-models"></div>
-      <div class="g" style="flex:1;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px" id="swarm-empty">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--txt3)" stroke-width="1"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-        <div class="orb" style="font-size:10px;color:var(--txt3);letter-spacing:.15em">SELECT ASSET &amp; GENERATE</div>
-        <div class="mono" style="font-size:9px;color:var(--txt3);text-align:center;max-width:300px">Works without API key (mock data). Add Gemini key in Neural Link for AI analysis.</div>
-      </div>
-    </div>
-
-    <!-- INST FLOW -->
-    <div class="view" id="view-flow">
-      <div class="g" style="padding:10px 14px;display:flex;align-items:center;gap:8px;flex-shrink:0">
-        <span class="orb" style="font-size:10px;color:var(--c);flex:1">INSTITUTIONAL ORDER FLOW TRACKER</span>
-        <span class="mono" style="font-size:8px;color:var(--txt3)">⚠ Simulated data</span>
-      </div>
-      <div style="flex:1;display:flex;gap:10px;min-height:0;overflow:auto">
-        <div class="g tbl-wrap" style="flex:1">
-          <table><thead><tr><th>Asset</th><th>Retail Long %</th><th>Retail Short %</th><th>Inst Bias</th><th>Inst Conf</th><th>COT Net</th><th>Sentiment</th></tr></thead><tbody id="flow-body"></tbody></table>
+      <div class="view" id="view-vault">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0">
+          <div class="text-muted font-bold">คลังความรู้ส่วนตัว</div>
+          <button class="btn btn-primary btn-sm" onclick="openArticleEditor(null)">+ เพิ่มบทความ</button>
         </div>
-        <div style="width:240px;flex-shrink:0"><div class="g" style="padding:14px" id="flow-detail"><div class="orb" style="font-size:9px;color:var(--txt2)">Click an asset for details</div></div></div>
+        <div style="flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:16px; align-content:start" id="vault-grid"></div>
       </div>
-    </div>
 
-    <!-- GOD-EYE -->
-    <div class="view" id="view-godmode">
-      <div style="display:flex;gap:8px;flex-shrink:0;overflow-x:auto;padding-bottom:4px" id="market-ticker"></div>
-      <div style="flex:1;display:flex;gap:10px;min-height:0;overflow:auto">
-        <div class="g" style="padding:16px;flex:1;overflow:auto">
-          <div class="orb" style="font-size:9px;color:var(--c);margin-bottom:12px">ASSET CORRELATION MATRIX</div>
-          <div id="corr-matrix"></div>
+      <div class="view" id="view-swarm">
+        <div class="card" style="padding: 12px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0">
+          <span class="text-primary text-xs font-bold" style="flex:1">มติเอกฉันท์จาก AI 4 โมเดล</span>
+          <select id="swarm-asset" style="width:100px; height:32px;"><option>XAUUSD</option><option>BTCUSD</option><option>EURUSD</option><option>US30</option></select>
+          <select id="swarm-tf" style="width:80px; height:32px;"><option>M15</option><option>H1</option><option>H4</option></select>
+          <button class="btn btn-primary btn-sm" onclick="generateSwarm()">ประมวลผล</button>
         </div>
-        <div style="width:260px;flex-shrink:0;display:flex;flex-direction:column;gap:10px">
-          <div class="g" style="padding:14px"><div class="orb" style="font-size:8px;color:var(--txt2);margin-bottom:10px">CORR. SCALE</div><div id="corr-legend"></div></div>
-          <div class="g" style="padding:14px;flex:1"><div class="orb" style="font-size:8px;color:var(--c);margin-bottom:10px">⚡ GOD-EYE SIGNALS</div><div id="god-signals"></div></div>
+        <div id="swarm-consensus" style="display:none; padding:20px; border-radius:12px; text-align:center; flex-shrink:0; background:rgba(0,0,0,0.3); border:1px solid var(--border)">
+          <div class="text-xs text-muted font-bold" style="letter-spacing:2px; margin-bottom:8px">ข้อสรุปทิศทาง</div>
+          <div class="cyber text-xl font-bold" id="consensus-text">BULL</div>
+          <div class="mono text-xs text-muted" style="margin-top:8px" id="consensus-conf"></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; flex-shrink:0" id="swarm-models"></div>
+        <div class="card" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center" id="swarm-empty">
+          <div class="text-muted font-bold mb-2">เลือกสินทรัพย์และกดประมวลผล</div>
+          <div class="text-xs text-dark max-w-md">ใช้ข้อมูลจำลองหากไม่ใส่ API Key กรุณาใส่ Gemini Key ที่หน้าผู้ช่วย AI สำหรับการวิเคราะห์จริง</div>
         </div>
       </div>
-    </div>
 
-    <!-- KNOWLEDGE VAULT -->
-    <div class="view" id="view-vault">
-      <div style="display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
-        <div class="orb" style="font-size:10px;color:var(--txt2)">CLEARANCE LEVEL: <span style="color:var(--c)" id="vault-level">LVL 1</span></div>
-        <button class="btn btn-c btn-sm" onclick="openArticleEditor(null)">+ Add Knowledge</button>
+      <div class="view" id="view-flow">
+        <div class="card" style="padding: 12px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0">
+          <span class="text-primary text-xs font-bold" style="flex:1">ติดตามกระแสเงินสถาบัน (ORDER FLOW)</span>
+          <span class="mono text-xs text-warning">⚠ ข้อมูลจำลอง</span>
+        </div>
+        <div style="flex:1; display:flex; gap:16px; min-height:0; overflow:hidden">
+          <div class="table-container" style="flex:1">
+            <table><thead><tr><th>สินทรัพย์</th><th>รายย่อย Long</th><th>รายย่อย Short</th><th>มุมมองสถาบัน</th><th>ความมั่นใจ</th><th>สภาวะตลาด</th></tr></thead><tbody id="flow-body"></tbody></table>
+          </div>
+          <div class="card" style="width:260px; flex-shrink:0" id="flow-detail">
+            <div class="text-xs text-muted">คลิกที่สินทรัพย์เพื่อดูรายละเอียด</div>
+          </div>
+        </div>
       </div>
-      <div style="flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;align-content:start" id="vault-grid"></div>
-    </div>
 
-    <!-- LIVE CHART -->
-    <div class="view" id="view-chart">
-      <div style="display:flex;gap:8px;flex-shrink:0;align-items:center">
-        <select id="chart-symbol" onchange="reloadChart()" style="width:130px;font-size:10px">
-          <option value="OANDA:XAUUSD">XAUUSD (Gold)</option>
-          <option value="BINANCE:BTCUSDT">BTCUSD</option>
-          <option value="FX:EURUSD">EURUSD</option>
-          <option value="FX:GBPUSD">GBPUSD</option>
-          <option value="FX:USDJPY">USDJPY</option>
-          <option value="FOREXCOM:SPXUSD">SPX500</option>
-          <option value="FOREXCOM:DJI">US30 (Dow)</option>
-          <option value="FOREXCOM:NAS100">NAS100</option>
-          <option value="USOIL">CRUDE OIL</option>
-        </select>
-        <select id="chart-interval" onchange="reloadChart()" style="width:70px;font-size:10px">
-          <option value="1">M1</option>
-          <option value="5">M5</option>
-          <option value="15" selected>M15</option>
-          <option value="30">M30</option>
-          <option value="60">H1</option>
-          <option value="240">H4</option>
-          <option value="D">D1</option>
-          <option value="W">W1</option>
-        </select>
-        <span class="mono" style="font-size:8px;color:var(--txt3)">Powered by TradingView</span>
+      <div class="view" id="view-godmode">
+        <div style="display:flex; gap:12px; flex-shrink:0; overflow-x:auto; padding-bottom:8px" id="market-ticker"></div>
+        <div style="flex:1; display:flex; gap:16px; min-height:0; overflow:hidden">
+          <div class="card" style="flex:1; overflow:auto">
+            <div class="text-xs text-primary font-bold mb-4">ตารางความสัมพันธ์สินทรัพย์ (CORRELATION)</div>
+            <div id="corr-matrix"></div>
+          </div>
+          <div class="card" style="width:260px; flex-shrink:0">
+            <div class="text-xs text-primary font-bold mb-4">สัญญาณเศรษฐกิจมหภาค</div>
+            <div id="god-signals"></div>
+          </div>
+        </div>
       </div>
-      <div style="flex:1;min-height:0" id="tv-chart-container"></div>
-    </div>
 
-    <!-- NEWS -->
-    <div class="view" id="view-news">
-      <div style="flex:1;min-height:0" id="tv-news-container"></div>
-    </div>
+      <div class="view" id="view-chart" style="height: calc(100vh - 130px); min-height: 500px;">
+        <div class="card" style="flex:1; padding:0; display:flex; flex-direction:column; overflow:hidden; height: 100%;">
+          <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; gap:12px; flex-shrink:0;">
+            <select id="chart-symbol" onchange="reloadChart()" style="width:200px"><option value="OANDA:XAUUSD">XAUUSD</option><option value="FOREXCOM:US30">US30</option><option value="BINANCE:BTCUSDT">BTCUSD</option></select>
+            <select id="chart-interval" onchange="reloadChart()" style="width:100px"><option value="15">M15</option><option value="60">H1</option><option value="240">H4</option></select>
+          </div>
+          <div id="tv-chart-container" style="flex:1; width:100%; height:100%;"></div>
+        </div>
+      </div>
 
-  </div><!-- /content -->
-</main>
+      <div class="view" id="view-news" style="height: calc(100vh - 130px); min-height: 500px;">
+        <div class="card" style="flex:1; padding:0; overflow:hidden; height: 100%;" id="tv-news-container"></div>
+      </div>
+
+    </div>
+  </main>
 </div>
 
-<!-- PANIC OVERLAY -->
+<div class="modal-overlay" id="checklist-modal" onclick="closeChecklist()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 class="modal-title text-success" style="font-family:var(--font-sans);">เช็คลิสต์รักษาวินัยก่อนเข้าเทรด</h3><button class="close-btn" onclick="closeChecklist()">×</button></div>
+    <div class="text-sm text-muted mb-4">ยืนยันเงื่อนไขทั้งหมดก่อนเข้าเทรด เพื่อป้องกันการใช้อารมณ์และลดอาการมือลั่น</div>
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+      <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>เทรดตามเทรนด์ใน Timeframe ใหญ่ (หรือมีเหตุผลในการสวนเทรนด์ที่ชัดเจน)</span></label>
+      <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>อัตรากำไรต่อความเสี่ยง (R:R) คุ้มค่า (1:1.5 ขึ้นไป)</span></label>
+      <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>คำนวณ Lot Size ถูกต้อง และจะไม่ทำให้ชน Daily Drawdown Limit</span></label>
+      <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>ไม่ได้เข้าเทรดเพราะอารมณ์อยากเอาคืน, กลัวตกรถ (FOMO), หรือคันมือ</span></label>
+    </div>
+    <button class="btn" id="btn-execute-trade" style="width: 100%; background: var(--bg-sidebar); border: 1px solid var(--border); color: var(--text-muted); pointer-events: none;" onclick="approveTrade()">ไปที่ MT4 / เปิดออเดอร์</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="note-modal" onclick="closeNoteModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header"><h3 class="modal-title" style="font-family:var(--font-sans);">บันทึกย่อการเทรด</h3><button class="close-btn" onclick="closeNoteModal()">×</button></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px">
+      <div><label>ราคาเข้า (Entry)</label><input type="number" id="note-entry" step="any"></div>
+      <div><label>ราคาออก (Exit)</label><input type="number" id="note-exit" step="any"></div>
+    </div>
+    <div style="margin-bottom:16px"><label>ลิงก์รูปภาพสกรีนช็อต (URL)</label><input type="text" id="note-img"></div>
+    <div style="margin-bottom:20px"><label>บทเรียน / ข้อผิดพลาดที่พบ</label><textarea id="note-text" style="height:100px"></textarea></div>
+    <button class="btn btn-primary" style="width:100%" onclick="saveNote()">บันทึกข้อมูล</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="article-modal" onclick="closeArticleModal()">
+  <div class="modal-content" style="max-width:1000px; height: 85vh; padding:0; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
+    <div style="padding:16px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink: 0;">
+      <div>
+        <div class="modal-title" style="font-family:var(--font-sans);" id="art-view-title">Article</div>
+        <div class="text-xs text-muted mt-1" id="art-view-meta"></div>
+      </div>
+      <button class="close-btn" onclick="closeArticleModal()">×</button>
+    </div>
+    <div style="flex: 1; padding:0; overflow-y:auto; display: flex; flex-direction: column;" id="art-view-content"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editor-modal" onclick="closeEditorModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h3 class="modal-title" style="font-family:var(--font-sans);">เครื่องมือจัดการคลังความรู้</h3>
+      <button class="close-btn" onclick="closeEditorModal()">×</button>
+    </div>
+    
+    <label>หัวข้อเอกสาร</label>
+    <input id="art-title" placeholder="เช่น กฎการเข้าเทรด SMC" style="margin-bottom:12px; font-weight:bold">
+    
+    <div style="display:grid; grid-template-columns:1fr 100px; gap:12px; margin-bottom:12px">
+      <div><label>หมวดหมู่</label><input id="art-cat" placeholder="เช่น จิตวิทยา, ระบบเทรด"></div>
+      <div><label>เลเวล</label><input type="number" id="art-lvl" value="1" placeholder="LVL"></div>
+    </div>
+    
+    <label>คำอธิบายสั้นๆ</label>
+    <textarea id="art-excerpt" style="height:60px; margin-bottom:12px" placeholder="สรุปใจความสำคัญ..."></textarea>
+    
+    <label>รูปแบบเนื้อหา</label>
+    <select id="art-type" style="margin-bottom:12px" onchange="toggleEditorType()">
+      <option value="markdown">📝 บทความ (พิมพ์ข้อความ)</option>
+      <option value="pdf">📄 ไฟล์ PDF (ใส่ลิงก์ URL)</option>
+    </select>
+    
+    <div id="editor-markdown-section">
+      <label>เนื้อหาบทความ (รองรับ Markdown)</label>
+      <textarea id="art-content" style="height:200px; margin-bottom:20px" placeholder="พิมพ์เนื้อหาที่นี่..."></textarea>
+    </div>
+    
+    <div id="editor-pdf-section" style="display: none; margin-bottom:20px">
+      <label>ลิงก์ไฟล์ PDF (URL)</label>
+      <input type="text" id="art-pdf-url" placeholder="https://example.com/trading-plan.pdf">
+      <p class="text-xs text-muted" style="margin-top: 6px;">* นำลิงก์ PDF (เช่นลิงก์ไฟล์ตรง หรือลิงก์จากเว็บ) มาวางเพื่อให้ระบบดึงมาแสดงผล</p>
+    </div>
+    
+    <button class="btn btn-primary" style="width:100%" onclick="saveArticle()">บันทึกข้อมูล</button>
+  </div>
+</div>
+
 <div id="panic-overlay">
-  <div class="orb" style="font-size:11px;color:var(--c2);letter-spacing:.5em;animation:gp 2s infinite">PANIC PROTOCOL ENGAGED</div>
+  <div class="cyber text-danger" style="font-size:16px; letter-spacing:2px">เปิดใช้งานระบบดึงสติ (PANIC PROTOCOL)</div>
   <div class="breath-circle" id="breath-circle">
-    <div class="orb" style="font-size:16px;font-weight:700;letter-spacing:.2em" id="breath-phase">INHALE</div>
-    <div class="mono" style="font-size:40px;font-weight:700;color:#fff;margin-top:4px" id="breath-count">4</div>
+    <div class="cyber" style="font-size:18px; letter-spacing:2px; color:var(--primary)" id="breath-phase">หายใจเข้า</div>
+    <div class="mono font-bold text-xl" style="margin-top:8px" id="breath-count">4</div>
   </div>
-  <div class="mono" style="font-size:10px;color:var(--txt2);text-align:center;max-width:300px">Brown noise active. Breathe slowly. No single trade defines your career.</div>
-  <button onclick="closePanic()" style="margin-top:12px;padding:10px 28px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:transparent;color:var(--txt2);cursor:pointer;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:.2em">DISENGAGE</button>
-</div>
-
-<!-- NOTE MODAL -->
-<div class="modal-bg" id="note-modal" style="display:none" onclick="closeNoteModal()">
-  <div class="modal" style="max-width:480px" onclick="event.stopPropagation()">
-    <button style="background:none;border:none;cursor:pointer;color:var(--txt2);float:right;font-size:18px" onclick="closeNoteModal()">&#x2715;</button>
-    <div class="orb" style="font-size:12px;color:var(--c);margin-bottom:12px" id="note-modal-title">Day Notes</div>
-    <textarea id="note-text" style="height:100px;font-size:11px;resize:vertical;margin-bottom:8px" placeholder="Trade notes..."></textarea>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
-      <div><label>Entry Price</label><input id="note-entry" type="number" step="0.00001" placeholder="Entry price"></div>
-      <div><label>Exit Price</label><input id="note-exit" type="number" step="0.00001" placeholder="Exit price"></div>
-    </div>
-    <button class="btn btn-c" style="width:100%;justify-content:center" onclick="saveNote()">Save</button>
-  </div>
-</div>
-
-<!-- IMG MODAL -->
-<div class="modal-bg" id="img-modal" style="display:none" onclick="closeImgModal()">
-  <div class="modal" style="max-width:680px" onclick="event.stopPropagation()">
-    <button style="background:none;border:none;cursor:pointer;color:var(--txt2);float:right;font-size:18px" onclick="closeImgModal()">&#x2715;</button>
-    <div class="orb" style="font-size:12px;color:var(--c);margin-bottom:12px">Chart Evidence</div>
-    <input id="img-url" placeholder="Paste image URL..." style="margin-bottom:10px">
-    <div id="img-preview" style="margin-bottom:12px;min-height:80px;display:flex;align-items:center;justify-content:center;border:1px dashed rgba(0,245,255,.15);border-radius:8px"></div>
-    <button class="btn btn-c" style="width:100%;justify-content:center" onclick="saveImg()">Save</button>
-  </div>
-</div>
-
-<!-- ARTICLE MODAL -->
-<div class="modal-bg" id="article-modal" style="display:none">
-  <div class="modal" style="max-width:900px;max-height:90vh;display:flex;flex-direction:column;padding:0;overflow:hidden">
-    <div style="padding:14px 18px;border-bottom:1px solid rgba(0,245,255,.08);display:flex;justify-content:space-between;align-items:center;flex-shrink:0">
-      <div><div class="orb" style="font-size:14px;font-weight:700;color:var(--c)" id="art-view-title">Article</div><div class="orb" style="font-size:8px;color:var(--txt2);margin-top:2px" id="art-view-meta"></div></div>
-      <button onclick="closeArticleModal()" style="background:none;border:none;cursor:pointer;color:var(--txt2);font-size:18px">&#x2715;</button>
-    </div>
-    <div style="flex:1;display:flex;overflow:hidden">
-      <div style="width:180px;border-right:1px solid rgba(0,245,255,.06);padding:10px;overflow-y:auto;flex-shrink:0" id="art-view-toc"></div>
-      <div style="flex:1;padding:20px;overflow-y:auto" id="art-view-content"></div>
-    </div>
-  </div>
-</div>
-
-<!-- EDITOR MODAL -->
-<div class="modal-bg" id="editor-modal" style="display:none" onclick="closeEditorModal()">
-  <div class="modal" style="max-width:620px" onclick="event.stopPropagation()">
-    <button style="background:none;border:none;cursor:pointer;color:var(--txt2);float:right;font-size:18px" onclick="closeEditorModal()">&#x2715;</button>
-    <div class="orb" style="font-size:12px;color:var(--c);margin-bottom:12px">Knowledge Editor</div>
-    <input id="art-title" placeholder="Article title" style="margin-bottom:8px;font-family:'Orbitron',sans-serif;font-size:13px">
-    <div style="display:grid;grid-template-columns:1fr 80px;gap:8px;margin-bottom:8px">
-      <input id="art-cat" placeholder="Category (e.g. Strategy, Psychology)">
-      <input type="number" id="art-lvl" value="1" placeholder="Level" min="1">
-    </div>
-    <textarea id="art-excerpt" style="height:55px;font-size:11px;resize:none;margin-bottom:8px" placeholder="Short description..."></textarea>
-    <textarea id="art-content" style="height:160px;font-size:11px;resize:vertical;margin-bottom:12px" placeholder="Content in Markdown format..."></textarea>
-    <button class="btn btn-c" style="width:100%;justify-content:center" onclick="saveArticle()">Save</button>
-  </div>
+  <div class="font-sans text-muted text-sm" style="text-align:center; max-width:300px">ระบบเสียง Brown Noise ทำงานแล้ว<br>หายใจช้าๆ วางเมาส์ ลุกเดินออกจากหน้าจอ</div>
+  <button class="btn btn-outline" style="margin-top:20px" onclick="closePanic()">ปิดระบบ</button>
 </div>
 
 <script>
-// ============================================================
-// BACKGROUND
-// ============================================================
+/* ============================================================
+   BACKGROUND ANIMATION
+   ============================================================ */
 (function(){
-  var c=document.getElementById('bg-canvas');
-  var ctx=c.getContext('2d');
-  var W,H,stars=[],particles=[],warp=false;
+  const c = document.getElementById('bg-canvas'); const ctx = c.getContext('2d');
+  let W, H, stars = [], particles = [], warp = false;
   function resize(){
-    W=c.width=innerWidth;H=c.height=innerHeight;
-    stars=[];
-    for(var i=0;i<Math.floor(W*H/5500);i++) stars.push({x:Math.random()*W-W/2,y:Math.random()*H-H/2,z:Math.random()*W,o:Math.random()*.7+.2});
+    W = c.width = innerWidth; H = c.height = innerHeight; stars = [];
+    for(let i=0; i<Math.floor(W*H/8000); i++) stars.push({x: Math.random()*W-W/2, y: Math.random()*H-H/2, z: Math.random()*W, o: Math.random()*0.5+0.1});
   }
-  window.triggerExplosion=function(x,y,col){for(var i=0;i<35;i++)particles.push({x:x,y:y,vx:(Math.random()-.5)*11,vy:(Math.random()-.5)*11,life:1,color:col||'#00f5ff',sz:Math.random()*3+1});};
-  window.setWarp=function(v){warp=v;};
+  window.triggerExplosion = function(x,y,col){ for(let i=0; i<30; i++) particles.push({x, y, vx:(Math.random()-0.5)*10, vy:(Math.random()-0.5)*10, life:1, color:col||'#38bdf8', sz:Math.random()*3+1}); };
+  window.setWarp = function(v){ warp = v; };
   function draw(){
-    ctx.fillStyle='rgba(2,4,8,.18)';ctx.fillRect(0,0,W,H);
-    var cx=W/2,cy=H/2,spd=warp?55:1.3;
-    for(var i=0;i<stars.length;i++){
-      var s=stars[i];s.z-=spd;
-      if(s.z<=0){s.z=W;s.x=Math.random()*W-W/2;s.y=Math.random()*H-H/2;}
-      var sx=(s.x/s.z)*W+cx,sy=(s.y/s.z)*H+cy;
-      var sz=(1-s.z/W)*2.5,sa=(1-s.z/W)*s.o;
-      if(sx>=0&&sx<W&&sy>=0&&sy<H){ctx.beginPath();ctx.fillStyle='rgba(0,245,255,'+sa*.5+')';ctx.arc(sx,sy,Math.max(0,sz),0,Math.PI*2);ctx.fill();}
+    ctx.clearRect(0,0,W,H);
+    let cx = W/2, cy = H/2, spd = warp ? 40 : 0.8;
+    for(let i=0; i<stars.length; i++){
+      let s = stars[i]; s.z -= spd;
+      if(s.z <= 0){ s.z = W; s.x = Math.random()*W-W/2; s.y = Math.random()*H-H/2; }
+      let sx = (s.x/s.z)*W+cx, sy = (s.y/s.z)*H+cy, sz = Math.max(0, (1-s.z/W)*2), sa = (1-s.z/W)*s.o;
+      if(sx>=0 && sx<W && sy>=0 && sy<H){ ctx.beginPath(); ctx.fillStyle=`rgba(56,189,248,${sa})`; ctx.arc(sx, sy, sz, 0, Math.PI*2); ctx.fill(); }
     }
-    for(var j=particles.length-1;j>=0;j--){
-      var p=particles[j];p.x+=p.vx;p.y+=p.vy;p.life-=.025;p.vx*=.94;p.vy*=.94;
-      if(p.life<=0){particles.splice(j,1);continue;}
-      ctx.globalAlpha=p.life;ctx.fillStyle=p.color;ctx.beginPath();ctx.arc(p.x,p.y,p.sz*p.life,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+    for(let j=particles.length-1; j>=0; j--){
+      let p = particles[j]; p.x += p.vx; p.y += p.vy; p.life -= 0.03; p.vx *= 0.92; p.vy *= 0.92;
+      if(p.life <= 0){ particles.splice(j,1); continue; }
+      ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz*p.life, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
     }
     requestAnimationFrame(draw);
   }
-  window.addEventListener('resize',resize);resize();draw();
+  window.addEventListener('resize', resize); resize(); draw();
 })();
 
-// ============================================================
-// SOUND
-// ============================================================
+/* ============================================================
+   AUDIO SYSTEM
+   ============================================================ */
 function playFX(type){
   try{
-    var ac=new(window.AudioContext||window.webkitAudioContext)();
-    var osc=ac.createOscillator(),g=ac.createGain();
-    osc.connect(g);g.connect(ac.destination);
-    if(type==='win'){osc.type='sine';osc.frequency.setValueAtTime(523,ac.currentTime);osc.frequency.exponentialRampToValueAtTime(1046,ac.currentTime+.15);g.gain.setValueAtTime(.07,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.5);}
-    else{osc.type='sawtooth';osc.frequency.setValueAtTime(180,ac.currentTime);osc.frequency.linearRampToValueAtTime(70,ac.currentTime+.3);g.gain.setValueAtTime(.06,ac.currentTime);g.gain.linearRampToValueAtTime(0,ac.currentTime+.3);}
-    osc.start();osc.stop(ac.currentTime+.6);
+    let ac = new (window.AudioContext || window.webkitAudioContext)();
+    let osc = ac.createOscillator(), g = ac.createGain();
+    osc.connect(g); g.connect(ac.destination);
+    if(type === 'win'){ osc.type='sine'; osc.frequency.setValueAtTime(523, ac.currentTime); osc.frequency.exponentialRampToValueAtTime(1046, ac.currentTime+0.1); g.gain.setValueAtTime(0.05, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.4); }
+    else { osc.type='sawtooth'; osc.frequency.setValueAtTime(200, ac.currentTime); osc.frequency.linearRampToValueAtTime(80, ac.currentTime+0.3); g.gain.setValueAtTime(0.05, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime+0.3); }
+    osc.start(); osc.stop(ac.currentTime + 0.5);
   }catch(e){}
 }
 
-// ============================================================
-// STATE
-// ============================================================
-var state={
-  activePort:1,
-  portfolios:{
-    1:{id:1,name:'Alpha Core',config:{bal:1000,risk:2,rr:2,days:30,slPips:50,startDate:''},journal:{},withdrawn:0,xp:0,goal:{name:'Target',amount:500}}
-  },
-  articles:[
-    {id:'a1',title:'Kelly Criterion: Optimal Position Sizing',category:'Mathematics',levelRequired:1,excerpt:'The mathematical formula professional traders use to maximize long-term portfolio growth.',
-     content:'# Kelly Criterion\n\nThe Kelly Criterion determines the **optimal size** of bets.\n\n## Formula\n\nf* = (bp - q) / b\n\nWhere: b = R:R ratio, p = win probability, q = 1-p\n\n## Example\n\nWin rate 55%, R:R 1.5: f* = 25%, Half-Kelly = 12.5%\n\n## Application\n\n1. Calculate historical win rate\n2. Calculate average R:R\n3. Apply formula\n4. Use Half-Kelly to reduce variance'},
-    {id:'a2',title:'ICT Concepts: Smart Money Trading',category:'Strategy',levelRequired:2,excerpt:'Inner Circle Trader methodology for reading institutional footprints.',
-     content:'# ICT Market Structure\n\n## Break of Structure (BOS)\n\nPrice breaks a previous swing high/low — signals **trend continuation**.\n\n## Change of Character (CHoCH)\n\nOpposite direction break — signals potential reversal.\n\n## Order Blocks\n\nThe **last opposing candle** before a strong impulse move.\n\n## Fair Value Gaps\n\n3-candle pattern creating a price gap. Price tends to return to fill these.'}
-  ],
-  apiKey:'',lang:'en',aiHistory:[],calMonth:null
-};
+/* ============================================================
+   STATE & CORE LOGIC
+   ============================================================ */
+let state = { activePort: 1, portfolios: {}, articles: [], apiKey: '', aiHistory: [] };
+const ASSETS = ['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD'];
+const STRATEGIES = ['ตามเทรนด์','สวนเทรนด์','เบรกเอาท์','ล่าสภาพคล่อง','เทรดชนข่าว','อื่นๆ'];
+const MOODS = ['โฟกัสดี','เฉยๆ','ลังเล','กลัวตกรถ (FOMO)','อยากเอาคืน','เหนื่อยล้า'];
+const DIRS = ['LONG','SHORT'];
+const SESSIONS = ['กะเช้า (08-18)','กะดึก (13-22)','London','New York','Asian'];
+const DEFAULT_ARTICLES = [
+  {id:'a1', title:'Kelly Criterion', category:'Math', levelRequired:1, type: 'markdown', excerpt:'สูตรทางคณิตศาสตร์สำหรับการคำนวณหน้าตัก', content:'# Kelly Criterion\n\nสูตรคำนวณ: `f* = (bp - q) / b`\n\n- `b` = อัตราส่วน R:R\n- `p` = โอกาสชนะ (Win Rate)\n- `q` = โอกาสแพ้\n\nแนะนำให้ใช้ Half-Kelly เพื่อลดความผันผวนของพอร์ต'},
+  {id:'a2', title:'จิตวิทยาการสอบกองทุน', category:'Mindset', levelRequired:1, type: 'markdown', excerpt:'วิธีเอาตัวรอดจากการสอบ Prop Firm', content:'# Mindset\n\nห้ามเสี่ยงเกิน 1% ต่อไม้เด็ดขาด เป้าหมายคือการรักษาพอร์ตให้อยู่รอด ไม่ใช่การรีบรวยภายในวันเดียว'}
+];
 
-// Load from localStorage
-try{
-  var saved=localStorage.getItem('qomega_v5');
-  if(saved){
-    var d=JSON.parse(saved);
-    if(d.portfolios) state.portfolios=d.portfolios;
-    if(d.activePort!=null) state.activePort=d.activePort;
-    if(d.articles&&d.articles.length) state.articles=d.articles;
-    if(d.apiKey) state.apiKey=d.apiKey;
-    if(d.lang) state.lang=d.lang;
+function initData() {
+  let saved = localStorage.getItem('rodeto1_v1');
+  if (saved) { state = JSON.parse(saved); } 
+  else {
+    state.portfolios[1] = { id: 1, name: 'พอร์ตสอบกองทุน #1', config: { bal: 100000, risk: 1, rr: 2, dailyDD: 4, maxDD: 8, slPips: 30 }, trades: [] };
+    state.articles = DEFAULT_ARTICLES;
   }
-}catch(e){}
-state.calMonth=new Date();
-
-function saveState(){
-  try{localStorage.setItem('qomega_v5',JSON.stringify({portfolios:state.portfolios,activePort:state.activePort,articles:state.articles,apiKey:state.apiKey,lang:state.lang}));}catch(e){}
+  if(el('api-key')) el('api-key').value = state.apiKey || '';
+  renderPortSelect(); loadPortfolio();
 }
+function saveState() { localStorage.setItem('rodeto1_v1', JSON.stringify(state)); }
+function cur() { return state.portfolios[state.activePort]; }
+function el(id) { return document.getElementById(id); }
+function fmt(n) { return (n<0?'-':'') + '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function pct(n) { return n.toFixed(1) + '%'; }
 
-// ============================================================
-// HELPERS
-// ============================================================
-function fmt(n){if(typeof n!=='number'||isNaN(n))return'$0.00';return(n>=0?'$':'-$')+Math.abs(n).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
-function pct(n){return((n||0).toFixed(1))+'%';}
-function el(id){return document.getElementById(id);}
-function cur(){return state.portfolios[state.activePort]||Object.values(state.portfolios)[0];}
-function localDateStr(dt){return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0');}
-
-// ============================================================
-// STATS ENGINE
-// ============================================================
-function computeStats(){
-  var p=cur();
-  if(!p) return {final:0,bal:0,wins:0,losses:0,total:0,wr:0,pf:0,avgDisc:0,equity:[{x:0,y:0}],hwm:[{x:0,y:0}],rows:[],level:1,progress:0,maxDD:0,streak:0,maxStreak:0,kelly:0,expectancy:0,profit:0,lossVal:0,sessionMap:{},stratMap:{},moodMap:{}};
-  var bal=p.config.bal||1000,peak=bal,maxDD=0;
-  var wins=0,losses=0,profit=0,lossVal=0,discSum=0,discCnt=0;
-  var streak=0,maxStreak=0;
-  var equity=[{x:0,y:bal}],hwm=[{x:0,y:bal}];
-  var rows=[],sessionMap={},stratMap={},moodMap={};
-  var days=p.config.days||30;
-  var risk=p.config.risk||2;
-  var rr=p.config.rr||2;
-  var slPips=p.config.slPips||50;
-
-  for(var i=1;i<=days;i++){
-    var d=p.journal[i]||{status:'pending'};
-    var startBal=bal;
-    var riskAmt=startBal*(risk/100);
-    var rewardAmt=riskAmt*rr;
-    var lotSize=riskAmt/(slPips*10);
-    var pnl=0;
-
-    if(d.status==='win'){pnl=rewardAmt;profit+=pnl;wins++;streak=streak>0?streak+1:1;if(streak>maxStreak)maxStreak=streak;}
-    else if(d.status==='loss'){pnl=-riskAmt;lossVal+=riskAmt;losses++;streak=streak<0?streak-1:-1;}
-
-    if(d.status!=='pending'){
-      bal+=pnl;discSum+=(d.discipline||5);discCnt++;
-      equity.push({x:i,y:parseFloat(bal.toFixed(2))});
-      if(bal>peak)peak=bal;
-      var dd=(peak-bal)/peak*100;
-      if(dd>maxDD)maxDD=dd;
-      if(d.session){if(!sessionMap[d.session])sessionMap[d.session]={wins:0,losses:0,pnl:0};if(d.status==='win'){sessionMap[d.session].wins++;sessionMap[d.session].pnl+=rewardAmt;}else{sessionMap[d.session].losses++;sessionMap[d.session].pnl-=riskAmt;}}
-      if(d.strategy){if(!stratMap[d.strategy])stratMap[d.strategy]={wins:0,losses:0,pnl:0};if(d.status==='win'){stratMap[d.strategy].wins++;stratMap[d.strategy].pnl+=rewardAmt;}else{stratMap[d.strategy].losses++;stratMap[d.strategy].pnl-=riskAmt;}}
-      if(d.mood){if(!moodMap[d.mood])moodMap[d.mood]={wins:0,losses:0};if(d.status==='win')moodMap[d.mood].wins++;else moodMap[d.mood].losses++;}
-    }
-    hwm.push({x:i,y:parseFloat(peak.toFixed(2))});
-    rows.push({day:i,startBal:startBal,riskAmt:riskAmt,rewardAmt:rewardAmt,lotSize:lotSize,pnl:pnl,endBal:bal,status:d.status||'pending',asset:d.asset,strategy:d.strategy,session:d.session,tf:d.tf,grade:d.grade,mood:d.mood,discipline:d.discipline,notes:d.notes,screenshot:d.screenshot});
-  }
-
-  var total=wins+losses;
-  var wr=total>0?(wins/total)*100:0;
-  var pf=lossVal>0?profit/lossVal:(profit>0?Infinity:0);
-  var avgDisc=discCnt>0?discSum/discCnt:0;
-  var pr=wr/100,qr=1-pr;
-  var kelly=pr>0&&qr>0&&rr>0?(pr*rr-qr)/rr*100:0;
-  var expectancy=(pr*rr)-qr;
-  var xp=p.xp||0;
-  var level=Math.floor(Math.sqrt(xp/100))+1;
-  var progress=xp%100;
-  return {final:bal-(p.withdrawn||0),bal:bal,wins:wins,losses:losses,total:total,wr:wr,pf:pf,avgDisc:avgDisc,equity:equity,hwm:hwm,rows:rows,level:level,progress:progress,maxDD:maxDD,streak:streak,maxStreak:maxStreak,kelly:kelly,expectancy:expectancy,profit:profit,lossVal:lossVal,sessionMap:sessionMap,stratMap:stratMap,moodMap:moodMap};
+function renderPortSelect() {
+  let sel = el('port-select'); sel.innerHTML = '';
+  Object.values(state.portfolios).forEach(p => { let opt = document.createElement('option'); opt.value = p.id; opt.textContent = p.name; if(p.id == state.activePort) opt.selected = true; sel.appendChild(opt); });
 }
+function createPortfolio(){ let n = prompt('ชื่อพอร์ต:'); if(n){ let id=Date.now(); state.portfolios[id] = {id, name:n, config:{bal:100000, risk:1, rr:2, dailyDD:4, maxDD:8, slPips:30}, trades:[]}; state.activePort=id; saveState(); renderPortSelect(); loadPortfolio(); } }
+function deletePortfolio(){ if(Object.keys(state.portfolios).length>1 && confirm('ต้องการลบพอร์ตนี้หรือไม่?')){ delete state.portfolios[state.activePort]; state.activePort = Number(Object.keys(state.portfolios)[0]); saveState(); renderPortSelect(); loadPortfolio(); } }
 
-// ============================================================
-// PORTFOLIO
-// ============================================================
-function renderPortSelect(){
-  var sel=el('port-select');if(!sel)return;
-  sel.innerHTML='';
-  Object.values(state.portfolios).forEach(function(p){
-    var o=document.createElement('option');o.value=p.id;o.textContent=p.name;
-    if(p.id===state.activePort)o.selected=true;
-    sel.appendChild(o);
-  });
-  sel.onchange=function(){state.activePort=Number(sel.value);loadPortfolio();};
-}
-
-function createPortfolio(){
-  var name=prompt('Portfolio name:');if(!name)return;
-  var id=Date.now();
-  state.portfolios[id]={id:id,name:name,config:{bal:1000,risk:2,rr:2,days:30,slPips:50,startDate:''},journal:{},withdrawn:0,xp:0,goal:{name:'Target',amount:500}};
-  state.activePort=id;saveState();renderPortSelect();loadPortfolio();
-}
-
-function deletePortfolio(){
-  if(Object.keys(state.portfolios).length<=1){alert('Cannot delete the last portfolio.');return;}
-  if(!confirm('Delete this portfolio?'))return;
-  delete state.portfolios[state.activePort];
-  state.activePort=Number(Object.keys(state.portfolios)[0]);
-  saveState();renderPortSelect();loadPortfolio();
-}
-
-function loadPortfolio(){
-  var p=cur();if(!p)return;
-  function setEl(id,v){var e=el(id);if(e)e.value=v;}
-  setEl('cfg-bal',p.config.bal||1000);setEl('cfg-risk',p.config.risk||2);setEl('cfg-rr',p.config.rr||2);
-  setEl('cfg-days',p.config.days||30);setEl('cfg-slpips',p.config.slPips||50);
-  setEl('cfg-date',p.config.startDate||'');
-  setEl('goal-name',p.goal?p.goal.name:'');setEl('goal-amt',p.goal?p.goal.amount:0);
-  setEl('api-key',state.apiKey||'');
+function loadPortfolio() {
+  let p = cur(); if(!p) return;
+  ['bal','risk','rr','dailyDD','maxDD','slPips'].forEach(k => el('cfg-'+k.toLowerCase()).value = p.config[k]);
+  if(!p.trades || p.trades.length === 0) addTradeRow(true);
   renderAll();
 }
-
-function saveConfig(){
-  var p=cur();if(!p)return;
-  p.config={
-    bal:parseFloat(el('cfg-bal').value)||1000,risk:parseFloat(el('cfg-risk').value)||2,
-    rr:parseFloat(el('cfg-rr').value)||2,days:parseInt(el('cfg-days').value)||30,
-    slPips:parseFloat(el('cfg-slpips').value)||50,startDate:el('cfg-date').value||''
-  };
-  saveState();renderAll();
+function saveConfig() {
+  let p = cur();
+  ['bal','risk','rr','dailyDD','maxDD','slPips'].forEach(k => p.config[k] = parseFloat(el('cfg-'+k.toLowerCase()).value));
+  saveState(); renderAll();
 }
 
-function saveGoal(){
-  var p=cur();if(!p)return;
-  p.goal={name:el('goal-name').value||'',amount:parseFloat(el('goal-amt').value)||0};
-  saveState();updateGoalUI();
-}
+function computeStats() {
+  let p = cur(); let bal = p.config.bal; let peak = bal;
+  let maxDD = 0, maxDailyDD = 0; let wins = 0, losses = 0, profit = 0, lossVal = 0;
+  let streak = 0, maxStreak = 0; let equityCurve = [{x: 0, y: bal}];
+  let maxSingleTradeProfit = 0; let stratMap = {}; let sessMap = {};
+  let processed = [];
 
-function doWithdraw(){
-  var v=parseFloat(el('withdraw-amt').value)||0;if(v<=0)return;
-  cur().withdrawn=(cur().withdrawn||0)+v;
-  el('withdraw-amt').value='';saveState();updateGoalUI();
-}
-
-function updateGoalUI(){
-  var p=cur();if(!p)return;
-  var amt=p.goal?p.goal.amount:1;if(amt<=0)amt=1;
-  var w=p.withdrawn||0;
-  var gp=el('goal-progress');if(gp)gp.textContent=fmt(w)+' / '+fmt(amt);
-  var gb=el('goal-bar');if(gb)gb.style.width=Math.min(100,(w/amt)*100)+'%';
-}
-
-// ============================================================
-// VIEW SWITCHING
-// ============================================================
-var TITLES={terminal:'Battle Station',journal:'Mission Logs',analytics:'Deep Analytics',calendar:'PnL Calendar',risk:'Risk Matrix',neural:'Neural Link',swarm:'Swarm AI',flow:'Inst. Flow Tracker',godmode:'God-Eye View',vault:'Knowledge Vault',chart:'Live Market Chart',news:'Economic News'};
-var currentView='terminal';
-var chartsMap={};
-
-function switchView(viewId,navEl){
-  document.querySelectorAll('.view').forEach(function(v){v.classList.remove('active');});
-  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  var v=el('view-'+viewId);if(v)v.classList.add('active');
-  if(navEl)navEl.classList.add('active');
-  var t=el('view-title');if(t)t.textContent=TITLES[viewId]||viewId;
-  currentView=viewId;
-  if(viewId==='journal')renderJournal();
-  if(viewId==='analytics')renderAnalytics();
-  if(viewId==='calendar')renderCalendar();
-  if(viewId==='vault')renderVault();
-  if(viewId==='flow')renderFlowTable();
-  if(viewId==='godmode')renderGodMode();
-  if(viewId==='chart')loadTVChart();
-  if(viewId==='news')loadTVNews();
-}
-
-// ============================================================
-// RENDER ALL
-// ============================================================
-function renderAll(){
-  try{
-    var s=computeStats();
-    updateHeader(s);updateXP(s);updateStatCards(s);
-    renderEquityChart(s);
-    renderJournal(s);
-    updateGoalUI();updateSessionIntel(s);updateDrawdownShield(s);
-    if(currentView==='analytics')renderAnalytics(s);
-    if(currentView==='calendar')renderCalendar();
-    if(currentView==='vault')renderVault();
-  }catch(e){console.error('renderAll error:',e);}
-}
-
-function updateHeader(s){
-  var he=el('hdr-equity');if(he)he.textContent=fmt(s.final);
-  var hw=el('hdr-wr');if(hw)hw.textContent=pct(s.wr);
-  var hp=el('hdr-pf');if(hp)hp.textContent=isFinite(s.pf)?s.pf.toFixed(2):'\u221e';
-}
-
-function updateXP(s){
-  var p=cur();if(!p)return;
-  var xl=el('xp-level');if(xl)xl.textContent='LVL '+s.level;
-  var xv=el('xp-val');if(xv)xv.textContent=(p.xp||0)+' XP';
-  var xb=el('xp-bar');if(xb)xb.style.width=s.progress+'%';
-  var vl=el('vault-level');if(vl)vl.textContent='LVL '+s.level;
-}
-
-function updateStatCards(s){
-  var p=cur();if(!p)return;
-  var totalRet=s.final>0?((s.final/p.config.bal)-1)*100:0;
-  var wrCol=s.wr>=55?'var(--c4)':s.wr>=45?'var(--c)':'var(--c2)';
-  var pfCol=s.pf>=2?'var(--c4)':s.pf>=1?'var(--c)':'var(--c2)';
-  var ddCol=s.maxDD>20?'var(--c2)':s.maxDD>10?'#fbbf24':'var(--c4)';
-  var evCol=s.expectancy>0?'var(--c4)':'var(--c2)';
-  var stCol=s.streak>0?'var(--c4)':s.streak<0?'var(--c2)':'var(--txt)';
-  var pfStr=isFinite(s.pf)?s.pf.toFixed(2):'\u221e';
-  var pfPct=(pfStr==='Infinity'?'\u221e':pfStr);
-  function si(id,html){var e=el(id);if(e)e.innerHTML=html;}
-  si('sc-equity','<div class="stat-val" style="color:var(--c)">'+fmt(s.final)+'</div><div class="stat-lbl">Net Equity</div><div class="stat-sub">'+(totalRet>=0?'+':'')+totalRet.toFixed(1)+'% total</div>');
-  si('sc-wr','<div class="stat-val" style="color:'+wrCol+'">'+pct(s.wr)+'</div><div class="stat-lbl">Win Rate</div><div class="stat-sub">'+s.wins+'W / '+s.losses+'L</div>');
-  si('sc-pf','<div class="stat-val" style="color:'+pfCol+'">'+pfPct+'</div><div class="stat-lbl">Profit Factor</div><div class="stat-sub">Kelly: '+s.kelly.toFixed(1)+'%</div>');
-  si('sc-dd','<div class="stat-val" style="color:'+ddCol+'">-'+pct(s.maxDD)+'</div><div class="stat-lbl">Max Drawdown</div><div class="stat-sub">Shield Active</div>');
-  si('sc-ev','<div class="stat-val" style="color:'+evCol+'">'+s.expectancy.toFixed(3)+'R</div><div class="stat-lbl">Expectancy</div><div class="stat-sub">Per trade EV</div>');
-  si('sc-streak','<div class="stat-val" style="color:'+stCol+'">'+(s.streak>0?'+':'')+s.streak+'</div><div class="stat-lbl">Current Streak</div><div class="stat-sub">'+(s.streak>0?'Win streak':s.streak<0?'Loss streak':'\u2014')+'</div>');
-  var tb=el('trade-badges');if(tb)tb.innerHTML='<span class="badge bw">'+s.wins+' WIN</span>&nbsp;<span class="badge bl">'+s.losses+' LOSS</span>';
-  var totalPnl=s.profit-s.lossVal;
-  var jt=el('j-total');if(jt)jt.textContent=s.total;
-  var jp=el('j-pnl');if(jp){jp.textContent=fmt(totalPnl);jp.style.color=totalPnl>=0?'var(--c4)':'var(--c2)';}
-  var jd=el('j-disc');if(jd)jd.textContent=s.avgDisc.toFixed(1)+'/5';
-  var js=el('j-streak');if(js)js.textContent='+'+s.maxStreak;
-}
-
-// ============================================================
-// EQUITY CHART
-// ============================================================
-function renderEquityChart(s){
-  if(typeof Chart==='undefined')return;
-  var canvas=el('equity-chart');if(!canvas)return;
-  try{if(chartsMap.equity)chartsMap.equity.destroy();}catch(e){}
-  try{
-    var ctx=canvas.getContext('2d');
-    var ph=canvas.parentElement?canvas.parentElement.offsetHeight||200:200;
-    var grad=ctx.createLinearGradient(0,0,0,ph);
-    grad.addColorStop(0,'rgba(0,245,255,.18)');grad.addColorStop(1,'rgba(0,245,255,0)');
-    chartsMap.equity=new Chart(ctx,{
-      type:'line',
-      data:{labels:s.equity.map(function(d){return d.x===0?'Start':'D'+d.x;}),
-        datasets:[
-          {label:'Equity',data:s.equity.map(function(d){return d.y;}),borderColor:'#00f5ff',backgroundColor:grad,borderWidth:2,fill:true,tension:.4,pointRadius:2,pointHoverRadius:5,pointBorderColor:'#00f5ff',pointBackgroundColor:'#020408'},
-          {label:'Peak',data:s.hwm.map(function(d){return d.y;}),borderColor:'rgba(255,255,255,.12)',borderWidth:1,borderDash:[4,4],fill:false,pointRadius:0,tension:.2}
-        ]},
-      options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(4,12,20,.95)',titleColor:'#00f5ff',bodyColor:'#c8e6f0',borderColor:'rgba(0,245,255,.2)',borderWidth:1}},
-        scales:{x:{grid:{color:'rgba(255,255,255,.025)'},ticks:{color:'#5a8a9a',font:{size:8}}},y:{grid:{color:'rgba(255,255,255,.025)'},ticks:{color:'#5a8a9a',font:{size:8},callback:function(v){return'$'+v;}}}}}
-    });
-  }catch(e){console.warn('equity chart error:',e);}
-}
-
-// ============================================================
-// SESSION INTEL
-// ============================================================
-function updateSessionIntel(s){
-  var box=el('session-intel');if(!box)return;
-  var keys=Object.keys(s.sessionMap);
-  if(!keys.length){box.textContent='Log sessions in Mission Logs to see breakdown.';return;}
-  var html='';
-  keys.forEach(function(sess){
-    var v=s.sessionMap[sess];
-    html+='<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-family:JetBrains Mono,monospace;font-size:9px"><span style="color:var(--txt2)">'+sess+'</span><div style="display:flex;gap:8px"><span style="color:var(--c4)">'+v.wins+'W</span><span style="color:var(--c2)">'+v.losses+'L</span><span style="color:'+(v.pnl>=0?'var(--c4)':'var(--c2)')+'">'+fmt(v.pnl)+'</span></div></div>';
-  });
-  box.innerHTML=html;
-}
-
-// ============================================================
-// JOURNAL
-// ============================================================
-var ASSETS=['XAUUSD','BTCUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','SPX500','CRUDE','Other'];
-var STRATEGIES=['Trend Following','Reversal','Breakout','Scalping','News Trade','Range','ICT/SMC','EMA Cross','Other'];
-var MOODS=['Disciplined','Confident','Neutral','Hesitant','Anxious','FOMO','Revenge','Overconfident'];
-var GRADES=['A+','A','B','C','D','F'];
-var SESSIONS=['London','New York','Tokyo','Sydney','Overlap'];
-var TFS=['M1','M5','M15','M30','H1','H4','D1','W1'];
-
-function mkOpts(arr,val){
-  return arr.map(function(a){return '<option value="'+a+'"'+(a===val?' selected':'')+'>'+a+'</option>';}).join('');
-}
-
-function renderJournal(sArg){
-  try{
-    var s=sArg||computeStats();
-    var fa=el('filter-asset');
-    if(fa&&fa.options.length<=1){ASSETS.forEach(function(a){var o=document.createElement('option');o.value=a;o.textContent=a;fa.appendChild(o);});}
-    var filterAsset=fa?fa.value:'';
-    var fo=el('filter-outcome');var filterOut=fo?fo.value:'';
-    var rows=s.rows.filter(function(r){
-      if(filterAsset&&r.asset!==filterAsset)return false;
-      if(filterOut&&r.status!==filterOut)return false;
-      return true;
-    });
-    var tbody=el('journal-body');if(!tbody)return;
-    var html='';
-    rows.forEach(function(r){
-      var jd=cur().journal[r.day]||{};
-      var bg=r.status==='win'?'rgba(6,214,160,.04)':r.status==='loss'?'rgba(255,0,110,.04)':'transparent';
-      var endCol=r.status==='win'?'var(--c4)':r.status==='loss'?'var(--c2)':'var(--txt3)';
-      var winGlow=r.status==='win'?'box-shadow:0 0 8px rgba(6,214,160,.3)':'background:rgba(6,214,160,.04);color:var(--c4);border:1px solid rgba(6,214,160,.1)';
-      var lossGlow=r.status==='loss'?'box-shadow:0 0 8px rgba(255,0,110,.3)':'background:rgba(255,0,110,.04);color:var(--c2);border:1px solid rgba(255,0,110,.1)';
-      var resetBtn=r.status!=='pending'?'<button onclick="resetTrade('+r.day+')" style="background:none;border:none;color:var(--txt3);cursor:pointer;font-size:11px">&#x21BA;</button>':'';
-      var endBal=r.status!=='pending'?fmt(r.endBal):'-';
-      html+='<tr style="background:'+bg+'">'
-        +'<td><span class="orb" style="font-size:9px;font-weight:700;color:var(--txt2)">'+r.day+'</span></td>'
-        +'<td style="text-align:right;font-family:JetBrains Mono,monospace;font-weight:600">'+fmt(r.startBal)+'</td>'
-        +'<td><div style="font-size:8px;color:#fbbf24;font-family:JetBrains Mono,monospace">Lot:'+r.lotSize.toFixed(2)+'</div><div style="font-size:7px;display:flex;gap:4px;margin-top:1px"><span style="color:var(--c2)">SL:'+fmt(r.riskAmt)+'</span><span style="color:var(--c4)">TP:'+fmt(r.rewardAmt)+'</span></div></td>'
-        +'<td><div style="display:flex;gap:3px;align-items:center"><button class="badge '+( r.status==='win'?'bw':'')+'" style="cursor:pointer;'+winGlow+'" onclick="commitTrade('+r.day+',\'win\',event)">WIN</button><button class="badge '+(r.status==='loss'?'bl':'')+'" style="cursor:pointer;'+lossGlow+'" onclick="commitTrade('+r.day+',\'loss\',event)">LOSS</button>'+resetBtn+'</div></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'asset\',this.value)" style="font-size:9px;padding:3px 5px;width:80px"><option value="">-</option>'+mkOpts(ASSETS,jd.asset||'')+'</select></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'strategy\',this.value)" style="font-size:9px;padding:3px 5px;width:95px"><option value="">-</option>'+mkOpts(STRATEGIES,jd.strategy||'')+'</select></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'session\',this.value)" style="font-size:9px;padding:3px 5px;width:76px"><option value="">-</option>'+mkOpts(SESSIONS,jd.session||'')+'</select></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'tf\',this.value)" style="font-size:9px;padding:3px 5px;width:58px"><option value="">-</option>'+mkOpts(TFS,jd.tf||'')+'</select></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'grade\',this.value)" style="font-size:9px;padding:3px 5px;width:52px"><option value="">-</option>'+mkOpts(GRADES,jd.grade||'')+'</select></td>'
-        +'<td><select onchange="updateJ('+r.day+',\'mood\',this.value)" style="font-size:9px;padding:3px 5px;width:92px;color:var(--c3)"><option value="">-</option>'+mkOpts(MOODS,jd.mood||'')+'</select></td>'
-        +'<td><input type="number" min="1" max="5" value="'+(jd.discipline||'')+'" onchange="updateJ('+r.day+',\'discipline\',parseInt(this.value))" style="width:38px;text-align:center;padding:3px" placeholder="5"></td>'
-        +'<td style="text-align:center"><button onclick="openNoteModal('+r.day+')" style="background:none;border:none;cursor:pointer;font-size:14px;color:'+(jd.notes?'var(--c)':'var(--txt3)')+'">&#x270F;</button></td>'
-        +'<td style="text-align:center"><button onclick="openImgModal('+r.day+')" style="background:none;border:none;cursor:pointer;font-size:14px">&#x1F4F7;</button></td>'
-        +'<td style="text-align:right;font-family:JetBrains Mono,monospace;font-weight:700;color:'+endCol+'">'+endBal+'</td>'
-        +'</tr>';
-    });
-    tbody.innerHTML=html;
-  }catch(e){console.error('renderJournal error:',e);}
-}
-
-function updateJ(day,field,val){
-  if(!cur().journal[day])cur().journal[day]={status:'pending'};
-  cur().journal[day][field]=val;
-  saveState();
-  try{var s=computeStats();updateHeader(s);updateStatCards(s);updateSessionIntel(s);updateDrawdownShield(s);}catch(e){}
-}
-
-function commitTrade(day,status,event){
-  if(!cur().journal[day])cur().journal[day]={status:'pending',discipline:5};
-  var prev=cur().journal[day].status;
-  cur().journal[day].status=status;
-  if(status==='win'&&prev!=='win'){
-    playFX('win');cur().xp=(cur().xp||0)+100;
-    if(window.setWarp){setWarp(true);setTimeout(function(){setWarp(false);},3000);}
-    if(event&&window.triggerExplosion)triggerExplosion(event.clientX,event.clientY,'#00f5ff');
-  }else if(status==='loss'&&prev!=='loss'){playFX('loss');cur().xp=(cur().xp||0)+10;}
-  saveState();renderAll();
-}
-
-function resetTrade(day){
-  if(cur().journal[day])cur().journal[day].status='pending';
-  saveState();renderAll();
-}
-
-// ============================================================
-// NOTE / IMG MODALS
-// ============================================================
-var _noteDay=null,_imgDay=null;
-
-function openNoteModal(day){
-  _noteDay=day;var jd=cur().journal[day]||{};
-  var t=el('note-modal-title');if(t)t.textContent='Day '+day+' \u2014 Notes';
-  var nt=el('note-text');if(nt)nt.value=jd.notes||'';
-  var ne=el('note-entry');if(ne)ne.value=jd.entry||'';
-  var nx=el('note-exit');if(nx)nx.value=jd.exit||'';
-  var m=el('note-modal');if(m)m.style.display='flex';
-}
-function closeNoteModal(){var m=el('note-modal');if(m)m.style.display='none';}
-function saveNote(){
-  if(!cur().journal[_noteDay])cur().journal[_noteDay]={status:'pending'};
-  cur().journal[_noteDay].notes=el('note-text').value||'';
-  cur().journal[_noteDay].entry=el('note-entry').value||'';
-  cur().journal[_noteDay].exit=el('note-exit').value||'';
-  saveState();renderJournal();closeNoteModal();
-}
-
-function openImgModal(day){
-  _imgDay=day;var jd=cur().journal[day]||{};var url=jd.screenshot||'';
-  var iu=el('img-url');if(iu)iu.value=url;
-  var pr=el('img-preview');
-  if(pr)pr.innerHTML=url?'<img src="'+url+'" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'">':'<span style="color:var(--txt3);font-size:10px">Preview appears here</span>';
-  var m=el('img-modal');if(m)m.style.display='flex';
-  if(iu)iu.oninput=function(){var u=iu.value;if(pr)pr.innerHTML=u?'<img src="'+u+'" style="max-width:100%;max-height:300px;border-radius:8px;object-fit:contain" onerror="this.style.display=\'none\'">':'';};
-}
-function closeImgModal(){var m=el('img-modal');if(m)m.style.display='none';}
-function saveImg(){
-  if(!cur().journal[_imgDay])cur().journal[_imgDay]={status:'pending'};
-  cur().journal[_imgDay].screenshot=el('img-url').value||'';
-  saveState();renderJournal();closeImgModal();
-}
-
-// ============================================================
-// ANALYTICS
-// ============================================================
-function renderAnalytics(sArg){
-  try{
-    var s=sArg||computeStats();
-    renderBarChart(s);renderPieChart(s);renderRadarChart(s);renderHeatmap(s);
-    renderStratBreakdown(s);renderMoodBreakdown(s);
-    var pw=el('pie-wr-lbl');if(pw)pw.textContent=pct(s.wr);
-  }catch(e){console.error('renderAnalytics error:',e);}
-}
-
-function mkChart(id,type,data,options){
-  if(typeof Chart==='undefined')return;
-  var canvas=el(id);if(!canvas)return;
-  try{if(chartsMap[id])chartsMap[id].destroy();}catch(e){}
-  try{chartsMap[id]=new Chart(canvas.getContext('2d'),{type:type,data:data,options:options});}catch(e){console.warn(id+' chart error:',e);}
-}
-
-function renderBarChart(s){
-  var rows=s.rows.filter(function(r){return r.status!=='pending';});
-  if(!rows.length)return;
-  mkChart('bar-chart','bar',{
-    labels:rows.map(function(r){return 'D'+r.day;}),
-    datasets:[{label:'P&L',data:rows.map(function(r){return parseFloat(r.pnl.toFixed(2));}),backgroundColor:rows.map(function(r){return r.pnl>=0?'rgba(6,214,160,.5)':'rgba(255,0,110,.5)';}),borderColor:rows.map(function(r){return r.pnl>=0?'#06d6a0':'#ff006e';}),borderWidth:1,borderRadius:3}]
-  },{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{display:false},ticks:{color:'#5a8a9a',font:{size:7}}},y:{grid:{color:'rgba(255,255,255,.025)'},ticks:{color:'#5a8a9a',font:{size:7},callback:function(v){return'$'+v;}}}}});
-}
-
-function renderPieChart(s){
-  var pending=Math.max(0,(cur().config.days||30)-(s.wins+s.losses));
-  mkChart('pie-chart','doughnut',{
-    labels:['Win','Loss','Pending'],
-    datasets:[{data:[s.wins,s.losses,pending],backgroundColor:['rgba(6,214,160,.6)','rgba(255,0,110,.6)','rgba(90,138,154,.1)'],borderWidth:0,hoverOffset:4}]
-  },{responsive:true,maintainAspectRatio:false,cutout:'72%',plugins:{legend:{display:false}}});
-}
-
-function renderRadarChart(s){
-  var wr=s.wr;
-  var pf2=Math.min(100,isFinite(s.pf)?s.pf*25:0);
-  var disc=(s.avgDisc/5)*100;
-  var kelly=Math.max(0,Math.min(100,s.kelly*5));
-  var ev=Math.max(0,Math.min(100,(s.expectancy+0.5)*100));
-  var consist=Math.max(0,100-s.maxDD*3);
-  mkChart('radar-chart','radar',{
-    labels:['Win Rate','P.Factor','Discipline','Kelly','Expectancy','Consistency'],
-    datasets:[
-      {label:'You',data:[wr,pf2,disc,kelly,ev,consist],borderColor:'rgba(0,245,255,.7)',backgroundColor:'rgba(0,245,255,.06)',pointBackgroundColor:'#00f5ff',borderWidth:2},
-      {label:'Target',data:[60,75,90,40,70,85],borderColor:'rgba(131,56,236,.3)',backgroundColor:'rgba(131,56,236,.03)',borderDash:[4,4],borderWidth:1,pointRadius:0}
-    ]
-  },{responsive:true,maintainAspectRatio:false,scales:{r:{min:0,max:100,grid:{color:'rgba(255,255,255,.04)'},pointLabels:{color:'#5a8a9a',font:{size:8}},ticks:{display:false}}},plugins:{legend:{display:false}}});
-}
-
-function renderHeatmap(s){
-  var box=el('heatmap');if(!box)return;
-  box.innerHTML=s.rows.map(function(r){
-    var bg=r.status==='win'?'rgba(0,245,255,.55)':r.status==='loss'?'rgba(255,0,110,.5)':'rgba(255,255,255,.04)';
-    var glow=r.status==='win'?'0 0 6px rgba(0,245,255,.4)':'none';
-    return '<div class="hm-cell" style="background:'+bg+';box-shadow:'+glow+'" title="Day '+r.day+': '+(r.status==='pending'?'Pending':r.status.toUpperCase())+'"></div>';
-  }).join('');
-}
-
-function renderStratBreakdown(s){
-  var box=el('strat-breakdown');if(!box)return;
-  var keys=Object.keys(s.stratMap);
-  if(!keys.length){box.textContent='Log strategies in Mission Logs.';return;}
-  var sorted=keys.sort(function(a,b){return s.stratMap[b].pnl-s.stratMap[a].pnl;});
-  var html='';
-  sorted.forEach(function(st){
-    var v=s.stratMap[st];var wr=v.wins+v.losses>0?(v.wins/(v.wins+v.losses))*100:0;
-    html+='<div style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;margin-bottom:2px"><span style="font-size:9px;color:var(--txt);font-family:JetBrains Mono,monospace">'+st+'</span><div style="display:flex;gap:8px"><span style="font-size:8px;color:var(--txt2)">'+pct(wr)+' WR</span><span style="font-size:8px;color:'+(v.pnl>=0?'var(--c4)':'var(--c2)')+';font-family:JetBrains Mono,monospace">'+fmt(v.pnl)+'</span></div></div><div class="pbar"><div class="pbar-fill" style="width:'+wr+'%"></div></div></div>';
-  });
-  box.innerHTML=html;
-}
-
-function renderMoodBreakdown(s){
-  var box=el('mood-breakdown');if(!box)return;
-  var keys=Object.keys(s.moodMap);
-  if(!keys.length){box.textContent='Log moods in Mission Logs.';return;}
-  var sorted=keys.sort(function(a,b){var wa=s.moodMap[a].wins/(s.moodMap[a].wins+s.moodMap[a].losses||1);var wb=s.moodMap[b].wins/(s.moodMap[b].wins+s.moodMap[b].losses||1);return wb-wa;});
-  var html='';
-  sorted.forEach(function(m){
-    var v=s.moodMap[m];var wr=v.wins+v.losses>0?(v.wins/(v.wins+v.losses))*100:0;
-    html+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span style="font-size:9px;color:var(--txt2);font-family:JetBrains Mono,monospace;min-width:88px">'+m+'</span><div style="flex:1;height:7px;border-radius:4px;background:rgba(0,0,0,.3);overflow:hidden"><div style="height:100%;border-radius:4px;background:'+(wr>=50?'linear-gradient(90deg,var(--c4),#00ff88)':'linear-gradient(90deg,var(--c2),#ff4488)')+';width:'+wr+'%"></div></div><span style="font-size:8px;color:var(--txt2);min-width:32px">'+pct(wr)+'</span></div>';
-  });
-  box.innerHTML=html;
-}
-
-// ============================================================
-// CALENDAR — fixed local timezone
-// ============================================================
-function calChangeMonth(delta){
-  state.calMonth=new Date(state.calMonth.getFullYear(),state.calMonth.getMonth()+delta,1);
-  renderCalendar();
-}
-
-function renderCalendar(){
-  try{
-    var s=computeStats();var p=cur();
-    var grid=el('cal-grid');
-    if(!p.config.startDate){if(grid)grid.innerHTML='<div style="color:var(--txt3);font-family:Orbitron,sans-serif;font-size:9px;padding:10px">Set Start Date in Battle Station config.</div>';return;}
-
-    var parts=p.config.startDate.split('-').map(Number);
-    var startLocal=new Date(parts[0],parts[1]-1,parts[2]);
-    var tradeMap={};
-    s.rows.forEach(function(r){
-      if(r.status!=='pending'){
-        var d=new Date(startLocal.getFullYear(),startLocal.getMonth(),startLocal.getDate()+(r.day-1));
-        tradeMap[localDateStr(d)]=r;
-      }
-    });
-
-    var vm=state.calMonth||new Date();
-    var daysInMonth=new Date(vm.getFullYear(),vm.getMonth()+1,0).getDate();
-    var firstDay=new Date(vm.getFullYear(),vm.getMonth(),1).getDay();
-    var adjFirst=firstDay===0?6:firstDay-1;
-    var todayStr=localDateStr(new Date());
-    var monthTitle=vm.toLocaleDateString(state.lang==='th'?'th-TH':'en-US',{month:'long',year:'numeric'});
-    var mt=el('cal-month-title');if(mt)mt.textContent=monthTitle;
-
-    var dayNames=state.lang==='th'?['\u0E08','\u0E2D','\u0E1E','\u0E1E\u0E24','\u0E28','\u0E2A','\u0E2D\u0E32']:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-    var hdrs=el('cal-day-headers');
-    if(hdrs)hdrs.innerHTML=dayNames.map(function(d){return '<div style="text-align:center;font-family:Orbitron,sans-serif;font-size:7px;color:var(--txt2);letter-spacing:.1em;padding:4px 0">'+d+'</div>';}).join('');
-
-    var monthPnl=0,monthW=0,monthL=0;
-    var cells=[];
-    for(var i=0;i<adjFirst;i++)cells.push('<div></div>');
-    for(var i=1;i<=daysInMonth;i++){
-      var dateStr=localDateStr(new Date(vm.getFullYear(),vm.getMonth(),i));
-      var trade=tradeMap[dateStr];
-      var isToday=dateStr===todayStr;
-      if(trade){if(trade.status==='win'){monthW++;monthPnl+=trade.rewardAmt;}else{monthL++;monthPnl-=trade.riskAmt;}}
-      var cls=trade?(trade.status==='win'?'cal-day-win':'cal-day-loss'):(isToday?'cal-today':'');
-      var pnlHtml=trade?'<div style="text-align:right;margin-top:auto"><div style="font-family:Orbitron,sans-serif;font-size:10px;font-weight:700;color:'+(trade.status==='win'?'var(--c4)':'var(--c2)')+'">'+fmt(trade.pnl||0)+'</div><div style="font-size:6px;color:var(--txt2);font-family:Orbitron">'+trade.status.toUpperCase()+'</div></div>':'';
-      cells.push('<div class="cal-day '+cls+'"><div style="font-size:9px;font-family:JetBrains Mono,monospace;font-weight:700;color:'+(isToday?'var(--c)':'var(--txt2)')+'">'+i+'</div>'+pnlHtml+'</div>');
+  p.trades.forEach((t, i) => {
+    let riskAmt = bal * (p.config.risk / 100); let rewardAmt = riskAmt * p.config.rr; let lotSize = riskAmt / (p.config.slPips * 10);
+    let pnl = 0;
+    if (t.status === 'win') { pnl = t.pnlOverride != null ? t.pnlOverride : rewardAmt; wins++; profit += pnl; streak = streak > 0 ? streak + 1 : 1; if(streak > maxStreak) maxStreak = streak; if(pnl > maxSingleTradeProfit) maxSingleTradeProfit = pnl; }
+    else if (t.status === 'loss') { pnl = t.pnlOverride != null ? t.pnlOverride : -riskAmt; losses++; lossVal += Math.abs(pnl); streak = streak < 0 ? streak - 1 : -1; }
+    
+    if(t.status !== 'pending') {
+      bal += pnl; equityCurve.push({x: i+1, y: bal});
+      if(bal > peak) peak = bal;
+      let dd = ((peak - bal) / peak) * 100; if(dd > maxDD) maxDD = dd;
+      let dailyDip = ((p.config.bal - bal) / p.config.bal) * 100; if(dailyDip > maxDailyDD) maxDailyDD = dailyDip;
+      
+      if(t.strategy){ stratMap[t.strategy] = stratMap[t.strategy] || {w:0, l:0}; t.status==='win'?stratMap[t.strategy].w++:stratMap[t.strategy].l++; }
+      if(t.session){ sessMap[t.session] = sessMap[t.session] || {w:0, l:0}; t.status==='win'?sessMap[t.session].w++:sessMap[t.session].l++; }
     }
-    if(grid)grid.innerHTML=cells.join('');
-
-    var mwr=monthW+monthL>0?pct(monthW/(monthW+monthL)*100):'N/A';
-    var cs=el('cal-stats');
-    if(cs)cs.innerHTML=[{l:'Month P&L',v:fmt(monthPnl),c:monthPnl>=0?'var(--c4)':'var(--c2)'},{l:'Wins',v:monthW,c:'var(--c4)'},{l:'Losses',v:monthL,c:'var(--c2)'},{l:'WR',v:mwr,c:'var(--c)'}].map(function(x){return '<div class="g" style="padding:8px 12px;text-align:center"><div class="orb" style="font-size:16px;font-weight:700;color:'+x.c+'">'+x.v+'</div><div class="orb" style="font-size:7px;color:var(--txt2)">'+x.l+'</div></div>';}).join('');
-  }catch(e){console.error('renderCalendar error:',e);}
-}
-
-// ============================================================
-// RISK MATRIX
-// ============================================================
-function calcLot(){
-  var risk=parseFloat(el('r-risk').value)||100;
-  var sl=parseFloat(el('r-sl').value)||50;
-  var pair=el('r-pair').value||'XAUUSD';
-  var pipVals={XAUUSD:10,EURUSD:10,GBPUSD:10,USDJPY:9.1,US30:1,NAS100:1,BTCUSD:1,OTHER:10};
-  var pv=pipVals[pair]||10;
-  var lot=(risk/(sl*pv)).toFixed(2);
-  var lr=el('lot-result');if(lr)lr.textContent=lot;
-  var ld=el('lot-detail');if(ld)ld.textContent='Risk: '+fmt(risk)+' | SL: '+sl+' pips';
-}
-
-function calcKelly(){
-  var wr=parseFloat(el('k-wr').value)||50;
-  var rr=parseFloat(el('k-rr').value)||2;
-  var p=wr/100,q=1-p;
-  var kelly=p>0&&q>0&&rr>0?(p*rr-q)/rr*100:0;
-  var ev=(p*rr)-q;
-  var ruin=ev>=0?Math.max(0,(1-ev)*10):Math.min(99,q/(p||.001)*100);
-  var kf=el('kelly-full');if(kf)kf.textContent=kelly.toFixed(1)+'%';
-  var kh=el('kelly-half');if(kh)kh.textContent=(kelly/2).toFixed(1)+'%';
-  var ke=el('kelly-ev');if(ke){ke.textContent=ev.toFixed(3)+'R';ke.style.color=ev>0?'var(--c4)':'var(--c2)';}
-  var kr=el('kelly-ruin');if(kr){kr.textContent=ruin.toFixed(1)+'%';kr.style.color=ruin<5?'var(--c4)':ruin<20?'#fbbf24':'var(--c2)';}
-}
-
-function runMonteCarlo(){
-  try{
-    var wr=parseFloat(el('k-wr').value)||50;
-    var rr=parseFloat(el('k-rr').value)||2;
-    var bal=parseFloat(el('k-bal').value)||1000;
-    var runs=Math.min(parseInt(el('mc-runs').value)||500,2000);
-    var p=wr/100;var risk=0.02;
-    var results=[];
-    for(var sim=0;sim<runs;sim++){
-      var b=bal;var eq=[b];
-      for(var t=0;t<50;t++){var r=b*risk;b+=Math.random()<p?r*rr:-r;if(b<=0){b=0;break;}eq.push(parseFloat(b.toFixed(2)));}
-      results.push(eq);
-    }
-    var canvas=el('monte-chart');if(!canvas||typeof Chart==='undefined')return;
-    try{if(chartsMap.monte)chartsMap.monte.destroy();}catch(e){}
-    var sample=results.slice(0,40);
-    chartsMap.monte=new Chart(canvas.getContext('2d'),{
-      type:'line',
-      data:{labels:Array.from({length:51},function(_,i){return i;}),datasets:sample.map(function(r,i){return{data:r,borderColor:'rgba(0,245,255,'+(i<8?0.3:0.07)+')',borderWidth:i<8?1:.5,fill:false,pointRadius:0,tension:.3};})},
-      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.025)'},ticks:{color:'#5a8a9a',font:{size:8},callback:function(v){return'$'+v;}}}}}
-    });
-    var survived=results.filter(function(r){return r[r.length-1]>0;}).length;
-    var finals=results.map(function(r){return r[r.length-1];});
-    var avg=finals.reduce(function(a,b){return a+b;},0)/finals.length;
-    var best=Math.max.apply(null,finals);var worst=Math.min.apply(null,finals);
-    var ms=el('mc-survived');if(ms)ms.textContent=survived+'/'+results.length;
-    var ma=el('mc-avg');if(ma)ma.textContent=fmt(avg);
-    var mb=el('mc-best');if(mb)mb.textContent=fmt(best);
-    var mw=el('mc-worst');if(mw)mw.textContent=fmt(worst);
-    var mr=el('mc-results');if(mr)mr.style.display='grid';
-  }catch(e){console.error('Monte Carlo error:',e);}
-}
-
-function updateDrawdownShield(s){
-  var dd=s.maxDD;
-  var sd=el('shield-dd');if(sd){sd.textContent='-'+pct(dd);sd.style.color=dd>10?'var(--c2)':'var(--c4)';}
-  ['5','10','20'].forEach(function(v){
-    var e=el('dd-shield-'+v);if(!e)return;
-    if(dd>=parseFloat(v)){e.style.boxShadow='0 0 10px rgba(255,0,110,.15)';if(!e.querySelector('.ddt'))e.insertAdjacentHTML('beforeend','<div class="ddt" style="font-size:7px;color:var(--c2);font-family:Orbitron;margin-top:4px">\u26A0 TRIGGERED</div>');}
-    else{e.style.boxShadow='';e.querySelectorAll('.ddt').forEach(function(x){x.remove();});}
+    processed.push({...t, idx: i, riskAmt, rewardAmt, lotSize, pnl, endBal: bal});
   });
+
+  let totalClosed = wins + losses; let wr = totalClosed > 0 ? (wins / totalClosed) * 100 : 0;
+  let pf = lossVal > 0 ? (profit / lossVal) : (profit > 0 ? 99.99 : 0);
+  let ev = (wr/100 * p.config.rr) - (1 - wr/100);
+  let netProf = bal - p.config.bal; let consist = (netProf > 0 && maxSingleTradeProfit > 0) ? (maxSingleTradeProfit / netProf) * 100 : 0;
+
+  return { bal, maxDD, maxDailyDD, wins, losses, totalClosed, wr, pf, ev, streak, equityCurve, consist, trades: processed, stratMap, sessMap };
 }
 
-// ============================================================
-// SWARM AI — fixed: no JSON in template literal
-// ============================================================
-var MODEL_NAMES=['Alpha (Trend)','Beta (Pattern)','Gamma (News)','Delta (Flow)'];
-var MODEL_ICONS=['📈','🔷','📰','🌊'];
+function renderAll() {
+  let s = computeStats(); let c = cur().config;
+  el('hdr-wr').textContent = pct(s.wr); el('hdr-pf').textContent = s.pf.toFixed(2);
+  el('hdr-equity').textContent = fmt(s.bal); el('hdr-equity').style.color = s.bal < c.bal ? 'var(--danger)' : s.bal > c.bal ? 'var(--success)' : 'var(--text-main)';
 
-function generateSwarm(){
-  var asset=el('swarm-asset').value||'XAUUSD';
-  var tf=el('swarm-tf').value||'H1';
-  var key=state.apiKey;
-  if(key){generateSwarmAI(asset,tf,key);}
-  else{
-    var dirs=['BULL','BEAR'];
-    var dir=function(){return dirs[Math.random()>.45?0:1];};
-    var conf=function(){return Math.floor(45+Math.random()*45);};
-    var reasons={BULL:['Price above key MA. Bullish structure intact.','Higher high confirmed. Momentum favorable.','Positive catalyst detected.','Institutional accumulation visible.'],BEAR:['Rejected at resistance. Bearish divergence.','Lower low formed. Declining momentum.','Risk-off sentiment prevailing.','Smart money distribution observed.']};
-    var models=[0,1,2,3].map(function(i){var d=dir();return{name:MODEL_NAMES[i],icon:MODEL_ICONS[i],direction:d,confidence:conf(),reason:reasons[d][i]};});
-    var bullCount=models.filter(function(m){return m.direction==='BULL';}).length;
-    var consensus=bullCount>=3?'BULL':bullCount<=1?'BEAR':'NEUTRAL';
-    var overallConf=Math.round(models.reduce(function(a,m){return a+m.confidence;},0)/4);
-    renderSwarmSignals(models,consensus,overallConf);
-  }
+  el('sc-trades').textContent = s.totalClosed; el('sc-wr').textContent = pct(s.wr); el('sc-wl').textContent = `${s.wins} ชนะ / ${s.losses} แพ้`;
+  el('sc-pf').textContent = s.pf.toFixed(2); el('sc-ev').textContent = s.ev.toFixed(2) + 'R'; el('sc-streak').textContent = s.streak;
+  el('sc-daily-dd').textContent = '-' + pct(s.maxDailyDD); el('sc-max-dd').textContent = '-' + pct(s.maxDD);
+  el('sc-daily-dd').style.color = s.maxDailyDD >= c.dailyDD ? 'var(--danger)' : s.maxDailyDD >= c.dailyDD*0.8 ? 'var(--warning)' : 'var(--success)';
+  el('sc-max-dd').style.color = s.maxDD >= c.maxDD ? 'var(--danger)' : s.maxDD >= c.maxDD*0.8 ? 'var(--warning)' : 'var(--success)';
+  
+  el('sc-daily-dd').nextElementSibling.nextElementSibling.textContent = `ลิมิต: ${c.dailyDD}%`;
+  el('sc-max-dd').nextElementSibling.nextElementSibling.textContent = `ลิมิต: ${c.maxDD}%`;
+
+  el('sc-consist').textContent = pct(s.consist); el('sc-consist').style.color = s.consist > 50 ? 'var(--danger)' : s.consist > 40 ? 'var(--warning)' : 'var(--purple)';
+
+  renderJournalTable(s.trades);
+  if(currentView === 'terminal') renderEquityChart(s);
+  if(currentView === 'analytics') renderAnalytics(s);
+  if(currentView === 'risk') { calcLot(); calcScaleOut(); }
+  if(currentView === 'vault') renderVault();
 }
 
-async function generateSwarmAI(asset,tf,key){
-  var empty=el('swarm-empty');if(empty){empty.style.display='flex';empty.innerHTML='<div class="orb" style="font-size:10px;color:var(--c);letter-spacing:.15em;animation:gp 1s infinite">ANALYZING '+asset+' '+tf+'...</div>';}
-  var sc=el('swarm-consensus');if(sc)sc.style.display='none';
-  var sm=el('swarm-models');if(sm)sm.innerHTML='';
-  try{
-    // Build prompt string separately to avoid template literal issues
-    var jsonTemplate='{"alpha":{"direction":"BULL","confidence":70,"reason":"brief"},"beta":{"direction":"BEAR","confidence":55,"reason":"..."},"gamma":{"direction":"BULL","confidence":65,"reason":"..."},"delta":{"direction":"NEUTRAL","confidence":50,"reason":"..."},"consensus":"BULL","overall":68}';
-    var prompt='Analyze '+asset+' on '+tf+'. Return JSON only: '+jsonTemplate;
-    var res=await callAI([{role:'user',parts:[{text:prompt}]}],'Return ONLY valid JSON. No markdown, no explanation.',key);
-    var clean=res.replace(/```json|```/g,'').trim();
-    var data=JSON.parse(clean);
-    var models=['alpha','beta','gamma','delta'].map(function(k,i){return {name:MODEL_NAMES[i],icon:MODEL_ICONS[i],direction:data[k].direction,confidence:data[k].confidence,reason:data[k].reason};});
-    renderSwarmSignals(models,data.consensus||'NEUTRAL',data.overall||60);
-  }catch(e){if(empty)empty.innerHTML='<div style="color:var(--c2);font-size:10px">Error: '+e.message+'</div>';}
+/* ============================================================
+   JOURNAL & CSV
+   ============================================================ */
+function addTradeRow(silent=false) { cur().trades.push({ status: 'pending', asset: '', dir: '', strategy: '', session: '', mood: '', notes: '' }); if(!silent){saveState(); renderAll();} }
+function updateT(idx, field, val) { cur().trades[idx][field] = val; saveState(); renderAll(); }
+function setStatus(idx, status, e) { 
+  let t = cur().trades[idx]; 
+  if(status==='win' && t.status!=='win') { playFX('win'); if(window.setWarp){ setWarp(true); setTimeout(()=>setWarp(false),2000); } if(e) triggerExplosion(e.clientX, e.clientY); }
+  else if(status==='loss' && t.status!=='loss') playFX('loss');
+  t.status = status; saveState(); renderAll(); 
+}
+function mkOpts(arr, sel) { return arr.map(a => `<option value="${a}" ${a===sel?'selected':''}>${a}</option>`).join(''); }
+
+function renderJournalTable(trades) {
+  let tbody = el('journal-body'); if(!tbody) return;
+  let html = ''; [...trades].reverse().forEach(t => {
+    let isW = t.status==='win', isL = t.status==='loss';
+    let bg = isW ? 'var(--success-bg)' : isL ? 'var(--danger-bg)' : 'transparent';
+    let pnlTxt = t.status!=='pending' ? (t.pnl>0 ? `+${fmt(t.pnl)}` : fmt(t.pnl)) : '...';
+    let pnlColor = isW ? 'var(--success)' : isL ? 'var(--danger)' : 'var(--text-muted)';
+    html += `<tr style="background:${bg}">
+      <td class="mono font-bold text-muted">#${t.idx+1}</td>
+      <td class="td-input"><div class="text-xs text-muted">เสี่ยง: ${fmt(t.riskAmt)}</div></td>
+      <td class="td-input"><select onchange="updateT(${t.idx}, 'asset', this.value)"><option value="">-</option>${mkOpts(ASSETS, t.asset)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx}, 'dir', this.value)"><option value="">-</option>${mkOpts(DIRS, t.dir)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx}, 'strategy', this.value)"><option value="">-</option>${mkOpts(STRATEGIES, t.strategy)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx}, 'session', this.value)"><option value="">-</option>${mkOpts(SESSIONS, t.session)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx}, 'mood', this.value)"><option value="">-</option>${mkOpts(MOODS, t.mood)}</select></td>
+      <td style="text-align:center">
+        <div style="display:flex;gap:4px;justify-content:center" data-html2canvas-ignore="true">
+          <button class="badge ${isW?'badge-success':'btn-outline'}" onclick="setStatus(${t.idx}, 'win', event)">ชนะ</button>
+          <button class="badge ${isL?'badge-danger':'btn-outline'}" onclick="setStatus(${t.idx}, 'loss')">แพ้</button>
+        </div>
+        <div class="mono font-bold" style="color:${pnlColor};font-size:11px;margin-top:4px">${pnlTxt}</div>
+      </td>
+      <td class="mono font-bold" style="text-align:right;color:${t.status!=='pending'?'var(--text-main)':'var(--text-muted)'}">${t.status!=='pending'?fmt(t.endBal):'-'}</td>
+      <td style="text-align:center" data-html2canvas-ignore="true">
+        <button class="btn btn-outline btn-sm text-primary" style="padding:4px 8px" onclick="openNotes(${t.idx})">✎</button>
+        <button class="btn btn-outline btn-sm text-danger" style="padding:4px 8px" onclick="if(confirm('ต้องการลบออเดอร์นี้หรือไม่?')){ cur().trades.splice(${t.idx},1); saveState(); renderAll(); }">✕</button>
+      </td>
+    </tr>`;
+  }); tbody.innerHTML = html;
 }
 
-function renderSwarmSignals(models,consensus,overallConf){
-  var empty=el('swarm-empty');if(empty)empty.style.display='none';
-  var cColor=consensus==='BULL'?'var(--c4)':consensus==='BEAR'?'var(--c2)':'var(--txt2)';
-  var cBg=consensus==='BULL'?'rgba(6,214,160,.08)':consensus==='BEAR'?'rgba(255,0,110,.08)':'rgba(90,138,154,.05)';
-  var cBorder=consensus==='BULL'?'rgba(6,214,160,.25)':consensus==='BEAR'?'rgba(255,0,110,.25)':'rgba(90,138,154,.15)';
-  var consEl=el('swarm-consensus');
-  if(consEl){consEl.style.display='block';consEl.style.background=cBg;consEl.style.border='2px solid '+cBorder;}
-  var ct=el('consensus-text');if(ct){ct.textContent=consensus;ct.style.color=cColor;}
-  var cc=el('consensus-conf');if(cc)cc.textContent='Confidence: '+overallConf+'% | '+new Date().toLocaleTimeString();
-  var sm=el('swarm-models');if(!sm)return;
-  sm.innerHTML=models.map(function(m){
-    var dc=m.direction==='BULL'?'var(--c4)':m.direction==='BEAR'?'var(--c2)':'var(--txt2)';
-    var db=m.direction==='BULL'?'rgba(6,214,160,.08)':m.direction==='BEAR'?'rgba(255,0,110,.08)':'rgba(90,138,154,.05)';
-    var dborder=m.direction==='BULL'?'rgba(6,214,160,.2)':m.direction==='BEAR'?'rgba(255,0,110,.2)':'rgba(90,138,154,.1)';
-    return '<div class="sig-card" style="background:'+db+';border:1px solid '+dborder+'"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span class="orb" style="font-size:9px;color:var(--txt)">'+m.icon+' '+m.name+'</span><span class="badge" style="background:'+db+';color:'+dc+';border:1px solid '+dborder+'">'+m.direction+'</span></div><div style="margin-bottom:5px"><div style="display:flex;justify-content:space-between;font-size:7px;color:var(--txt2);font-family:Orbitron;margin-bottom:2px"><span>CONFIDENCE</span><span style="color:'+dc+'">'+m.confidence+'%</span></div><div class="sig-bar"><div class="sig-fill" style="width:'+m.confidence+'%;background:'+dc+';opacity:.8"></div></div></div><div class="mono" style="font-size:9px;color:var(--txt2);line-height:1.4">'+m.reason+'</div></div>';
-  }).join('');
-}
+let actNoteIdx=null;
+function openNotes(idx){ actNoteIdx=idx; let t=cur().trades[idx]; el('note-entry').value=t.entry||''; el('note-exit').value=t.exit||''; el('note-img').value=t.img||''; el('note-text').value=t.notes||''; el('note-modal').style.display='flex'; }
+function closeNoteModal(){ el('note-modal').style.display='none'; }
+function saveNote(){ if(actNoteIdx==null)return; let t=cur().trades[actNoteIdx]; t.entry=el('note-entry').value; t.exit=el('note-exit').value; t.img=el('note-img').value; t.notes=el('note-text').value; saveState(); renderAll(); closeNoteModal(); }
 
-// ============================================================
-// INST FLOW
-// ============================================================
-var FLOW_ASSETS=['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD','CRUDE'];
-var flowData=[];
-
-function renderFlowTable(){
-  if(!flowData.length){
-    flowData=FLOW_ASSETS.map(function(a){return{asset:a,retailLong:Math.floor(20+Math.random()*60),instBias:Math.random()>.5?'LONG':'SHORT',instConf:Math.floor(40+Math.random()*50),cot:Math.floor(-80+Math.random()*160),sentiment:Math.random()>.5?'Risk-On':'Risk-Off'};});
-  }
-  var fb=el('flow-body');if(!fb)return;
-  fb.innerHTML=flowData.map(function(d){
-    return '<tr onclick="showFlowDetail(\''+d.asset+'\')" style="cursor:pointer"><td><span class="orb" style="font-size:10px;font-weight:700;color:var(--c)">'+d.asset+'</span></td><td><div style="display:flex;align-items:center;gap:4px"><div style="width:60px;height:4px;background:rgba(6,214,160,.1);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--c4);width:'+d.retailLong+'%"></div></div><span class="mono" style="font-size:8px;color:var(--c4)">'+d.retailLong+'%</span></div></td><td><div style="display:flex;align-items:center;gap:4px"><div style="width:60px;height:4px;background:rgba(255,0,110,.1);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--c2);width:'+(100-d.retailLong)+'%"></div></div><span class="mono" style="font-size:8px;color:var(--c2)">'+(100-d.retailLong)+'%</span></div></td><td><span class="badge '+(d.instBias==='LONG'?'bw':'bl')+'">'+d.instBias+'</span></td><td><div style="display:flex;align-items:center;gap:4px"><div style="width:40px;height:4px;background:rgba(0,245,255,.08);border-radius:2px;overflow:hidden"><div style="height:100%;background:var(--c);width:'+d.instConf+'%"></div></div><span class="mono" style="font-size:8px;color:var(--c)">'+d.instConf+'%</span></div></td><td><span class="mono" style="font-size:10px;font-weight:700;color:'+(d.cot>0?'var(--c4)':'var(--c2)')+'">'+( d.cot>0?'+':'')+d.cot+'</span></td><td><span class="mono" style="font-size:9px;color:'+(d.sentiment==='Risk-On'?'var(--c4)':'var(--c2)')+'">'+d.sentiment+'</span></td></tr>';
-  }).join('');
-}
-
-function showFlowDetail(asset){
-  var d=null;flowData.forEach(function(f){if(f.asset===asset)d=f;});if(!d)return;
-  var fd=el('flow-detail');if(!fd)return;
-  fd.innerHTML='<div class="orb" style="font-size:14px;font-weight:700;color:var(--c);margin-bottom:3px">'+d.asset+'</div><div class="orb" style="font-size:7px;color:var(--txt2);margin-bottom:12px">FLOW ANALYSIS</div>'+[{l:'Inst Bias',v:d.instBias,c:d.instBias==='LONG'?'var(--c4)':'var(--c2)'},{l:'Confidence',v:d.instConf+'%',c:'var(--c)'},{l:'COT Net',v:(d.cot>0?'+':'')+d.cot+'K',c:d.cot>0?'var(--c4)':'var(--c2)'},{l:'Sentiment',v:d.sentiment,c:d.sentiment==='Risk-On'?'var(--c4)':'var(--c2)'},{l:'Retail LONG',v:d.retailLong+'%',c:'#fbbf24'}].map(function(x){return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span class="orb" style="font-size:8px;color:var(--txt2)">'+x.l+'</span><span class="mono" style="font-size:9px;color:'+x.c+';font-weight:700">'+x.v+'</span></div>';}).join('')+'<div style="margin-top:10px;padding:8px;background:rgba(0,0,0,.3);border-radius:7px;font-size:9px;color:var(--txt2);line-height:1.5">Signal: '+(d.instBias==='LONG'?'Inst NET LONG. Retail SHORT = potential squeeze.':'Inst NET SHORT. Retail LONG = potential markdown.')+'</div>';
-}
-
-// ============================================================
-// GOD-EYE
-// ============================================================
-function renderGodMode(){
-  var assets=['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD','CRUDE'];
-  var matrix={};
-  assets.forEach(function(a){
-    matrix[a]={};
-    assets.forEach(function(b){
-      if(a===b){matrix[a][b]=1;}
-      else if(matrix[b]&&matrix[b][a]!=null){matrix[a][b]=matrix[b][a];}
-      else{
-        var c=(Math.random()*2-1)*.65;
-        if((a==='EURUSD'&&b==='GBPUSD')||(a==='GBPUSD'&&b==='EURUSD'))c=.6+Math.random()*.2;
-        if((a==='US30'&&b==='NAS100')||(a==='NAS100'&&b==='US30'))c=.7+Math.random()*.2;
-        if((a==='USDJPY'&&b==='XAUUSD')||(a==='XAUUSD'&&b==='USDJPY'))c=-.3-Math.random()*.2;
-        matrix[a][b]=parseFloat(c.toFixed(2));
+function importTradesCSV(e){
+  let f = e.target.files[0]; if(!f) return; let r = new FileReader();
+  r.onload = ev => {
+    let lines = ev.target.result.split('\n'); let imp = 0;
+    for(let i=1; i<lines.length; i++){
+      let c = lines[i].split(',');
+      if(c.length >= 3){
+        let pnl = parseFloat(c[3]||0); let s = c[2].toLowerCase(); let st = s.includes('w')?'win':(s.includes('l')?'loss':'pending');
+        cur().trades.push({ status:st, asset:c[0].trim()||'Other', dir:c[1].trim()||'LONG', strategy:c[4]?c[4].trim():'', pnlOverride:isNaN(pnl)?null:pnl, notes:'CSV Import' }); imp++;
       }
-    });
-  });
-  function getCorrColor(v){if(v===1)return'#00f5ff';if(v>.7)return'#06d6a0';if(v>.3)return'#84fab0';if(v>-.3)return'#5a8a9a';if(v>-.7)return'#ff7eb3';return'#ff006e';}
-  var prices={XAUUSD:'2,318.45',EURUSD:'1.0892',GBPUSD:'1.2734',USDJPY:'151.2',US30:'38,934',NAS100:'17,823',BTCUSD:'67,234',CRUDE:'83.45'};
-  var changes={XAUUSD:.82,EURUSD:.23,GBPUSD:.15,USDJPY:-.12,US30:.45,NAS100:-.32,BTCUSD:-1.24,CRUDE:.67};
-  var mt=el('market-ticker');if(mt)mt.innerHTML=assets.map(function(a){return '<div class="g" style="padding:8px 12px;flex-shrink:0"><div class="orb" style="font-size:8px;font-weight:700;color:var(--c);margin-bottom:2px">'+a+'</div><div class="mono" style="font-size:12px;font-weight:700">'+prices[a]+'</div><div class="mono" style="font-size:8px;color:'+(changes[a]>=0?'var(--c4)':'var(--c2)')+'">'+( changes[a]>=0?'+':'')+changes[a]+'%</div></div>';}).join('');
-  var n=assets.length;
-  var headerRow='<div></div>'+assets.map(function(a){return '<div class="orb" style="text-align:center;font-size:7px;color:var(--txt2);padding:3px 0">'+a+'</div>';}).join('');
-  var rows=assets.map(function(a){return '<div class="orb" style="font-size:7px;color:var(--c);font-weight:700;display:flex;align-items:center">'+a+'</div>'+assets.map(function(b){var v=matrix[a][b];var col=getCorrColor(v);return '<div class="corr-cell" style="background:'+col+'22;border:1px solid '+col+'44;color:'+col+'" title="'+a+' vs '+b+': '+v+'">'+v.toFixed(2)+'</div>';}).join('');}).join('');
-  var cm=el('corr-matrix');if(cm)cm.innerHTML='<div style="display:grid;grid-template-columns:60px repeat('+n+',1fr);gap:3px">'+headerRow+rows+'</div>';
-  var cl=el('corr-legend');if(cl)cl.innerHTML=[{r:'> +0.7',l:'Strong +',c:'#06d6a0'},{r:'+0.3 to +0.7',l:'Moderate +',c:'#84fab0'},{r:'-0.3 to +0.3',l:'Neutral',c:'#5a8a9a'},{r:'-0.7 to -0.3',l:'Moderate -',c:'#ff7eb3'},{r:'< -0.7',l:'Strong -',c:'#ff006e'}].map(function(e){return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><div style="width:20px;height:10px;border-radius:2px;background:'+e.c+'33;border:1px solid '+e.c+'55;flex-shrink:0"></div><span class="mono" style="font-size:8px;color:var(--txt2)">'+e.r+'</span><span class="orb" style="font-size:7px;color:'+e.c+';margin-left:auto">'+e.l+'</span></div>';}).join('');
-  var gs=el('god-signals');if(gs)gs.innerHTML=[{l:'Dollar Strength',v:'DXY Neutral',c:'var(--txt2)',i:'💵'},{l:'Risk Appetite',v:'Risk-On',c:'var(--c4)',i:'📈'},{l:'Volatility',v:'VIX Moderate',c:'#fbbf24',i:'⚡'},{l:'Market Phase',v:'Distribution',c:'var(--c2)',i:'🔄'},{l:'Inst. Activity',v:'Accumulating',c:'var(--c4)',i:'🏦'},{l:'Session',v:'NY > LDN',c:'var(--c)',i:'🕐'}].map(function(x){return '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04)"><span class="mono" style="font-size:9px;color:var(--txt2)">'+x.i+' '+x.l+'</span><span class="orb" style="font-size:8px;color:'+x.c+'">'+x.v+'</span></div>';}).join('');
+    } saveState(); renderAll(); alert(`นำเข้าออเดอร์สำเร็จ ${imp} รายการ!`); e.target.value='';
+  }; r.readAsText(f);
 }
-
-// ============================================================
-// KNOWLEDGE VAULT — fixed markdown $2 -> $1
-// ============================================================
-function renderVault(){
-  var s=computeStats();var level=s.level;
-  var vl=el('vault-level');if(vl)vl.textContent='LVL '+level;
-  var vg=el('vault-grid');if(!vg)return;
-  vg.innerHTML=state.articles.map(function(a){
-    var locked=level<a.levelRequired;
-    var lockHtml=locked?'<div style="position:absolute;inset:0;background:rgba(2,4,8,.8);backdrop-filter:blur(3px);z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:10px"><div style="font-size:24px">🔒</div><div class="orb" style="font-size:8px;color:var(--txt3)">REQUIRES LVL '+a.levelRequired+'</div></div>':'';
-    var readOnclick=locked?'':'openArticle(\''+a.id+'\')';
-    return '<div class="g" style="padding:14px;position:relative;overflow:hidden">'+lockHtml+'<div style="display:flex;justify-content:space-between;margin-bottom:7px"><span class="badge bc">'+a.category+'</span><span class="orb" style="font-size:7px;color:var(--txt2)">LVL '+a.levelRequired+'</span></div><div class="orb" style="font-size:12px;font-weight:700;color:var(--txt);margin-bottom:5px;line-height:1.3">'+a.title+'</div><div style="font-size:9px;color:var(--txt2);margin-bottom:10px;line-height:1.4">'+a.excerpt+'</div><div style="display:flex;gap:5px"><button class="btn btn-c btn-sm" style="flex:1;justify-content:center" onclick="'+readOnclick+'">📖 Read</button><button class="btn btn-sm" style="padding:4px 7px;background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08);color:var(--txt2)" onclick="openArticleEditor(\''+a.id+'\')">✏</button><button class="btn btn-sm" style="padding:4px 7px;background:rgba(255,0,110,.04);border-color:rgba(255,0,110,.12);color:var(--c2)" onclick="deleteArticle(\''+a.id+'\')">🗑</button></div></div>';
-  }).join('');
-}
-
-function openArticle(id){
-  var a=null;state.articles.forEach(function(x){if(x.id===id)a=x;});if(!a)return;
-  var t=el('art-view-title');if(t)t.textContent=a.title;
-  var m=el('art-view-meta');if(m)m.textContent=(a.category||'')+' | LVL '+(a.levelRequired||1);
-  var toc=el('art-view-toc');if(toc)toc.innerHTML='<div class="orb" style="font-size:8px;color:var(--txt2);margin-bottom:8px">CONTENTS</div><div style="padding:7px 8px;border-radius:7px;background:rgba(0,245,255,.06);border:1px solid rgba(0,245,255,.15);color:var(--c);font-size:10px">'+a.title+'</div>';
-  var ac=el('art-view-content');if(ac)ac.innerHTML='<div class="orb" style="font-size:20px;font-weight:700;color:var(--c);margin-bottom:14px">'+a.title+'</div><div style="font-size:11px;line-height:1.75;color:var(--txt2)">'+mdToHtml(a.content||'')+'</div>';
-  var am=el('article-modal');if(am)am.style.display='flex';
-}
-function closeArticleModal(){var m=el('article-modal');if(m)m.style.display='none';}
-
-function mdToHtml(md){
-  return md
-    .replace(/^# (.+)$/gm,'<h1 style="font-family:Orbitron,sans-serif;font-size:18px;font-weight:700;color:var(--c);margin:14px 0 8px">$1</h1>')
-    .replace(/^## (.+)$/gm,'<h2 style="font-family:Orbitron,sans-serif;font-size:14px;font-weight:700;color:var(--txt);margin:12px 0 6px">$1</h2>')
-    .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--c)">$1</strong>')
-    .replace(/`([^`]+)`/g,'<code style="background:rgba(0,0,0,.5);padding:2px 6px;border-radius:4px;color:#ff79c6;font-family:JetBrains Mono,monospace;font-size:10px">$1</code>')
-    .replace(/^- (.+)$/gm,'<li style="color:var(--txt2);margin:3px 0;margin-left:12px">$1</li>')
-    .replace(/^> (.+)$/gm,'<blockquote style="border-left:2px solid var(--c);padding-left:10px;color:var(--txt2);font-style:italic;margin:8px 0">$1</blockquote>')
-    .replace(/\n\n/g,'<br><br>');
-}
-
-var _editingArticle=null;
-function openArticleEditor(id){
-  _editingArticle=id;
-  var a=null;if(id)state.articles.forEach(function(x){if(x.id===id)a=x;});
-  function setv(eid,v){var e=el(eid);if(e)e.value=v;}
-  setv('art-title',a?a.title:'');setv('art-cat',a?a.category:'Strategy');setv('art-lvl',a?a.levelRequired:1);setv('art-excerpt',a?a.excerpt:'');setv('art-content',a?a.content:'');
-  var m=el('editor-modal');if(m)m.style.display='flex';
-}
-function closeEditorModal(){var m=el('editor-modal');if(m)m.style.display='none';_editingArticle=null;}
-function saveArticle(){
-  function gv(id){var e=el(id);return e?e.value:'';}
-  var data={title:gv('art-title'),category:gv('art-cat'),levelRequired:parseInt(gv('art-lvl'))||1,excerpt:gv('art-excerpt'),content:gv('art-content')};
-  if(_editingArticle){
-    for(var i=0;i<state.articles.length;i++){if(state.articles[i].id===_editingArticle){Object.assign(state.articles[i],data);break;}}
-  }else{data.id='art_'+Date.now();state.articles.unshift(data);}
-  saveState();renderVault();closeEditorModal();
-}
-function deleteArticle(id){
-  if(!confirm('Delete this article?'))return;
-  state.articles=state.articles.filter(function(a){return a.id!==id;});
-  saveState();renderVault();
-}
-
-// ============================================================
-// TRADINGVIEW — official embed-widget script (correct method)
-// ============================================================
-function loadTVChart(){
-  var container=el('tv-chart-container');if(!container)return;
-  var symbol=el('chart-symbol')?el('chart-symbol').value:'OANDA:XAUUSD';
-  var interval=el('chart-interval')?el('chart-interval').value:'60';
-
-  // Clear previous widget
-  container.innerHTML='';
-
-  var wrapper=document.createElement('div');
-  wrapper.className='tradingview-widget-container';
-  wrapper.style.cssText='height:100%;width:100%';
-
-  var inner=document.createElement('div');
-  inner.className='tradingview-widget-container__widget';
-  inner.style.cssText='height:100%;width:100%';
-
-  var config={
-    autosize:true,
-    symbol:symbol,
-    interval:interval,
-    timezone:'Asia/Bangkok',
-    theme:'dark',
-    style:'1',
-    locale:'en',
-    withdateranges:true,
-    hide_side_toolbar:false,
-    allow_symbol_change:true,
-    details:true,
-    hotlist:true,
-    calendar:false,
-    support_host:'https://www.tradingview.com'
-  };
-
-  var script=document.createElement('script');
-  script.type='text/javascript';
-  script.async=true;
-  script.src='https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js';
-  script.textContent=JSON.stringify(config);
-
-  wrapper.appendChild(inner);
-  wrapper.appendChild(script);
-  container.appendChild(wrapper);
-}
-
-function reloadChart(){
-  loadTVChart();
-}
-
-function loadTVNews(){
-  var container=el('tv-news-container');if(!container)return;
-  container.innerHTML='';
-
-  var wrapper=document.createElement('div');
-  wrapper.className='tradingview-widget-container';
-  wrapper.style.cssText='height:100%;width:100%';
-
-  var inner=document.createElement('div');
-  inner.className='tradingview-widget-container__widget';
-  inner.style.cssText='height:100%;width:100%';
-
-  var config={
-    colorTheme:'dark',
-    isTransparent:true,
-    width:'100%',
-    height:'100%',
-    locale:'en',
-    importanceFilter:'-1,0,1',
-    countryFilter:'us,eu,gb,jp,th'
-  };
-
-  var script=document.createElement('script');
-  script.type='text/javascript';
-  script.async=true;
-  script.src='https://s3.tradingview.com/external-embedding/embed-widget-events.js';
-  script.textContent=JSON.stringify(config);
-
-  wrapper.appendChild(inner);
-  wrapper.appendChild(script);
-  container.appendChild(wrapper);
-}
-
-// ============================================================
-// AI — no template literals with JSON
-// ============================================================
-async function callAI(messages,system,key){
-  var url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key='+key;
-  var body={contents:messages,systemInstruction:{parts:[{text:system}]},generationConfig:{temperature:.7,maxOutputTokens:1000}};
-  var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!res.ok){var e=await res.json().catch(function(){return{};});throw new Error(e.error?e.error.message:'HTTP '+res.status);}
-  var data=await res.json();
-  return data.candidates&&data.candidates[0]&&data.candidates[0].content&&data.candidates[0].content.parts?data.candidates[0].content.parts[0].text:'No response';
-}
-
-async function getForecast(){
-  var key=state.apiKey;var box=el('forecast-box');
-  if(!key){if(box)box.textContent='Set Gemini API Key in Neural Link tab first.';return;}
-  if(box)box.innerHTML='<span style="color:var(--c);animation:gp 1s infinite">Generating forecast...</span>';
-  try{
-    var p=cur();var s=computeStats();
-    var prompt='WR:'+s.wr.toFixed(1)+'% PF:'+s.pf.toFixed(2)+' Balance:$'+p.config.bal+' Risk:'+p.config.risk+'% RR:'+p.config.rr+' Kelly:'+s.kelly.toFixed(1)+'% EV:'+s.expectancy.toFixed(3)+'R. Give concise strategic forecast.';
-    var sys='You are QUANTUM OMEGA AI. Give a concise trading forecast in 80 words max. Use bullet points. Cyberpunk tone.';
-    var res=await callAI([{role:'user',parts:[{text:prompt}]}],sys,key);
-    if(box)box.innerHTML=res.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--c)">$1</strong>');
-  }catch(e){if(box)box.textContent='Error: '+e.message;}
-}
-
-async function getDebrief(){
-  var key=state.apiKey;var box=el('debrief-box');
-  if(!key){if(box)box.textContent='Set Gemini API Key in Neural Link tab first.';return;}
-  var s=computeStats();
-  var stratSum=Object.keys(s.stratMap).map(function(st){var v=s.stratMap[st];return st+':'+v.wins+'W/'+v.losses+'L';}).join(',');
-  var moodSum=Object.keys(s.moodMap).map(function(m){var v=s.moodMap[m];return m+':'+v.wins+'W/'+v.losses+'L';}).join(',');
-  if(box)box.innerHTML='<span style="color:var(--c);animation:gp 1s infinite">Analyzing...</span>';
-  try{
-    var prompt='WR:'+s.wr.toFixed(1)+'% PF:'+s.pf.toFixed(2)+' DD:'+s.maxDD.toFixed(1)+'% EV:'+s.expectancy.toFixed(3)+' Disc:'+s.avgDisc.toFixed(1)+' Strategies:['+stratSum+'] Moods:['+moodSum+']';
-    var sys='You are QUANTUM OMEGA Deep Analytics. Provide trading debrief: 1) Strengths 2) Weaknesses 3) Mood/strategy patterns 4) Action items. Cyberpunk tone. 200 words max.';
-    var res=await callAI([{role:'user',parts:[{text:prompt}]}],sys,key);
-    if(box)box.innerHTML=res.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--c)">$1</strong>');
-  }catch(e){if(box)box.textContent='Error: '+e.message;}
-}
-
-function setNeuralPrompt(text){var ci=el('chat-input');if(ci)ci.value=text;}
-
-async function sendChat(){
-  var input=el('chat-input');var msg=input?input.value.trim():'';if(!msg)return;
-  var key=state.apiKey;if(input)input.value='';
-  var chatBox=el('chat-messages');
-  function addMsg(html,isUser){
-    var div=document.createElement('div');div.style.cssText='display:flex;justify-content:'+(isUser?'flex-end':'flex-start');
-    var bubble=document.createElement('div');
-    bubble.style.cssText='max-width:80%;padding:10px 14px;border-radius:'+(isUser?'14px 14px 4px 14px':'4px 14px 14px 14px')+';background:'+(isUser?'rgba(0,245,255,.12)':'rgba(8,15,26,.8)')+';border:1px solid '+(isUser?'rgba(0,245,255,.25)':'rgba(255,255,255,.06)')+';font-size:11px;line-height:1.6';
-    bubble.innerHTML=html;div.appendChild(bubble);
-    if(chatBox)chatBox.appendChild(div);if(chatBox)chatBox.scrollTop=chatBox.scrollHeight;
-    return div;
-  }
-  addMsg(msg,true);
-  state.aiHistory.push({role:'user',parts:[{text:msg}]});
-  if(!key){addMsg('Please enter your Gemini API key above first.',false);return;}
-  var loading=addMsg('<span style="color:var(--c);animation:gp 1s infinite">Processing...</span>',false);
-  try{
-    var s=computeStats();var p=cur();
-    var ctx='Portfolio: '+p.name+', WR: '+s.wr.toFixed(1)+'%, PF: '+s.pf.toFixed(2)+', Balance: $'+p.config.bal+', Risk: '+p.config.risk+'%, RR: '+p.config.rr;
-    var sys='You are QUANTUM OMEGA Neural AI - expert trading advisor. Context: '+ctx+'. Be concise, direct. Cyberpunk tone.';
-    var res=await callAI(state.aiHistory,sys,key);
-    loading.remove();
-    addMsg(res.replace(/\n/g,'<br>').replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--c)">$1</strong>'),false);
-    state.aiHistory.push({role:'model',parts:[{text:res}]});
-    if(state.aiHistory.length>20)state.aiHistory=state.aiHistory.slice(-20);
-  }catch(e){loading.remove();addMsg('Error: '+e.message,false);}
-}
-
-// ============================================================
-// EXPORT / IMPORT
-// ============================================================
 function exportCSV(){
-  var s=computeStats();
-  var csv='Day,Start Bal,Risk$,Reward$,Lot,Outcome,Asset,Strategy,Session,TF,Grade,Mood,Discipline,Notes,End Bal\n';
-  s.rows.forEach(function(r){csv+=r.day+','+r.startBal.toFixed(2)+','+r.riskAmt.toFixed(2)+','+r.rewardAmt.toFixed(2)+','+r.lotSize.toFixed(2)+','+(r.status||'')+','+(r.asset||'')+','+(r.strategy||'')+','+(r.session||'')+','+(r.tf||'')+','+(r.grade||'')+','+(r.mood||'')+','+(r.discipline||'')+',"'+((r.notes||'').replace(/"/g,"'"))+'",'+r.endBal.toFixed(2)+'\n';});
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='QO_'+cur().name+'.csv';a.click();
+  let s = computeStats(); let csv = 'Trade,Asset,Dir,Status,PnL,Strategy,Session,Mood,Notes,Bal\n';
+  s.trades.forEach(t => csv += `${t.idx+1},${t.asset},${t.dir},${t.status},${t.pnl},${t.strategy},${t.session},${t.mood},"${(t.notes||'').replace(/"/g,"'")}",${t.endBal}\n`);
+  let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'RodeTo1Percent_Export.csv'; a.click();
+}
+function exportToPDF(){
+  el('pdf-header').style.display='block'; el('pdf-date').innerText=new Date().toLocaleString('th-TH');
+  html2pdf().set({margin:0.5, filename:'RodeTo1Percent_Report.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true, logging:false}, jsPDF:{unit:'in',format:'a3',orientation:'landscape'}}).from(el('content')).save().then(()=>el('pdf-header').style.display='none');
 }
 
-function exportXLSX(){
-  if(!window.XLSX){alert('XLSX library not loaded.');return;}
-  try{
-    var s=computeStats();
-    var ws=XLSX.utils.json_to_sheet(s.rows.map(function(r){return{'Day':r.day,'Start Bal':r.startBal,'Risk $':r.riskAmt,'Reward $':r.rewardAmt,'Lot':r.lotSize,'Outcome':r.status,'Asset':r.asset,'Strategy':r.strategy,'Session':r.session,'TF':r.tf,'Grade':r.grade,'Mood':r.mood,'Discipline':r.discipline,'Notes':r.notes,'End Bal':r.endBal};}));
-    var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,'Trades');XLSX.writeFile(wb,'QO_'+cur().name+'.xlsx');
-  }catch(e){alert('Export error: '+e.message);}
+/* ============================================================
+   CHARTS
+   ============================================================ */
+let charts = {};
+function renderEquityChart(s) {
+  if(charts.equity) charts.equity.destroy();
+  charts.equity = new Chart(el('equity-chart').getContext('2d'), {
+    type: 'line', data: { labels: s.equityCurve.map(d=>d.x===0?'Start':`T${d.x}`), datasets: [{ label:'ยอดเงิน (Equity)', data:s.equityCurve.map(d=>d.y), borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,0.1)', borderWidth:2, fill:true, tension:0.1, pointRadius:2 }] },
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.05)'}},y:{grid:{color:'rgba(255,255,255,0.05)'}}} }
+  });
+}
+function renderAnalytics(s) {
+  let closed = s.trades.filter(t => t.status!=='pending');
+  if(charts.bar) charts.bar.destroy();
+  charts.bar = new Chart(el('bar-chart'), { type:'bar', data:{ labels:closed.map(t=>`T${t.idx+1}`), datasets:[{ data:closed.map(t=>t.pnl), backgroundColor:closed.map(t=>t.pnl>=0?'#10b981':'#ef4444') }] }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}} });
+  if(charts.pie) charts.pie.destroy();
+  charts.pie = new Chart(el('pie-chart'), { type:'doughnut', data:{ labels:['ชนะ','แพ้'], datasets:[{ data:[s.wins, s.losses], backgroundColor:['#10b981','#ef4444'], borderWidth:0 }] }, options:{responsive:true, maintainAspectRatio:false, cutout:'75%', plugins:{legend:{display:false}}} });
+  
+  if(charts.radar) charts.radar.destroy();
+  charts.radar = new Chart(el('radar-chart'), { type:'radar', data:{ labels:['Win Rate','P.Factor','ความสม่ำเสมอ','EV'], datasets:[{ data:[s.wr, Math.min(100,s.pf*30), Math.max(0,100-s.consist), Math.min(100, (s.ev+0.5)*100)], borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.2)' }] }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{r:{min:0,max:100,ticks:{display:false}}}} });
+
+  function bHtml(m){ return Object.keys(m).sort((a,b)=>m[b].w-m[a].w).map(k=>{ let v=m[k], t=v.w+v.l, wr=t>0?(v.w/t)*100:0; return `<div style="margin-bottom:12px;font-size:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>${k}</span><span class="mono">${v.w}W ${v.l}L (${wr.toFixed(0)}%)</span></div><div style="height:6px;background:var(--bg-sidebar);border-radius:3px"><div style="height:100%;background:${wr>=50?'var(--success)':'var(--danger)'};width:${wr}%"></div></div></div>`; }).join('') || 'ต้องการข้อมูลเพิ่มเติม...'; }
+  el('strat-breakdown').innerHTML = bHtml(s.stratMap); el('session-breakdown').innerHTML = bHtml(s.sessMap);
 }
 
-function backup(){
-  var d=JSON.stringify({portfolios:state.portfolios,activePort:state.activePort,articles:state.articles,apiKey:state.apiKey,lang:state.lang});
-  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([d],{type:'application/json'}));a.download='QO_backup_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+/* ============================================================
+   RISK, SCALE-OUT & MONTE CARLO
+   ============================================================ */
+let _currentLot = 0;
+function calcLot() {
+  let risk = parseFloat(el('r-risk').value)||100, sl = parseFloat(el('r-sl').value)||20, spread = parseFloat(el('r-spread').value)||0, comm = parseFloat(el('r-comm').value)||0, mul = parseFloat(el('r-pair').value)||10;
+  let lot = risk / (((sl + spread) * mul) + comm);
+  _currentLot = (isFinite(lot)&&lot>0) ? lot : 0;
+  el('lot-result').textContent = _currentLot > 0 ? _currentLot.toFixed(2) : "0.00";
+  calcScaleOut(); 
+}
+function calcScaleOut() {
+  let tp1Pips = parseFloat(el('so-tp1').value)||20;
+  let closePct = parseFloat(el('so-pct').value)||50;
+  let tp2Pips = parseFloat(el('so-tp2').value)||40;
+  let mul = parseFloat(el('r-pair').value)||10;
+  
+  let lot1 = _currentLot * (closePct/100);
+  let lot2 = _currentLot - lot1;
+  
+  let pnl1 = lot1 * tp1Pips * mul;
+  let pnl2 = lot2 * tp2Pips * mul;
+  let totalPnl = pnl1 + pnl2;
+  
+  el('so-result').textContent = totalPnl > 0 ? `+${fmt(totalPnl)}` : "$0.00";
 }
 
-function importData(event){
-  var f=event.target.files[0];if(!f)return;
-  var r=new FileReader();
-  r.onload=function(ev){
-    try{
-      var d=JSON.parse(ev.target.result);
-      if(d.portfolios){
-        state.portfolios=d.portfolios;state.activePort=d.activePort||Number(Object.keys(d.portfolios)[0]);
-        if(d.articles&&d.articles.length)state.articles=d.articles;
-        if(d.apiKey)state.apiKey=d.apiKey;if(d.lang)state.lang=d.lang;
-        saveState();renderPortSelect();loadPortfolio();alert('Import successful!');
-      }else alert('Invalid backup file.');
-    }catch(err){alert('Parse error: '+err.message);}
-  };r.readAsText(f);event.target.value='';
+function runMonteCarlo() {
+  let s = computeStats(); if(s.wr===0) return alert('ต้องมีออเดอร์ที่ปิดแล้วถึงจะจำลองได้');
+  let p = s.wr/100, rr = cur().config.rr, bal = cur().config.bal, rPct = cur().config.risk/100, res = [];
+  for(let i=0; i<500; i++){ let b=bal, c=[b]; for(let t=0; t<100; t++){ let ra=b*rPct; b+=Math.random()<p?(ra*rr):-ra; if(b<=0){b=0;c.push(b);break;} c.push(b); } res.push(c); }
+  let fin = res.map(r=>r[r.length-1]), surv = fin.filter(f=>f>bal*0.5).length;
+  el('mc-avg').textContent=fmt(fin.reduce((a,b)=>a+b,0)/500); el('mc-best').textContent=fmt(Math.max(...fin)); el('mc-worst').textContent=fmt(Math.min(...fin)); el('mc-survived').textContent=pct((surv/500)*100); el('mc-results').style.display='grid';
+  if(charts.monte) charts.monte.destroy();
+  charts.monte = new Chart(el('monte-chart').getContext('2d'), { type:'line', data:{ labels:Array.from({length:101},(_,i)=>i), datasets:res.slice(0,40).map(r=>({data:r, borderColor:'rgba(139,92,246,0.15)', borderWidth:1, fill:false, pointRadius:0})) }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false}}} });
 }
 
-// ============================================================
-// CLOCKS
-// ============================================================
-function updateClocks(){
-  var now=new Date();var utcMs=now.getTime()+now.getTimezoneOffset()*60000;
-  var sessions=[{k:'LDN',offset:1,oh:8,ch:17},{k:'NY',offset:-4,oh:8,ch:17},{k:'TKY',offset:9,oh:9,ch:16},{k:'BKK',offset:7,oh:0,ch:24}];
-  var cc=el('clocks-container');if(!cc)return;
-  cc.innerHTML=sessions.map(function(s){
-    var t=new Date(utcMs+3600000*s.offset);var h=t.getHours();var open=h>=s.oh&&h<s.ch;
-    var ts=t.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-    return '<div style="text-align:center"><div style="font-family:Orbitron,sans-serif;font-size:7px;color:'+(open?'var(--c)':'var(--txt3)')+'"><span style="width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:3px;background:'+(open?'var(--c4)':'rgba(255,0,110,.5)')+'"></span>'+s.k+'</div><span style="font-family:JetBrains Mono,monospace;font-size:9px;color:var(--txt2);display:block;margin-top:1px">'+ts+'</span></div>';
+/* ============================================================
+   KNOWLEDGE VAULT (รองรับ PDF)
+   ============================================================ */
+function mdToHtml(md){ return md.replace(/^# (.+)$/gm,'<h1 style="color:var(--primary);font-family:var(--font-cyber);margin:16px 0 8px;font-size:20px">$1</h1>').replace(/^## (.+)$/gm,'<h2 style="color:var(--text-main);margin:12px 0 8px;font-size:16px">$1</h2>').replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--primary)">$1</strong>').replace(/`([^`]+)`/g,'<code style="background:rgba(0,0,0,0.5);padding:2px 6px;color:#ff79c6;font-family:var(--font-mono)">$1</code>').replace(/^- (.+)$/gm,'<li style="margin-left:16px;margin-bottom:4px">$1</li>').replace(/\n\n/g,'<br><br>'); }
+
+function renderVault(){
+  el('vault-grid').innerHTML = state.articles.map(a => {
+    let icon = a.type === 'pdf' ? '📄 PDF' : '📝 Article';
+    let badgeColor = a.type === 'pdf' ? 'badge-danger' : 'badge-primary';
+    
+    return `<div class="card" style="padding:16px; display:flex; flex-direction:column;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span class="badge ${badgeColor}">${icon}</span>
+        <span class="badge badge-primary" style="background:transparent; border-color:var(--border); color:var(--text-muted)">${a.category}</span>
+      </div>
+      <div class="font-bold text-main" style="font-size:14px;margin-bottom:8px">${a.title}</div>
+      <div class="text-xs text-muted mb-3" style="line-height:1.5; flex:1;">${a.excerpt}</div>
+      <div style="display:flex;gap:6px">
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="openArticle('${a.id}')">เปิดอ่าน</button>
+        <button class="btn btn-outline btn-sm" onclick="openArticleEditor('${a.id}')">✎</button>
+        <button class="btn btn-outline btn-sm text-danger" onclick="if(confirm('ต้องการลบข้อมูลนี้หรือไม่?')){state.articles=state.articles.filter(x=>x.id!=='${a.id}');saveState();renderVault();}">✕</button>
+      </div>
+    </div>`;
   }).join('');
 }
-setInterval(updateClocks,1000);
 
-// ============================================================
-// LANG
-// ============================================================
-function setLang(l){
-  state.lang=l;
-  var be=el('btn-en');var bt=el('btn-th');
-  if(be)be.classList.toggle('active',l==='en');
-  if(bt)bt.classList.toggle('active',l==='th');
-  saveState();
+function openArticle(id){ 
+  let a = state.articles.find(x=>x.id===id); 
+  if(!a) return;
+  el('art-view-title').textContent = a.title; 
+  el('art-view-meta').textContent = `${a.category} | LVL ${a.levelRequired}`; 
+  
+  let contentBox = el('art-view-content');
+  if (a.type === 'pdf') {
+    contentBox.innerHTML = `<iframe src="${a.pdfUrl}" style="width:100%; height:100%; border:none; flex:1; background:#fff;" title="${a.title}"></iframe>`;
+  } else {
+    contentBox.innerHTML = `<div style="padding: 24px;">${mdToHtml(a.content || '')}</div>`;
+  }
+  el('article-modal').style.display = 'flex'; 
 }
 
-// ============================================================
-// PANIC
-// ============================================================
-var PHASES=['INHALE','HOLD','EXHALE','HOLD'];
-var PHASE_COLS=['#00f5ff','#fbbf24','#06d6a0','#8338ec'];
-var _panicPhase=0,_panicCount=4,_panicTimer=null,_noiseCtx=null,_noiseNode=null;
+function closeArticleModal(){ el('article-modal').style.display='none'; el('art-view-content').innerHTML = ''; }
 
-function openPanic(){
-  el('panic-overlay').classList.add('show');
-  _panicPhase=0;_panicCount=4;
-  clearInterval(_panicTimer);
-  _panicTimer=setInterval(function(){
-    _panicCount--;
-    if(_panicCount<=0){_panicPhase=(_panicPhase+1)%4;_panicCount=4;}
-    var bc=el('breath-circle');var ph=el('breath-phase');var cnt=el('breath-count');
-    if(ph){ph.textContent=PHASES[_panicPhase];ph.style.color=PHASE_COLS[_panicPhase];}
-    if(cnt)cnt.textContent=_panicCount;
-    if(bc){bc.style.borderColor=PHASE_COLS[_panicPhase]+'55';bc.style.background=PHASE_COLS[_panicPhase]+'08';}
-  },1000);
-  try{
-    _noiseCtx=new(window.AudioContext||window.webkitAudioContext)();
-    var bufSz=_noiseCtx.sampleRate*2;var buf=_noiseCtx.createBuffer(1,bufSz,_noiseCtx.sampleRate);
-    var data=buf.getChannelData(0);var last=0;
-    for(var i=0;i<bufSz;i++){var w=Math.random()*2-1;data[i]=(last+.02*w)/1.02;last=data[i];data[i]*=3.5;}
-    _noiseNode=_noiseCtx.createBufferSource();_noiseNode.buffer=buf;_noiseNode.loop=true;
-    var gain=_noiseCtx.createGain();gain.gain.value=0;
-    _noiseNode.connect(gain);gain.connect(_noiseCtx.destination);_noiseNode.start();
-    gain.gain.linearRampToValueAtTime(.06,_noiseCtx.currentTime+2);
-  }catch(e){}
+let editArtId=null;
+function toggleEditorType() {
+  let type = el('art-type').value;
+  el('editor-markdown-section').style.display = type === 'markdown' ? 'block' : 'none';
+  el('editor-pdf-section').style.display = type === 'pdf' ? 'block' : 'none';
 }
 
-function closePanic(){
-  el('panic-overlay').classList.remove('show');
-  clearInterval(_panicTimer);
-  if(_noiseNode){try{_noiseNode.stop();}catch(e){}}
-  if(_noiseCtx){try{_noiseCtx.close();}catch(e){}}
-  _noiseCtx=null;_noiseNode=null;
+function openArticleEditor(id){ 
+  editArtId=id; 
+  let a = state.articles.find(x=>x.id===id) || {title:'', category:'', levelRequired:1, excerpt:'', type:'markdown', content:'', pdfUrl:''}; 
+  el('art-title').value = a.title; el('art-cat').value = a.category; el('art-lvl').value = a.levelRequired; 
+  el('art-excerpt').value = a.excerpt; el('art-type').value = a.type || 'markdown';
+  el('art-content').value = a.content || ''; el('art-pdf-url').value = a.pdfUrl || '';
+  toggleEditorType(); el('editor-modal').style.display='flex'; 
 }
 
-// ============================================================
-// INIT
-// ============================================================
-document.addEventListener('DOMContentLoaded',function(){
-  try{
-    renderPortSelect();
-    loadPortfolio();
-    calcLot();
-    calcKelly();
-    updateClocks();
-    var be=el('btn-en');var bt=el('btn-th');
-    if(be)be.classList.toggle('active',state.lang==='en');
-    if(bt)bt.classList.toggle('active',state.lang==='th');
-    var ak=el('api-key');if(ak&&state.apiKey)ak.value=state.apiKey;
-    // Set default start date if not set
-    var p=cur();if(p&&!p.config.startDate){p.config.startDate=new Date().toISOString().split('T')[0];var cd=el('cfg-date');if(cd)cd.value=p.config.startDate;}
-  }catch(e){console.error('Init error:',e);}
-});
+function closeEditorModal(){ el('editor-modal').style.display='none'; }
+
+function saveArticle(){ 
+  let d = {
+    title: el('art-title').value, category: el('art-cat').value, levelRequired: parseInt(el('art-lvl').value)||1, 
+    excerpt: el('art-excerpt').value, type: el('art-type').value, content: el('art-content').value, pdfUrl: el('art-pdf-url').value
+  }; 
+  if(editArtId){ Object.assign(state.articles.find(x=>x.id===editArtId), d); } 
+  else { d.id = 'a' + Date.now(); state.articles.unshift(d); } 
+  saveState(); renderVault(); closeEditorModal(); 
+}
+
+/* ============================================================
+   NEURAL LINK & AI (อัปเดตโมเดลเป็นรุ่นมาตรฐาน gemini-pro)
+   ============================================================ */
+async function callAI(messages, sys, key){
+  // เปลี่ยนชื่อโมเดลจาก 1.5-flash เป็น gemini-pro เพื่อให้รองรับทุก API Key
+  let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
+  try {
+    let res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: messages, 
+        // gemini-pro รุ่นเก่าบางตัวอาจจะไม่รองรับ systemInstruction ตรงๆ เราจึงย้ายคำสั่งระบบไปรวมกับข้อความ
+        generationConfig: {temperature: 0.7, maxOutputTokens: 800}
+      })
+    });
+    
+    let d = await res.json();
+    if(!res.ok) throw new Error(d.error ? d.error.message : `HTTP Error ${res.status}`);
+    return d.candidates[0].content.parts[0].text;
+    
+  } catch(e) {
+    console.error("API Error:", e);
+    if(e.message.includes('Failed to fetch')) {
+      throw new Error('เบราว์เซอร์บล็อกการเชื่อมต่อ (CORS) ลองรันผ่าน Live Server ดูครับ');
+    }
+    throw new Error(`${e.message}`);
+  }
+}
+
+// อัปเดตฟังก์ชันส่งข้อความเพื่อแนบคำสั่งระบบ (System Prompt) เข้าไปในข้อความเลย
+async function sendChat(){
+  let input=el('chat-input'), msg=input.value.trim(), key=state.apiKey, box=el('chat-messages'); if(!msg)return; input.value='';
+  function append(html, user){ let d=document.createElement('div'); d.style.cssText=`display:flex;justify-content:${user?'flex-end':'flex-start'}`; d.innerHTML=`<div style="max-width:80%;padding:12px;border-radius:8px;background:${user?'rgba(56,189,248,0.15)':'rgba(30,41,59,0.9)'};border:1px solid ${user?'rgba(56,189,248,0.3)':'var(--border)'};font-size:12px;line-height:1.6">${html}</div>`; box.appendChild(d); box.scrollTop=box.scrollHeight; return d; }
+  append(msg, true); 
+  
+  let s=computeStats(); 
+  // ฝังคำสั่งควบคุม AI ลงไปในประวัติแชทเลย
+  let sysCtx = `(System: You are an expert trading tutor. Context - Bal:${s.bal}, WR:${s.wr.toFixed(1)}%, PF:${s.pf.toFixed(2)}. Answer in Thai concisely.)\n\n`;
+  
+  state.aiHistory.push({role:'user',parts:[{text: sysCtx + msg}]});
+  if(!key) return append('กรุณาใส่ Gemini API Key ก่อนครับ', false);
+  let load = append('กำลังประมวลผล...', false);
+  try{ 
+    let r=await callAI(state.aiHistory, "", key); 
+    load.remove(); 
+    append(mdToHtml(r), false); 
+    state.aiHistory.push({role:'model',parts:[{text:r}]}); 
+  }catch(e){ load.remove(); append('Error: '+e.message, false); }
+}
+
+/* ============================================================
+   MOCK INTELLIGENCE
+   ============================================================ */
+function generateSwarm(){
+  let m = [0,1,2,3].map(i=>({n:['Alpha','Beta','Gamma','Delta'][i], d:Math.random()>0.5?'BULL':'BEAR', c:Math.floor(50+Math.random()*45)}));
+  let bc = m.filter(x=>x.d==='BULL').length, cons = bc>=3?'BULL':bc<=1?'BEAR':'NEUTRAL';
+  el('swarm-empty').style.display='none'; el('swarm-consensus').style.display='block'; el('consensus-text').textContent=cons; el('consensus-text').className=`cyber text-xl font-bold ${cons==='BULL'?'text-success':cons==='BEAR'?'text-danger':'text-muted'}`; el('consensus-conf').textContent=`ความมั่นใจ: ${Math.round(m.reduce((a,b)=>a+b.c,0)/4)}%`;
+  el('swarm-models').innerHTML = m.map(x=>`<div class="card" style="padding:12px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="cyber text-xs">${x.n}</span><span class="badge ${x.d==='BULL'?'badge-success':'badge-danger'}">${x.d}</span></div><div class="text-xs text-muted">Conf: ${x.c}%</div></div>`).join('');
+}
+function renderFlow(){
+  let f = ASSETS.map(a=>{ let r=Math.floor(20+Math.random()*60); return `<tr><td class="font-bold text-primary">${a}</td><td>${r}%</td><td>${100-r}%</td><td><span class="badge ${Math.random()>0.5?'badge-success':'badge-danger'}">${Math.random()>0.5?'LONG':'SHORT'}</span></td><td>${Math.floor(40+Math.random()*50)}%</td><td><span class="text-${Math.random()>0.5?'success':'danger'}">${Math.random()>0.5?'Risk-On':'Risk-Off'}</span></td></tr>`; }); el('flow-body').innerHTML=f.join('');
+}
+function renderGod(){
+  let a=['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD'];
+  let mt = a.map(x=>`<div class="card" style="padding:8px 16px;flex-shrink:0"><div class="cyber text-xs text-primary">${x}</div><div class="mono font-bold">${(Math.random()*1000).toFixed(2)}</div></div>`).join(''); el('market-ticker').innerHTML=mt;
+  let r = `<div></div>`+a.map(x=>`<div class="cyber text-xs text-muted" style="padding:4px;text-align:center">${x.slice(0,3)}</div>`).join('');
+  a.forEach(x=>{ r+=`<div class="cyber text-xs text-primary" style="display:flex;align-items:center">${x.slice(0,3)}</div>`; a.forEach(y=>{ let v=(x===y)?1:(Math.random()*2-1); let c=v>0.5?'var(--success)':v<-0.5?'var(--danger)':'var(--border)'; r+=`<div class="corr-cell" style="background:rgba(255,255,255,0.05);color:${c};border:1px solid ${c}">${v.toFixed(2)}</div>`; }); });
+  el('corr-matrix').innerHTML = `<div style="display:grid;grid-template-columns:50px repeat(7,1fr);gap:4px">${r}</div>`;
+  el('god-signals').innerHTML = ['DXY ทรงตัว','VIX ผันผวน','เงินทุนไหลเข้าเสี่ยงสูง','สถาบันสะสมของ'].map(x=>`<div style="padding:8px;border-bottom:1px solid var(--border);font-size:12px">${x}</div>`).join('');
+}
+
+/* ============================================================
+   FOCUS TIMER & CHECKLIST
+   ============================================================ */
+let focusTime = 45 * 60; 
+let isFocusRunning = false;
+let isBreak = false;
+let focusInterval;
+
+function toggleTimer() {
+  if(isFocusRunning) { clearInterval(focusInterval); isFocusRunning = false; el('focus-timer').classList.remove('active'); el('focus-timer').classList.remove('break'); }
+  else { 
+    isFocusRunning = true; 
+    el('focus-timer').classList.add(isBreak ? 'break' : 'active');
+    focusInterval = setInterval(() => {
+      focusTime--;
+      let m = Math.floor(focusTime / 60).toString().padStart(2, '0');
+      let s = (focusTime % 60).toString().padStart(2, '0');
+      el('timer-display').textContent = `${m}:${s}`;
+      if(focusTime <= 0) {
+        clearInterval(focusInterval); isFocusRunning = false;
+        playFX('win'); 
+        if(!isBreak) { alert("หมดเวลาโฟกัส! พักสายตา 15 นาที"); focusTime = 15 * 60; isBreak = true; el('focus-timer').classList.remove('active'); }
+        else { alert("หมดเวลาพัก! พร้อมลุยต่อไหม?"); focusTime = 45 * 60; isBreak = false; el('focus-timer').classList.remove('break'); }
+      }
+    }, 1000);
+  }
+}
+
+function openChecklist() {
+  document.querySelectorAll('.check-item input').forEach(cb => cb.checked = false);
+  verifyChecklist(); el('checklist-modal').style.display = 'flex';
+}
+function closeChecklist() { el('checklist-modal').style.display = 'none'; }
+
+function verifyChecklist() {
+  let allChecked = true;
+  document.querySelectorAll('.check-item input').forEach(cb => { if(!cb.checked) allChecked = false; });
+  let btn = el('btn-execute-trade');
+  if(allChecked) {
+    btn.style.pointerEvents = 'auto'; btn.style.background = 'var(--success)'; btn.style.color = '#000'; btn.textContent = 'ไปที่ MT4 / เปิดออเดอร์';
+  } else {
+    btn.style.pointerEvents = 'none'; btn.style.background = 'var(--bg-sidebar)'; btn.style.color = 'var(--text-muted)'; btn.textContent = 'กรุณาทำเช็คลิสต์ให้ครบ';
+  }
+}
+function approveTrade() { closeChecklist(); addTradeRow(false); switchView('journal', document.querySelectorAll('.nav-item')[1]); }
+
+/* ============================================================
+   TRADINGVIEW & PANIC
+   ============================================================ */
+function loadTV(id, type) {
+  let c = el(id); if(!c)return; c.innerHTML='';
+  let w = document.createElement('div'); w.className='tradingview-widget-container'; w.style.height='100%';
+  let s = document.createElement('script'); s.src=`https://s3.tradingview.com/external-embedding/embed-widget-${type}.js`; s.async=true;
+  if(type==='advanced-chart') s.innerHTML = JSON.stringify({autosize:true, symbol:el('chart-symbol')?el('chart-symbol').value:'OANDA:XAUUSD', interval:el('chart-interval')?el('chart-interval').value:'15', timezone:'Asia/Bangkok', theme:'dark', style:'1', locale:'en', backgroundColor:'rgba(15,23,42,0)'});
+  else s.innerHTML = JSON.stringify({colorTheme:'dark', isTransparent:true, width:'100%', height:'100%', locale:'en', importanceFilter:'-1,0,1'});
+  w.appendChild(s); c.appendChild(w);
+}
+function reloadChart() { loadTV('tv-chart-container', 'advanced-chart'); }
+
+let pInt; function openPanic(){ el('panic-overlay').classList.add('show'); let c=4; pInt=setInterval(()=>{ c--; if(c<=0)c=4; el('breath-count').textContent=c; el('breath-phase').textContent=c>2?'หายใจเข้า':'หายใจออก'; el('breath-circle').style.borderColor=c>2?'var(--primary)':'var(--success)'; },1000); }
+function closePanic(){ el('panic-overlay').classList.remove('show'); clearInterval(pInt); }
+
+/* ============================================================
+   INIT & ROUTER
+   ============================================================ */
+let currentView = 'terminal';
+function switchView(id, nav){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el('view-'+id).classList.add('active'); nav.classList.add('active'); currentView = id;
+  const t = {terminal:'ภาพรวมพอร์ต (Dashboard)', journal:'บันทึกการเทรด (Journal)', analytics:'วิเคราะห์สถิติ (Analytics)', risk:'คำนวณความเสี่ยง (Risk Calc)', neural:'ผู้ช่วย AI (Gemini)', vault:'คลังความรู้ (Vault)', swarm:'สัญญาณ AI (Swarm)', flow:'กระแสเงินสถาบัน (Flow)', godmode:'มุมมองภาพรวม (Macro)', chart:'กราฟสด (Live Chart)', news:'ข่าวเศรษฐกิจ (News)'};
+  el('view-title').textContent = t[id]||id;
+  setTimeout(()=>{ renderAll(); if(id==='chart')reloadChart(); if(id==='news')loadTV('tv-news-container','events'); if(id==='flow')renderFlow(); if(id==='godmode')renderGod(); }, 50);
+}
+
+document.addEventListener('DOMContentLoaded', initData);
 </script>
 </body>
 </html>
