@@ -24,12 +24,10 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body, html { height: 100%; background: var(--bg-app); color: var(--text-main); font-family: var(--font-sans); font-size: 14px; overflow: hidden; }
 
-/* BACKGROUND EFFECTS */
 #bg-canvas { position: fixed; inset: 0; z-index: 0; opacity: 0.4; pointer-events: none; }
 .scanlines { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px); }
 .vignette { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse at center, transparent 50%, rgba(15, 23, 42, 0.8) 100%); }
 
-/* LAYOUT */
 #app { display: flex; height: 100vh; position: relative; z-index: 3; }
 #sidebar { width: 260px; background: var(--bg-sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; backdrop-filter: blur(10px); }
 .logo-area { padding: 24px 20px; border-bottom: 1px solid var(--border); }
@@ -52,7 +50,6 @@ nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
 .view { display: none; flex-direction: column; gap: 20px; }
 .view.active { display: flex; }
 
-/* COMPONENTS */
 .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; backdrop-filter: blur(5px); }
 .grid-cols-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
 .grid-cols-8 { display: grid; grid-template-columns: repeat(8, 1fr); gap: 16px; }
@@ -83,6 +80,7 @@ input:focus, select:focus, textarea:focus { border-color: var(--primary); }
 .badge { display: inline-flex; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .badge-success { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.2); }
 .badge-danger { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+.badge-primary { background: rgba(56,189,248,0.1); color: var(--primary); border: 1px solid rgba(56,189,248,0.2); }
 
 .table-container { overflow-x: auto; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); backdrop-filter: blur(5px); }
 table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -96,31 +94,34 @@ tr:hover td { background: var(--bg-hover); }
 ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-/* MODALS */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); z-index: 100; display: none; align-items: center; justify-content: center; padding: 20px; }
 .modal-content { background: var(--bg-sidebar); border: 1px solid var(--primary); border-radius: 12px; padding: 24px; width: 100%; max-width: 600px; box-shadow: 0 0 20px rgba(56, 189, 248, 0.2); max-height: 90vh; overflow-y: auto; }
 .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
 .modal-title { font-size: 16px; font-weight: 700; color: var(--primary); }
 .close-btn { background: none; border: none; color: var(--text-muted); font-size: 24px; cursor: pointer; }
 
-/* PANIC OVERLAY */
 #panic-overlay { display: none; position: fixed; inset: 0; z-index: 500; background: rgba(0,0,0,0.95); flex-direction: column; align-items: center; justify-content: center; gap: 20px; }
 #panic-overlay.show { display: flex; }
 .breath-circle { width: 160px; height: 160px; border-radius: 50%; border: 2px solid rgba(56, 189, 248, 0.3); display: flex; align-items: center; justify-content: center; flex-direction: column; transition: all 1s; }
 
-/* TIMER */
 #focus-timer { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.4); padding: 6px 12px; border-radius: 20px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
 #focus-timer:hover { border-color: var(--primary); }
 #focus-timer.active { border-color: var(--success); box-shadow: 0 0 10px var(--success-bg); }
 #focus-timer.break { border-color: var(--warning); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
 
-/* CHECKLIST */
 .check-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 8px; cursor: pointer; transition: all 0.2s; }
 .check-item:hover { border-color: var(--primary); background: rgba(56, 189, 248, 0.05); }
-.check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); }
+.check-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--primary); flex-shrink: 0; }
 
-/* CORR GRID */
-.corr-cell { width: 40px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700; cursor: default; }
+.corr-cell { width: 40px; height: 30px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 10px; font-weight: 700; }
+
+/* Toast notification */
+#toast { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+.toast-item { padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: 500; animation: slideIn 0.3s ease; border-left: 4px solid; }
+.toast-success { background: rgba(16,185,129,0.15); border-color: var(--success); color: var(--success); }
+.toast-danger { background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger); }
+.toast-info { background: rgba(56,189,248,0.15); border-color: var(--primary); color: var(--primary); }
+@keyframes slideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 </style>
 </head>
 <body>
@@ -128,17 +129,19 @@ tr:hover td { background: var(--bg-hover); }
 <canvas id="bg-canvas"></canvas>
 <div class="scanlines"></div>
 <div class="vignette"></div>
+<div id="toast"></div>
 
 <div id="app">
   <aside id="sidebar" data-html2canvas-ignore="true">
     <div class="logo-area">
       <div class="logo-title">Rode To 1 %</div>
-      <div class="logo-sub">TRADING OS</div>
+      <div class="logo-sub">TRADING OS v2.1</div>
     </div>
     
     <div style="padding: 16px 20px; border-bottom: 1px solid var(--border);">
       <label>เลือกพอร์ตที่ใช้งาน</label>
-      <select id="port-select" style="margin-bottom: 8px; font-size: 11px; padding: 6px;"></select>
+      <!-- FIX: เพิ่ม onchange handler -->
+      <select id="port-select" style="margin-bottom: 8px; font-size: 11px; padding: 6px;" onchange="switchPortfolio(this.value)"></select>
       <div style="display: flex; gap: 6px;">
         <button class="btn btn-outline btn-sm" style="flex: 1;" onclick="createPortfolio()">+ สร้างพอร์ต</button>
         <button class="btn btn-outline btn-sm" style="flex: 1; color: var(--danger)" onclick="deletePortfolio()">ลบพอร์ต</button>
@@ -165,9 +168,7 @@ tr:hover td { background: var(--bg-hover); }
     </nav>
 
     <div class="sidebar-bottom">
-      <button class="btn btn-success" style="width: 100%; margin-bottom: 4px;" onclick="openChecklist()">
-        ✓ เช็คลิสต์ก่อนเทรด
-      </button>
+      <button class="btn btn-success" style="width: 100%; margin-bottom: 4px;" onclick="openChecklist()">✓ เช็คลิสต์ก่อนเทรด</button>
       <div style="display: flex; gap: 6px;">
         <label class="btn btn-outline btn-sm" style="flex:1; cursor:pointer; padding:4px;">
           นำเข้า CSV <input type="file" hidden accept=".csv" onchange="importTradesCSV(event)">
@@ -178,6 +179,10 @@ tr:hover td { background: var(--bg-hover); }
         <button class="btn btn-outline btn-sm" style="flex:1; padding:4px;" onclick="exportToPDF()">บันทึก PDF</button>
         <button class="btn btn-outline btn-sm" style="flex:1; padding:4px;" onclick="backup()">สำรองข้อมูล</button>
       </div>
+      <!-- FIX: เพิ่ม restore backup -->
+      <label class="btn btn-outline btn-sm" style="width:100%; cursor:pointer; padding:6px; color:var(--text-muted);">
+        📂 โหลดข้อมูลสำรอง <input type="file" hidden accept=".json" onchange="restoreBackup(event)">
+      </label>
       <button class="btn" style="width: 100%; padding: 8px; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: var(--danger); font-family: var(--font-sans); font-size: 11px; letter-spacing: 1px;" onclick="openPanic()">
         ⚠ ระบบฉุกเฉิน (ดึงสติ)
       </button>
@@ -216,10 +221,10 @@ tr:hover td { background: var(--bg-hover); }
         <p style="color:var(--text-muted); font-family:var(--font-mono)" id="pdf-date"></p>
       </div>
 
+      <!-- DASHBOARD VIEW -->
       <div class="view active" id="view-terminal">
-        
         <div class="card" data-html2canvas-ignore="true" style="padding: 16px 20px;">
-          <h2 class="text-xs text-muted font-bold mb-4" style="margin-bottom: 12px; letter-spacing: 1px;">ตั้งค่าพอร์ตและกฎกองทุน (Account Config)</h2>
+          <h2 class="text-xs text-muted font-bold" style="margin-bottom: 12px; letter-spacing: 1px;">ตั้งค่าพอร์ตและกฎกองทุน (Account Config)</h2>
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px;">
             <div><label>ทุนเริ่มต้น ($)</label><input type="number" id="cfg-bal" value="100000" onchange="saveConfig()" min="0"></div>
             <div><label>เสี่ยง/ไม้ (%)</label><input type="number" id="cfg-risk" value="1" onchange="saveConfig()" step="0.1"></div>
@@ -231,42 +236,51 @@ tr:hover td { background: var(--bg-hover); }
         </div>
 
         <div class="grid-cols-8">
-          <div class="card stat-card"><div class="stat-lbl">เทรดทั้งหมด</div><div class="stat-val text-main" id="sc-trades">0</div><div class="stat-sub">รอผล: 0</div></div>
-          <div class="card stat-card"><div class="stat-lbl">อัตราชนะ (WR)</div><div class="stat-val text-primary" id="sc-wr">0%</div><div class="stat-sub mono" id="sc-wl">0 ชนะ / 0 แพ้</div></div>
+          <div class="card stat-card"><div class="stat-lbl">เทรดทั้งหมด</div><div class="stat-val text-main" id="sc-trades">0</div><div class="stat-sub" id="sub-trades">รอผล: 0</div></div>
+          <div class="card stat-card"><div class="stat-lbl">อัตราชนะ (WR)</div><div class="stat-val text-primary" id="sc-wr">0%</div><div class="mono" style="font-size:11px;color:var(--text-dark);margin-top:8px" id="sc-wl">0W / 0L</div></div>
           <div class="card stat-card"><div class="stat-lbl">อัตราทำกำไร</div><div class="stat-val text-primary" id="sc-pf">0.00</div><div class="stat-sub">Profit Factor</div></div>
           <div class="card stat-card"><div class="stat-lbl">Drawdown วัน</div><div class="stat-val text-success" id="sc-daily-dd">-0.0%</div><div class="stat-sub" id="sub-daily-dd">ลิมิต: 4%</div></div>
           <div class="card stat-card"><div class="stat-lbl">Drawdown รวม</div><div class="stat-val text-success" id="sc-max-dd">-0.0%</div><div class="stat-sub" id="sub-max-dd">ลิมิต: 8%</div></div>
           <div class="card stat-card" style="border-left: 3px solid var(--purple);"><div class="stat-lbl">ความสม่ำเสมอ</div><div class="stat-val text-purple" id="sc-consist">0.0%</div><div class="stat-sub">ไม่เกิน: 50%</div></div>
           <div class="card stat-card"><div class="stat-lbl">ความคาดหวัง</div><div class="stat-val text-primary" id="sc-ev">0.00R</div><div class="stat-sub">ต่อ 1 ไม้ (EV)</div></div>
-          <div class="card stat-card"><div class="stat-lbl">สถิติต่อเนื่อง</div><div class="stat-val text-main" id="sc-streak">0</div><div class="stat-sub">แพ้/ชนะ ติดกัน</div></div>
+          <div class="card stat-card"><div class="stat-lbl">สถิติต่อเนื่อง</div><div class="stat-val text-main" id="sc-streak">0</div><div class="stat-sub" id="sub-streak">แพ้/ชนะ ติดกัน</div></div>
         </div>
 
         <div class="card" style="flex: 1; min-height: 300px; display: flex; flex-direction: column;">
-          <h2 class="text-xs text-muted font-bold mb-4" style="margin-bottom: 12px; letter-spacing: 1px;">กราฟการเติบโต (EQUITY CURVE)</h2>
+          <h2 class="text-xs text-muted font-bold" style="margin-bottom: 12px; letter-spacing: 1px;">กราฟการเติบโต (EQUITY CURVE)</h2>
           <div style="flex: 1; position: relative;"><canvas id="equity-chart"></canvas></div>
         </div>
       </div>
 
+      <!-- JOURNAL VIEW -->
       <div class="view" id="view-journal">
         <div style="display: flex; gap: 12px; margin-bottom: 4px;" data-html2canvas-ignore="true">
           <button class="btn btn-primary" onclick="addTradeRow()">+ เพิ่มออเดอร์</button>
           <div style="flex:1"></div>
-          <select id="filter-asset" onchange="renderJournal()" style="width: 120px; font-size: 11px; padding: 4px;"><option value="">สินทรัพย์ทั้งหมด</option></select>
-          <select id="filter-outcome" onchange="renderJournal()" style="width: 120px; font-size: 11px; padding: 4px;"><option value="">ผลลัพธ์ทั้งหมด</option><option value="win">ชนะ</option><option value="loss">แพ้</option><option value="pending">รอผล</option></select>
+          <!-- FIX: filter-asset will be populated dynamically -->
+          <select id="filter-asset" onchange="renderJournal()" style="width: 140px; font-size: 11px; padding: 4px;"><option value="">สินทรัพย์ทั้งหมด</option></select>
+          <select id="filter-outcome" onchange="renderJournal()" style="width: 140px; font-size: 11px; padding: 4px;"><option value="">ผลลัพธ์ทั้งหมด</option><option value="win">✅ ชนะ</option><option value="loss">❌ แพ้</option><option value="pending">⏳ รอผล</option></select>
+          <select id="filter-dir" onchange="renderJournal()" style="width: 120px; font-size: 11px; padding: 4px;"><option value="">ทิศทางทั้งหมด</option><option value="LONG">↑ LONG</option><option value="SHORT">↓ SHORT</option></select>
         </div>
         
         <div class="table-container" style="flex: 1; min-height: 0;">
           <table>
-            <thead><tr><th>#</th><th>ความเสี่ยง</th><th>สินทรัพย์</th><th>ทิศทาง</th><th>กลยุทธ์</th><th>ช่วงเวลา/กะ</th><th>อารมณ์</th><th style="text-align: center;">ผลลัพธ์</th><th style="text-align: right;">ยอดคงเหลือ</th><th style="text-align: center;" data-html2canvas-ignore="true">จัดการ</th></tr></thead>
+            <thead><tr>
+              <th>#</th><th>ความเสี่ยง</th><th>สินทรัพย์</th><th>ทิศทาง</th><th>กลยุทธ์</th><th>ช่วงเวลา/กะ</th><th>อารมณ์</th>
+              <th style="text-align:center;">ผลลัพธ์</th>
+              <th style="text-align:right;">ยอดคงเหลือ</th>
+              <th style="text-align:center;" data-html2canvas-ignore="true">จัดการ</th>
+            </tr></thead>
             <tbody id="journal-body"></tbody>
           </table>
         </div>
       </div>
 
+      <!-- ANALYTICS VIEW -->
       <div class="view" id="view-analytics">
         <div class="grid-cols-4" style="height: 280px;">
           <div class="card" style="grid-column: span 2; display:flex; flex-direction:column;">
-            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">สรุปกำไร/ขาดทุน รายวัน</h2>
+            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">สรุปกำไร/ขาดทุน รายออเดอร์</h2>
             <div style="flex:1; position:relative;"><canvas id="bar-chart"></canvas></div>
           </div>
           <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
@@ -274,7 +288,7 @@ tr:hover td { background: var(--bg-hover); }
             <div style="position:relative; width:160px; height:160px;"><canvas id="pie-chart"></canvas></div>
           </div>
           <div class="card" style="display:flex; flex-direction:column;">
-            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">วิเคราะห์พฤติกรรมเทรดเดอร์ (DNA)</h2>
+            <h2 class="text-xs text-muted" style="margin-bottom: 12px;">วิเคราะห์พฤติกรรม (DNA)</h2>
             <div style="flex:1; position:relative;"><canvas id="radar-chart"></canvas></div>
           </div>
         </div>
@@ -285,15 +299,15 @@ tr:hover td { background: var(--bg-hover); }
             <div id="strat-breakdown" class="text-muted text-sm">ต้องการข้อมูลเพิ่มเติม...</div>
           </div>
           <div class="card">
-            <h2 class="text-xs text-muted" style="margin-bottom: 16px;">ผลงานแยกตามกะเวลา (SESSION / SHIFT)</h2>
+            <h2 class="text-xs text-muted" style="margin-bottom: 16px;">ผลงานแยกตามกะเวลา (SESSION)</h2>
             <div id="session-breakdown" class="text-muted text-sm">ต้องการข้อมูลเพิ่มเติม...</div>
           </div>
         </div>
       </div>
 
+      <!-- RISK VIEW -->
       <div class="view" id="view-risk">
         <div style="display: flex; gap: 16px; height: 100%;">
-          
           <div style="width: 320px; display: flex; flex-direction: column; gap: 16px;">
             <div class="card">
               <h2 class="text-xs text-primary" style="margin-bottom: 16px;">เครื่องคิดเลขคำนวณ Lot ขั้นสูง</h2>
@@ -304,12 +318,17 @@ tr:hover td { background: var(--bg-hover); }
                 <div><label>ค่าคอมฯ/Lot ($)</label><input type="number" id="r-comm" value="6" step="0.5" oninput="calcLot()"></div>
               </div>
               <div style="margin-bottom: 16px;"><label>ประเภทสินทรัพย์</label>
-                <select id="r-pair" onchange="calcLot()"><option value="10">Forex ปกติ (10$ / Pip)</option><option value="1">ดัชนี/คริปโต (1$ / Point)</option></select>
+                <select id="r-pair" onchange="calcLot()">
+                  <option value="10">Forex ปกติ (10$ / Pip)</option>
+                  <option value="1">ดัชนี/คริปโต (1$ / Point)</option>
+                </select>
               </div>
-              <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border);">
-                <div class="text-xs text-muted mb-1">ขนาด Lot ที่ควรเปิด (True Lot)</div>
+              <div style="background: rgba(0,0,0,0.3); padding: 16px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border); margin-bottom: 12px;">
+                <div class="text-xs text-muted" style="margin-bottom:4px">ขนาด Lot ที่ควรเปิด (True Lot)</div>
                 <div class="text-xl font-bold text-primary mono" id="lot-result">0.00</div>
               </div>
+              <!-- FIX: เพิ่มปุ่มนำ Risk จากพอร์ต -->
+              <button class="btn btn-outline btn-sm" style="width:100%" onclick="pullRiskFromPortfolio()">📊 ดึงค่าจากพอร์ตปัจจุบัน</button>
             </div>
 
             <div class="card">
@@ -320,8 +339,9 @@ tr:hover td { background: var(--bg-hover); }
               </div>
               <div style="margin-bottom: 16px;"><label>ระยะ TP2 (Pips)</label><input type="number" id="so-tp2" value="40" oninput="calcScaleOut()"></div>
               <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: var(--radius); text-align: center; border: 1px solid var(--border);">
-                <div class="text-xs text-muted mb-1">คาดการณ์กำไรสุทธิ</div>
+                <div class="text-xs text-muted" style="margin-bottom:4px">คาดการณ์กำไรสุทธิ</div>
                 <div class="text-lg font-bold text-success mono" id="so-result">$0.00</div>
+                <div class="text-xs text-muted" style="margin-top:4px" id="so-detail"></div>
               </div>
             </div>
           </div>
@@ -329,7 +349,7 @@ tr:hover td { background: var(--bg-hover); }
           <div class="card" style="flex: 1; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
               <h2 class="text-xs text-warning">จำลองความน่าจะเป็น (Monte Carlo)</h2>
-              <button class="btn btn-outline btn-sm text-warning" onclick="runMonteCarlo()">เริ่มจำลอง</button>
+              <button class="btn btn-outline btn-sm text-warning" onclick="runMonteCarlo()">▶ เริ่มจำลอง 500 รอบ</button>
             </div>
             <div style="flex: 1; position: relative;"><canvas id="monte-chart"></canvas></div>
             <div id="mc-results" style="display: none; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 16px;">
@@ -342,27 +362,36 @@ tr:hover td { background: var(--bg-hover); }
         </div>
       </div>
 
+      <!-- AI VIEW -->
       <div class="view" id="view-neural">
         <div class="card" style="padding: 12px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0;">
-          <label style="margin:0; font-family:var(--font-sans); font-size:11px; color:var(--primary)">Gemini API Key</label>
-          <input type="password" id="api-key" placeholder="ใส่ API Key ของคุณที่นี่..." style="flex:1; height:32px;" oninput="state.apiKey=this.value;saveState()">
+          <label style="margin:0; font-family:var(--font-sans); font-size:11px; color:var(--primary); white-space:nowrap">Gemini API Key</label>
+          <input type="password" id="api-key" placeholder="ใส่ Gemini API Key ของคุณที่นี่..." style="flex:1; height:32px;" oninput="state.apiKey=this.value; saveState()">
+          <a href="https://aistudio.google.com/app/apikey" target="_blank" class="btn btn-outline btn-sm">รับ Key ฟรี</a>
         </div>
         <div style="display: flex; gap: 8px; flex-wrap: wrap; flex-shrink: 0;">
-          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('Analyze my trading performance and identify key weaknesses')">วิเคราะห์พอร์ตให้หน่อย</button>
-          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('What is my edge based on my stats?')">หาจุดแข็งของฉัน</button>
-          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('Explain Kelly Criterion for my portfolio')">อธิบาย Kelly Criterion</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('วิเคราะห์พอร์ตของฉันและระบุจุดอ่อนหลัก')">🔍 วิเคราะห์พอร์ต</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('ฉันมีจุดแข็งอะไรบ้างจากสถิติที่มี?')">💪 หาจุดแข็ง</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('อธิบาย Kelly Criterion และวิธีนำไปใช้กับพอร์ตของฉัน')">📐 Kelly Criterion</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('ช่วยสร้างแผนการพัฒนาเป็น Funded Trader ใน 90 วัน')">🎯 แผน 90 วัน</button>
+          <button class="btn btn-outline btn-sm" onclick="setNeuralPrompt('วิเคราะห์อารมณ์การเทรดของฉันจากข้อมูล')">🧠 วิเคราะห์อารมณ์</button>
         </div>
-        <div class="card" style="flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.4);" id="chat-messages">
+        <div class="card" style="flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.4); padding: 16px;" id="chat-messages">
           <div style="display:flex; justify-content:flex-start;">
-            <div style="max-width:80%; padding:12px; border-radius:4px 12px 12px 12px; background:rgba(30,41,59,0.9); border:1px solid var(--border); font-size:12px; line-height:1.6">ระบบ AI พร้อมทำงาน กรุณาใส่ API Key และพิมพ์คำถามของคุณเพื่อวิเคราะห์สถิติพอร์ต</div>
+            <div style="max-width:80%; padding:12px; border-radius:4px 12px 12px 12px; background:rgba(30,41,59,0.9); border:1px solid var(--border); font-size:12px; line-height:1.8">
+              🤖 ระบบ AI พร้อมทำงานแล้ว<br><br>
+              <strong style="color:var(--primary)">วิธีเริ่มต้น:</strong> ใส่ Gemini API Key (ฟรีได้จาก Google AI Studio) แล้วพิมพ์คำถาม หรือกดปุ่มลัดด้านบน<br><br>
+              AI จะวิเคราะห์สถิติพอร์ตของคุณโดยอัตโนมัติ รวมถึง Win Rate, Profit Factor, Drawdown และพฤติกรรมการเทรด
+            </div>
           </div>
         </div>
         <div style="display: flex; gap: 8px; flex-shrink: 0;">
-          <input id="chat-input" placeholder="ถาม AI..." style="flex:1" onkeydown="if(event.key==='Enter'){sendChat();event.preventDefault()}">
-          <button class="btn btn-primary" onclick="sendChat()">ส่ง</button>
+          <input id="chat-input" placeholder="ถาม AI เรื่องการเทรด..." style="flex:1" onkeydown="if(event.key==='Enter' && !event.shiftKey){sendChat();event.preventDefault()}">
+          <button class="btn btn-primary" onclick="sendChat()">ส่ง ➤</button>
         </div>
       </div>
 
+      <!-- VAULT VIEW -->
       <div class="view" id="view-vault">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-shrink:0">
           <div class="text-muted font-bold">คลังความรู้ส่วนตัว</div>
@@ -371,12 +400,13 @@ tr:hover td { background: var(--bg-hover); }
         <div style="flex:1; overflow-y:auto; display:grid; grid-template-columns:repeat(auto-fill, minmax(250px, 1fr)); gap:16px; align-content:start" id="vault-grid"></div>
       </div>
 
+      <!-- SWARM VIEW -->
       <div class="view" id="view-swarm">
         <div class="card" style="padding: 12px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0">
-          <span class="text-primary text-xs font-bold" style="flex:1">มติเอกฉันท์จาก AI 4 โมเดล</span>
-          <select id="swarm-asset" style="width:100px; height:32px;"><option>XAUUSD</option><option>BTCUSD</option><option>EURUSD</option><option>US30</option></select>
-          <select id="swarm-tf" style="width:80px; height:32px;"><option>M15</option><option>H1</option><option>H4</option></select>
-          <button class="btn btn-primary btn-sm" onclick="generateSwarm()">ประมวลผล</button>
+          <span class="text-primary text-xs font-bold" style="flex:1">มติเอกฉันท์จาก AI 4 โมเดล (Swarm Intelligence)</span>
+          <select id="swarm-asset" style="width:120px; height:32px;"><option>XAUUSD</option><option>BTCUSD</option><option>EURUSD</option><option>US30</option><option>NAS100</option></select>
+          <select id="swarm-tf" style="width:80px; height:32px;"><option>M15</option><option>H1</option><option>H4</option><option>D1</option></select>
+          <button class="btn btn-primary btn-sm" onclick="generateSwarm()">▶ ประมวลผล</button>
         </div>
         <div id="swarm-consensus" style="display:none; padding:20px; border-radius:12px; text-align:center; flex-shrink:0; background:rgba(0,0,0,0.3); border:1px solid var(--border)">
           <div class="text-xs text-muted font-bold" style="letter-spacing:2px; margin-bottom:8px">ข้อสรุปทิศทาง</div>
@@ -385,50 +415,70 @@ tr:hover td { background: var(--bg-hover); }
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; flex-shrink:0" id="swarm-models"></div>
         <div class="card" style="flex:1; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center" id="swarm-empty">
-          <div class="text-muted font-bold mb-2">เลือกสินทรัพย์และกดประมวลผล</div>
-          <div class="text-xs text-dark max-w-md">ใช้ข้อมูลจำลองหากไม่ใส่ API Key กรุณาใส่ Gemini Key ที่หน้าผู้ช่วย AI สำหรับการวิเคราะห์จริง</div>
+          <div class="text-muted font-bold" style="margin-bottom:8px">เลือกสินทรัพย์และกดประมวลผล</div>
+          <div class="text-xs text-dark" style="max-width:300px; line-height:1.6">ใช้ข้อมูลจำลอง หรือใส่ Gemini API Key ที่หน้าผู้ช่วย AI เพื่อรับการวิเคราะห์จาก AI จริง</div>
         </div>
       </div>
 
+      <!-- ORDER FLOW VIEW -->
       <div class="view" id="view-flow">
         <div class="card" style="padding: 12px 16px; display:flex; align-items:center; gap:12px; flex-shrink:0">
-          <span class="text-primary text-xs font-bold" style="flex:1">ติดตามกระแสเงินสถาบัน (ORDER FLOW)</span>
+          <span class="text-primary text-xs font-bold" style="flex:1">ติดตามกระแสเงินสถาบัน (ORDER FLOW SIMULATOR)</span>
           <span class="mono text-xs text-warning">⚠ ข้อมูลจำลอง</span>
+          <button class="btn btn-outline btn-sm" onclick="renderFlow()">🔄 รีเฟรช</button>
         </div>
         <div style="flex:1; display:flex; gap:16px; min-height:0; overflow:hidden">
           <div class="table-container" style="flex:1">
-            <table><thead><tr><th>สินทรัพย์</th><th>รายย่อย Long</th><th>รายย่อย Short</th><th>มุมมองสถาบัน</th><th>ความมั่นใจ</th><th>สภาวะตลาด</th></tr></thead><tbody id="flow-body"></tbody></table>
+            <table><thead><tr><th>สินทรัพย์</th><th>รายย่อย Long %</th><th>รายย่อย Short %</th><th>มุมมองสถาบัน</th><th>ความมั่นใจ</th><th>สภาวะตลาด</th></tr></thead>
+            <tbody id="flow-body"></tbody></table>
           </div>
           <div class="card" style="width:260px; flex-shrink:0" id="flow-detail">
-            <div class="text-xs text-muted">คลิกที่สินทรัพย์เพื่อดูรายละเอียด</div>
+            <div class="text-xs text-muted" style="margin-bottom:12px; font-weight:600">📊 คลิกที่สินทรัพย์เพื่อดูรายละเอียด</div>
+            <div id="flow-detail-content" class="text-xs text-muted">-</div>
           </div>
         </div>
       </div>
 
+      <!-- GODMODE VIEW -->
       <div class="view" id="view-godmode">
         <div style="display:flex; gap:12px; flex-shrink:0; overflow-x:auto; padding-bottom:8px" id="market-ticker"></div>
         <div style="flex:1; display:flex; gap:16px; min-height:0; overflow:hidden">
           <div class="card" style="flex:1; overflow:auto">
-            <div class="text-xs text-primary font-bold mb-4">ตารางความสัมพันธ์สินทรัพย์ (CORRELATION)</div>
+            <div class="text-xs text-primary font-bold" style="margin-bottom:16px">ตารางความสัมพันธ์สินทรัพย์ (CORRELATION MATRIX)</div>
             <div id="corr-matrix"></div>
           </div>
           <div class="card" style="width:260px; flex-shrink:0">
-            <div class="text-xs text-primary font-bold mb-4">สัญญาณเศรษฐกิจมหภาค</div>
+            <div class="text-xs text-primary font-bold" style="margin-bottom:16px">สัญญาณเศรษฐกิจมหภาค</div>
             <div id="god-signals"></div>
           </div>
         </div>
       </div>
 
+      <!-- CHART VIEW -->
       <div class="view" id="view-chart" style="height: calc(100vh - 130px); min-height: 500px;">
         <div class="card" style="flex:1; padding:0; display:flex; flex-direction:column; overflow:hidden; height: 100%;">
           <div style="padding:12px 16px; border-bottom:1px solid var(--border); display:flex; gap:12px; flex-shrink:0;">
-            <select id="chart-symbol" onchange="reloadChart()" style="width:200px"><option value="OANDA:XAUUSD">XAUUSD</option><option value="FOREXCOM:US30">US30</option><option value="BINANCE:BTCUSDT">BTCUSD</option></select>
-            <select id="chart-interval" onchange="reloadChart()" style="width:100px"><option value="15">M15</option><option value="60">H1</option><option value="240">H4</option></select>
+            <select id="chart-symbol" onchange="reloadChart()" style="width:200px">
+              <option value="OANDA:XAUUSD">XAUUSD (ทอง)</option>
+              <option value="FOREXCOM:US30">US30 (Dow Jones)</option>
+              <option value="BINANCE:BTCUSDT">BTCUSD (Bitcoin)</option>
+              <option value="FX:EURUSD">EURUSD</option>
+              <option value="FX:GBPUSD">GBPUSD</option>
+              <option value="PEPPERSTONE:NAS100">NAS100</option>
+            </select>
+            <select id="chart-interval" onchange="reloadChart()" style="width:100px">
+              <option value="5">M5</option>
+              <option value="15" selected>M15</option>
+              <option value="60">H1</option>
+              <option value="240">H4</option>
+              <option value="D">D1</option>
+            </select>
           </div>
           <div id="tv-chart-container" style="flex:1; width:100%; height:100%;"></div>
         </div>
       </div>
 
+      <!-- NEWS VIEW -->
       <div class="view" id="view-news" style="height: calc(100vh - 130px); min-height: 500px;">
         <div class="card" style="flex:1; padding:0; overflow:hidden; height: 100%;" id="tv-news-container"></div>
       </div>
@@ -437,39 +487,49 @@ tr:hover td { background: var(--bg-hover); }
   </main>
 </div>
 
+<!-- CHECKLIST MODAL -->
 <div class="modal-overlay" id="checklist-modal" onclick="closeChecklist()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header"><h3 class="modal-title text-success" style="font-family:var(--font-sans);">เช็คลิสต์รักษาวินัยก่อนเข้าเทรด</h3><button class="close-btn" onclick="closeChecklist()">×</button></div>
-    <div class="text-sm text-muted mb-4">ยืนยันเงื่อนไขทั้งหมดก่อนเข้าเทรด เพื่อป้องกันการใช้อารมณ์และลดอาการมือลั่น</div>
+    <div class="modal-header">
+      <h3 class="modal-title text-success" style="font-family:var(--font-sans);">✓ เช็คลิสต์รักษาวินัยก่อนเข้าเทรด</h3>
+      <button class="close-btn" onclick="closeChecklist()">×</button>
+    </div>
+    <div class="text-sm text-muted" style="margin-bottom: 16px; line-height:1.6">ยืนยันเงื่อนไขทั้งหมดก่อนเข้าเทรด เพื่อป้องกันการใช้อารมณ์และลดอาการมือลั่น</div>
     <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
       <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>เทรดตามเทรนด์ใน Timeframe ใหญ่ (หรือมีเหตุผลในการสวนเทรนด์ที่ชัดเจน)</span></label>
       <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>อัตรากำไรต่อความเสี่ยง (R:R) คุ้มค่า (1:1.5 ขึ้นไป)</span></label>
       <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>คำนวณ Lot Size ถูกต้อง และจะไม่ทำให้ชน Daily Drawdown Limit</span></label>
       <label class="check-item"><input type="checkbox" onchange="verifyChecklist()"> <span>ไม่ได้เข้าเทรดเพราะอารมณ์อยากเอาคืน, กลัวตกรถ (FOMO), หรือคันมือ</span></label>
     </div>
-    <button class="btn" id="btn-execute-trade" style="width: 100%; background: var(--bg-sidebar); border: 1px solid var(--border); color: var(--text-muted); pointer-events: none;" onclick="approveTrade()">ไปที่ MT4 / เปิดออเดอร์</button>
+    <button class="btn" id="btn-execute-trade" style="width: 100%; background: var(--bg-sidebar); border: 1px solid var(--border); color: var(--text-muted); pointer-events: none;" onclick="approveTrade()">กรุณาทำเช็คลิสต์ให้ครบก่อน</button>
   </div>
 </div>
 
+<!-- NOTE MODAL -->
 <div class="modal-overlay" id="note-modal" onclick="closeNoteModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
-    <div class="modal-header"><h3 class="modal-title" style="font-family:var(--font-sans);">บันทึกย่อการเทรด</h3><button class="close-btn" onclick="closeNoteModal()">×</button></div>
+    <div class="modal-header"><h3 class="modal-title" style="font-family:var(--font-sans);">✎ บันทึกย่อการเทรด</h3><button class="close-btn" onclick="closeNoteModal()">×</button></div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px">
       <div><label>ราคาเข้า (Entry)</label><input type="number" id="note-entry" step="any"></div>
       <div><label>ราคาออก (Exit)</label><input type="number" id="note-exit" step="any"></div>
     </div>
-    <div style="margin-bottom:16px"><label>ลิงก์รูปภาพสกรีนช็อต (URL)</label><input type="text" id="note-img"></div>
-    <div style="margin-bottom:20px"><label>บทเรียน / ข้อผิดพลาดที่พบ</label><textarea id="note-text" style="height:100px"></textarea></div>
-    <button class="btn btn-primary" style="width:100%" onclick="saveNote()">บันทึกข้อมูล</button>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px">
+      <div><label>Stop Loss</label><input type="number" id="note-sl" step="any"></div>
+      <div><label>Take Profit</label><input type="number" id="note-tp" step="any"></div>
+    </div>
+    <div style="margin-bottom:16px"><label>ลิงก์รูปภาพสกรีนช็อต (URL)</label><input type="text" id="note-img" placeholder="https://..."></div>
+    <div style="margin-bottom:20px"><label>บทเรียน / ข้อผิดพลาดที่พบ / สิ่งที่ทำได้ดี</label><textarea id="note-text" style="height:100px; resize:vertical"></textarea></div>
+    <button class="btn btn-primary" style="width:100%" onclick="saveNote()">💾 บันทึกข้อมูล</button>
   </div>
 </div>
 
+<!-- ARTICLE VIEW MODAL -->
 <div class="modal-overlay" id="article-modal" onclick="closeArticleModal()">
   <div class="modal-content" style="max-width:1000px; height: 85vh; padding:0; display: flex; flex-direction: column;" onclick="event.stopPropagation()">
     <div style="padding:16px 24px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; flex-shrink: 0;">
       <div>
         <div class="modal-title" style="font-family:var(--font-sans);" id="art-view-title">Article</div>
-        <div class="text-xs text-muted mt-1" id="art-view-meta"></div>
+        <div class="text-xs text-muted" style="margin-top:4px" id="art-view-meta"></div>
       </div>
       <button class="close-btn" onclick="closeArticleModal()">×</button>
     </div>
@@ -477,53 +537,53 @@ tr:hover td { background: var(--bg-hover); }
   </div>
 </div>
 
+<!-- ARTICLE EDITOR MODAL -->
 <div class="modal-overlay" id="editor-modal" onclick="closeEditorModal()">
   <div class="modal-content" onclick="event.stopPropagation()">
     <div class="modal-header">
-      <h3 class="modal-title" style="font-family:var(--font-sans);">เครื่องมือจัดการคลังความรู้</h3>
+      <h3 class="modal-title" style="font-family:var(--font-sans);">📚 เครื่องมือจัดการคลังความรู้</h3>
       <button class="close-btn" onclick="closeEditorModal()">×</button>
     </div>
-    
     <label>หัวข้อเอกสาร</label>
     <input id="art-title" placeholder="เช่น กฎการเข้าเทรด SMC" style="margin-bottom:12px; font-weight:bold">
-    
     <div style="display:grid; grid-template-columns:1fr 100px; gap:12px; margin-bottom:12px">
       <div><label>หมวดหมู่</label><input id="art-cat" placeholder="เช่น จิตวิทยา, ระบบเทรด"></div>
       <div><label>เลเวล</label><input type="number" id="art-lvl" value="1" placeholder="LVL"></div>
     </div>
-    
     <label>คำอธิบายสั้นๆ</label>
-    <textarea id="art-excerpt" style="height:60px; margin-bottom:12px" placeholder="สรุปใจความสำคัญ..."></textarea>
-    
+    <textarea id="art-excerpt" style="height:60px; margin-bottom:12px; resize:vertical" placeholder="สรุปใจความสำคัญ..."></textarea>
     <label>รูปแบบเนื้อหา</label>
     <select id="art-type" style="margin-bottom:12px" onchange="toggleEditorType()">
       <option value="markdown">📝 บทความ (พิมพ์ข้อความ)</option>
       <option value="pdf">📄 ไฟล์ PDF (ใส่ลิงก์ URL)</option>
     </select>
-    
     <div id="editor-markdown-section">
       <label>เนื้อหาบทความ (รองรับ Markdown)</label>
-      <textarea id="art-content" style="height:200px; margin-bottom:20px" placeholder="พิมพ์เนื้อหาที่นี่..."></textarea>
+      <textarea id="art-content" style="height:200px; margin-bottom:20px; resize:vertical" placeholder="พิมพ์เนื้อหาที่นี่..."></textarea>
     </div>
-    
     <div id="editor-pdf-section" style="display: none; margin-bottom:20px">
       <label>ลิงก์ไฟล์ PDF (URL)</label>
       <input type="text" id="art-pdf-url" placeholder="https://example.com/trading-plan.pdf">
-      <p class="text-xs text-muted" style="margin-top: 6px;">* นำลิงก์ PDF (เช่นลิงก์ไฟล์ตรง หรือลิงก์จากเว็บ) มาวางเพื่อให้ระบบดึงมาแสดงผล</p>
+      <p class="text-xs text-muted" style="margin-top: 6px;">* นำลิงก์ PDF มาวางเพื่อให้ระบบดึงมาแสดงผล</p>
     </div>
-    
-    <button class="btn btn-primary" style="width:100%" onclick="saveArticle()">บันทึกข้อมูล</button>
+    <button class="btn btn-primary" style="width:100%" onclick="saveArticle()">💾 บันทึกข้อมูล</button>
   </div>
 </div>
 
+<!-- PANIC OVERLAY -->
 <div id="panic-overlay">
-  <div class="cyber text-danger" style="font-size:16px; letter-spacing:2px">เปิดใช้งานระบบดึงสติ (PANIC PROTOCOL)</div>
+  <div class="cyber text-danger" style="font-size:16px; letter-spacing:2px">⚠ เปิดใช้งานระบบดึงสติ (PANIC PROTOCOL)</div>
   <div class="breath-circle" id="breath-circle">
     <div class="cyber" style="font-size:18px; letter-spacing:2px; color:var(--primary)" id="breath-phase">หายใจเข้า</div>
     <div class="mono font-bold text-xl" style="margin-top:8px" id="breath-count">4</div>
   </div>
-  <div class="font-sans text-muted text-sm" style="text-align:center; max-width:300px">ระบบเสียง Brown Noise ทำงานแล้ว<br>หายใจช้าๆ วางเมาส์ ลุกเดินออกจากหน้าจอ</div>
-  <button class="btn btn-outline" style="margin-top:20px" onclick="closePanic()">ปิดระบบ</button>
+  <div style="font-family:var(--font-sans); color:var(--text-muted); font-size:14px; text-align:center; max-width:300px; line-height:1.8">
+    หายใจช้าๆ วางเมาส์ลง<br>ลุกเดินออกจากหน้าจอ 5 นาที
+  </div>
+  <div style="text-align:center; font-size:12px; color:var(--text-dark); max-width:280px; line-height:1.6">
+    "ตลาดจะอยู่ที่นี่เสมอ แต่พอร์ตของคุณไม่ใช่ถ้าเทรดด้วยอารมณ์"
+  </div>
+  <button class="btn btn-outline" style="margin-top:20px" onclick="closePanic()">✓ ฉันพร้อมแล้ว ปิดระบบ</button>
 </div>
 
 <script>
@@ -531,504 +591,1010 @@ tr:hover td { background: var(--bg-hover); }
    BACKGROUND ANIMATION
    ============================================================ */
 (function(){
-  const c = document.getElementById('bg-canvas'); const ctx = c.getContext('2d');
+  const c = document.getElementById('bg-canvas'), ctx = c.getContext('2d');
   let W, H, stars = [], particles = [], warp = false;
-  function resize(){
-    W = c.width = innerWidth; H = c.height = innerHeight; stars = [];
-    for(let i=0; i<Math.floor(W*H/8000); i++) stars.push({x: Math.random()*W-W/2, y: Math.random()*H-H/2, z: Math.random()*W, o: Math.random()*0.5+0.1});
-  }
-  window.triggerExplosion = function(x,y,col){ for(let i=0; i<30; i++) particles.push({x, y, vx:(Math.random()-0.5)*10, vy:(Math.random()-0.5)*10, life:1, color:col||'#38bdf8', sz:Math.random()*3+1}); };
+  function resize(){ W = c.width = innerWidth; H = c.height = innerHeight; stars = []; for(let i=0; i<Math.floor(W*H/8000); i++) stars.push({x:Math.random()*W-W/2, y:Math.random()*H-H/2, z:Math.random()*W, o:Math.random()*0.5+0.1}); }
+  window.triggerExplosion = function(x, y, col){ for(let i=0; i<30; i++) particles.push({x,y,vx:(Math.random()-0.5)*10,vy:(Math.random()-0.5)*10,life:1,color:col||'#38bdf8',sz:Math.random()*3+1}); };
   window.setWarp = function(v){ warp = v; };
   function draw(){
     ctx.clearRect(0,0,W,H);
-    let cx = W/2, cy = H/2, spd = warp ? 40 : 0.8;
-    for(let i=0; i<stars.length; i++){
-      let s = stars[i]; s.z -= spd;
-      if(s.z <= 0){ s.z = W; s.x = Math.random()*W-W/2; s.y = Math.random()*H-H/2; }
-      let sx = (s.x/s.z)*W+cx, sy = (s.y/s.z)*H+cy, sz = Math.max(0, (1-s.z/W)*2), sa = (1-s.z/W)*s.o;
-      if(sx>=0 && sx<W && sy>=0 && sy<H){ ctx.beginPath(); ctx.fillStyle=`rgba(56,189,248,${sa})`; ctx.arc(sx, sy, sz, 0, Math.PI*2); ctx.fill(); }
-    }
-    for(let j=particles.length-1; j>=0; j--){
-      let p = particles[j]; p.x += p.vx; p.y += p.vy; p.life -= 0.03; p.vx *= 0.92; p.vy *= 0.92;
-      if(p.life <= 0){ particles.splice(j,1); continue; }
-      ctx.globalAlpha = p.life; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz*p.life, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1;
-    }
+    let cx=W/2, cy=H/2, spd=warp?40:0.8;
+    stars.forEach(s=>{ s.z-=spd; if(s.z<=0){s.z=W; s.x=Math.random()*W-W/2; s.y=Math.random()*H-H/2;} let sx=(s.x/s.z)*W+cx, sy=(s.y/s.z)*H+cy, sz=Math.max(0,(1-s.z/W)*2), sa=(1-s.z/W)*s.o; if(sx>=0&&sx<W&&sy>=0&&sy<H){ctx.beginPath();ctx.fillStyle=`rgba(56,189,248,${sa})`;ctx.arc(sx,sy,sz,0,Math.PI*2);ctx.fill();} });
+    for(let j=particles.length-1;j>=0;j--){ let p=particles[j]; p.x+=p.vx; p.y+=p.vy; p.life-=0.03; p.vx*=0.92; p.vy*=0.92; if(p.life<=0){particles.splice(j,1);continue;} ctx.globalAlpha=p.life; ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(p.x,p.y,p.sz*p.life,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1; }
     requestAnimationFrame(draw);
   }
   window.addEventListener('resize', resize); resize(); draw();
 })();
 
 /* ============================================================
-   AUDIO SYSTEM
+   AUDIO
    ============================================================ */
 function playFX(type){
   try{
-    let ac = new (window.AudioContext || window.webkitAudioContext)();
-    let osc = ac.createOscillator(), g = ac.createGain();
+    let ac = new (window.AudioContext||window.webkitAudioContext)(), osc=ac.createOscillator(), g=ac.createGain();
     osc.connect(g); g.connect(ac.destination);
-    if(type === 'win'){ osc.type='sine'; osc.frequency.setValueAtTime(523, ac.currentTime); osc.frequency.exponentialRampToValueAtTime(1046, ac.currentTime+0.1); g.gain.setValueAtTime(0.05, ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime+0.4); }
-    else { osc.type='sawtooth'; osc.frequency.setValueAtTime(200, ac.currentTime); osc.frequency.linearRampToValueAtTime(80, ac.currentTime+0.3); g.gain.setValueAtTime(0.05, ac.currentTime); g.gain.linearRampToValueAtTime(0, ac.currentTime+0.3); }
-    osc.start(); osc.stop(ac.currentTime + 0.5);
+    if(type==='win'){ osc.type='sine'; osc.frequency.setValueAtTime(523,ac.currentTime); osc.frequency.exponentialRampToValueAtTime(1046,ac.currentTime+0.1); g.gain.setValueAtTime(0.05,ac.currentTime); g.gain.exponentialRampToValueAtTime(0.001,ac.currentTime+0.4); }
+    else{ osc.type='sawtooth'; osc.frequency.setValueAtTime(200,ac.currentTime); osc.frequency.linearRampToValueAtTime(80,ac.currentTime+0.3); g.gain.setValueAtTime(0.05,ac.currentTime); g.gain.linearRampToValueAtTime(0,ac.currentTime+0.3); }
+    osc.start(); osc.stop(ac.currentTime+0.5);
   }catch(e){}
 }
 
 /* ============================================================
-   STATE & CORE LOGIC
+   TOAST NOTIFICATIONS
+   ============================================================ */
+function toast(msg, type='info'){
+  let t = document.getElementById('toast');
+  let d = document.createElement('div');
+  d.className = `toast-item toast-${type}`;
+  d.textContent = msg;
+  t.appendChild(d);
+  setTimeout(()=>d.remove(), 3000);
+}
+
+/* ============================================================
+   STATE & CONFIG KEY MAPPING (FIX)
    ============================================================ */
 let state = { activePort: 1, portfolios: {}, articles: [], apiKey: '', aiHistory: [] };
-const ASSETS = ['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD'];
-const STRATEGIES = ['ตามเทรนด์','สวนเทรนด์','เบรกเอาท์','ล่าสภาพคล่อง','เทรดชนข่าว','อื่นๆ'];
+
+// FIX: เพิ่ม mapping table สำหรับ config keys → element IDs
+const CFG_KEYS = ['bal', 'risk', 'rr', 'dailyDD', 'maxDD', 'slPips'];
+const CFG_EL_MAP = { bal: 'cfg-bal', risk: 'cfg-risk', rr: 'cfg-rr', dailyDD: 'cfg-daily-dd', maxDD: 'cfg-max-dd', slPips: 'cfg-slpips' };
+
+const ASSETS = ['XAUUSD','EURUSD','GBPUSD','USDJPY','USDCAD','AUDUSD','US30','NAS100','BTCUSD','ETHUSD'];
+const STRATEGIES = ['ตามเทรนด์','สวนเทรนด์','เบรกเอาท์','ล่าสภาพคล่อง','Order Block','FVG','เทรดชนข่าว','อื่นๆ'];
 const MOODS = ['โฟกัสดี','เฉยๆ','ลังเล','กลัวตกรถ (FOMO)','อยากเอาคืน','เหนื่อยล้า'];
 const DIRS = ['LONG','SHORT'];
-const SESSIONS = ['กะเช้า (08-18)','กะดึก (13-22)','London','New York','Asian'];
+const SESSIONS = ['กะเช้า (08-18)','กะดึก (13-22)','London','New York','Asian','London/NY Overlap'];
 const DEFAULT_ARTICLES = [
-  {id:'a1', title:'Kelly Criterion', category:'Math', levelRequired:1, type: 'markdown', excerpt:'สูตรทางคณิตศาสตร์สำหรับการคำนวณหน้าตัก', content:'# Kelly Criterion\n\nสูตรคำนวณ: `f* = (bp - q) / b`\n\n- `b` = อัตราส่วน R:R\n- `p` = โอกาสชนะ (Win Rate)\n- `q` = โอกาสแพ้\n\nแนะนำให้ใช้ Half-Kelly เพื่อลดความผันผวนของพอร์ต'},
-  {id:'a2', title:'จิตวิทยาการสอบกองทุน', category:'Mindset', levelRequired:1, type: 'markdown', excerpt:'วิธีเอาตัวรอดจากการสอบ Prop Firm', content:'# Mindset\n\nห้ามเสี่ยงเกิน 1% ต่อไม้เด็ดขาด เป้าหมายคือการรักษาพอร์ตให้อยู่รอด ไม่ใช่การรีบรวยภายในวันเดียว'}
+  {id:'a1',title:'Kelly Criterion',category:'คณิตศาสตร์',levelRequired:1,type:'markdown',excerpt:'สูตรทางคณิตศาสตร์สำหรับการคำนวณหน้าตักที่เหมาะสม',content:'# Kelly Criterion\n\nสูตรคำนวณ: `f* = (bp - q) / b`\n\n- `b` = อัตราส่วน R:R ที่ได้รับ\n- `p` = โอกาสชนะ (Win Rate เช่น 0.6)\n- `q` = โอกาสแพ้ (1 - p)\n\n## ตัวอย่าง\n\nหาก WR = 60% และ R:R = 2:1\n`f* = (2×0.6 - 0.4) / 2 = 0.4 = 40%`\n\n**คำแนะนำ:** ใช้ Half-Kelly (20%) เพื่อลดความผันผวน\n\n## วิธีนำไปใช้\n\nหาก Kelly บอก 20% → ใช้ Risk 1-2% จริง (Quarter-Kelly) เพื่อความปลอดภัย'},
+  {id:'a2',title:'จิตวิทยา Funded Trader',category:'Mindset',levelRequired:1,type:'markdown',excerpt:'วิธีเอาตัวรอดจากการสอบ Prop Firm และรักษาพอร์ต',content:'# จิตวิทยา Funded Trader\n\n## กฎเหล็ก 5 ข้อ\n\n1. **ห้ามเสี่ยงเกิน 1% ต่อไม้** เด็ดขาด\n2. **หยุดเมื่อแพ้ 3 ไม้ติด** ออกจากหน้าจอทันที\n3. **เป้าหมายคือรักษาพอร์ต** ไม่ใช่รีบรวย\n4. **Journal ทุกไม้** รวมถึงไม้ที่ไม่ได้เข้า\n5. **มีชีวิตนอกตลาด** พักผ่อนให้เพียงพอ\n\n## วงจรอารมณ์ที่ต้องระวัง\n\n**FOMO** → เข้าช้าเกิน → เสีย\n**Revenge** → เพิ่ม Lot → พัง Account\n**Overconfidence** → ลืมใช้ SL → หายนะ'}
 ];
 
-function initData() {
-  let saved = localStorage.getItem('rodeto1_v1');
-  if (saved) { state = JSON.parse(saved); } 
-  else {
-    state.portfolios[1] = { id: 1, name: 'พอร์ตสอบกองทุน #1', config: { bal: 100000, risk: 1, rr: 2, dailyDD: 4, maxDD: 8, slPips: 30 }, trades: [] };
-    state.articles = DEFAULT_ARTICLES;
-  }
+function initData(){
+  let saved = localStorage.getItem('rodeto1_v2');
+  if(saved){ try{ state = JSON.parse(saved); }catch(e){ state = buildDefault(); } }
+  else{ state = buildDefault(); }
+  // Ensure articles exist
+  if(!state.articles || state.articles.length === 0) state.articles = DEFAULT_ARTICLES;
+  if(!state.aiHistory) state.aiHistory = [];
   if(el('api-key')) el('api-key').value = state.apiKey || '';
-  renderPortSelect(); loadPortfolio();
+  renderPortSelect();
+  loadPortfolio();
 }
-function saveState() { localStorage.setItem('rodeto1_v1', JSON.stringify(state)); }
-function cur() { return state.portfolios[state.activePort]; }
-function el(id) { return document.getElementById(id); }
-function fmt(n) { return (n<0?'-':'') + '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-function pct(n) { return n.toFixed(1) + '%'; }
 
-function renderPortSelect() {
+function buildDefault(){
+  return {
+    activePort: 1,
+    portfolios: { 1: { id:1, name:'พอร์ตสอบกองทุน #1', config:{bal:100000, risk:1, rr:2, dailyDD:4, maxDD:8, slPips:30}, trades:[] } },
+    articles: DEFAULT_ARTICLES,
+    apiKey: '',
+    aiHistory: []
+  };
+}
+
+function saveState(){ localStorage.setItem('rodeto1_v2', JSON.stringify(state)); }
+function cur(){ return state.portfolios[state.activePort]; }
+function el(id){ return document.getElementById(id); }
+function fmt(n){ return (n<0?'-':'') + '$' + Math.abs(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function pct(n){ return n.toFixed(1)+'%'; }
+
+function renderPortSelect(){
   let sel = el('port-select'); sel.innerHTML = '';
-  Object.values(state.portfolios).forEach(p => { let opt = document.createElement('option'); opt.value = p.id; opt.textContent = p.name; if(p.id == state.activePort) opt.selected = true; sel.appendChild(opt); });
+  Object.values(state.portfolios).forEach(p=>{
+    let opt = document.createElement('option');
+    opt.value = p.id; opt.textContent = p.name;
+    if(p.id == state.activePort) opt.selected = true;
+    sel.appendChild(opt);
+  });
 }
-function createPortfolio(){ let n = prompt('ชื่อพอร์ต:'); if(n){ let id=Date.now(); state.portfolios[id] = {id, name:n, config:{bal:100000, risk:1, rr:2, dailyDD:4, maxDD:8, slPips:30}, trades:[]}; state.activePort=id; saveState(); renderPortSelect(); loadPortfolio(); } }
-function deletePortfolio(){ if(Object.keys(state.portfolios).length>1 && confirm('ต้องการลบพอร์ตนี้หรือไม่?')){ delete state.portfolios[state.activePort]; state.activePort = Number(Object.keys(state.portfolios)[0]); saveState(); renderPortSelect(); loadPortfolio(); } }
 
-function loadPortfolio() {
+// FIX: เพิ่มฟังก์ชัน switchPortfolio
+function switchPortfolio(id){
+  state.activePort = Number(id);
+  saveState();
+  loadPortfolio();
+}
+
+function createPortfolio(){
+  let n = prompt('ชื่อพอร์ตใหม่:');
+  if(n && n.trim()){
+    let id = Date.now();
+    state.portfolios[id] = {id, name:n.trim(), config:{bal:100000, risk:1, rr:2, dailyDD:4, maxDD:8, slPips:30}, trades:[]};
+    state.activePort = id;
+    saveState(); renderPortSelect(); loadPortfolio();
+    toast('สร้างพอร์ตใหม่สำเร็จ', 'success');
+  }
+}
+
+function deletePortfolio(){
+  if(Object.keys(state.portfolios).length <= 1){ toast('ไม่สามารถลบพอร์ตสุดท้ายได้', 'danger'); return; }
+  if(confirm(`ต้องการลบพอร์ต "${cur().name}" หรือไม่? ข้อมูลทั้งหมดจะหายไป`)){
+    delete state.portfolios[state.activePort];
+    state.activePort = Number(Object.keys(state.portfolios)[0]);
+    saveState(); renderPortSelect(); loadPortfolio();
+    toast('ลบพอร์ตแล้ว', 'danger');
+  }
+}
+
+function loadPortfolio(){
   let p = cur(); if(!p) return;
-  ['bal','risk','rr','dailyDD','maxDD','slPips'].forEach(k => el('cfg-'+k.toLowerCase()).value = p.config[k]);
+  // FIX: ใช้ CFG_EL_MAP แทนการ toLowerCase()
+  CFG_KEYS.forEach(k => { let el_id = CFG_EL_MAP[k]; if(el(el_id)) el(el_id).value = p.config[k]; });
   if(!p.trades || p.trades.length === 0) addTradeRow(true);
   renderAll();
 }
-function saveConfig() {
+
+function saveConfig(){
   let p = cur();
-  ['bal','risk','rr','dailyDD','maxDD','slPips'].forEach(k => p.config[k] = parseFloat(el('cfg-'+k.toLowerCase()).value));
+  // FIX: ใช้ CFG_EL_MAP
+  CFG_KEYS.forEach(k => { let el_id = CFG_EL_MAP[k]; if(el(el_id)) p.config[k] = parseFloat(el(el_id).value) || 0; });
   saveState(); renderAll();
 }
 
-function computeStats() {
-  let p = cur(); let bal = p.config.bal; let peak = bal;
-  let maxDD = 0, maxDailyDD = 0; let wins = 0, losses = 0, profit = 0, lossVal = 0;
-  let streak = 0, maxStreak = 0; let equityCurve = [{x: 0, y: bal}];
-  let maxSingleTradeProfit = 0; let stratMap = {}; let sessMap = {};
+/* ============================================================
+   COMPUTE STATS
+   ============================================================ */
+function computeStats(){
+  let p = cur(); let bal = p.config.bal, peak = bal;
+  let maxDD = 0, maxDailyDD = 0, wins = 0, losses = 0, profit = 0, lossVal = 0;
+  let streak = 0; let equityCurve = [{x:0, y:bal}];
+  let maxSingleTradeProfit = 0; let stratMap = {}, sessMap = {};
   let processed = [];
 
-  p.trades.forEach((t, i) => {
-    let riskAmt = bal * (p.config.risk / 100); let rewardAmt = riskAmt * p.config.rr; let lotSize = riskAmt / (p.config.slPips * 10);
+  p.trades.forEach((t, i)=>{
+    let riskAmt = bal * (p.config.risk/100);
+    let rewardAmt = riskAmt * p.config.rr;
+    let lotSize = riskAmt / (p.config.slPips * 10);
     let pnl = 0;
-    if (t.status === 'win') { pnl = t.pnlOverride != null ? t.pnlOverride : rewardAmt; wins++; profit += pnl; streak = streak > 0 ? streak + 1 : 1; if(streak > maxStreak) maxStreak = streak; if(pnl > maxSingleTradeProfit) maxSingleTradeProfit = pnl; }
-    else if (t.status === 'loss') { pnl = t.pnlOverride != null ? t.pnlOverride : -riskAmt; losses++; lossVal += Math.abs(pnl); streak = streak < 0 ? streak - 1 : -1; }
-    
-    if(t.status !== 'pending') {
-      bal += pnl; equityCurve.push({x: i+1, y: bal});
-      if(bal > peak) peak = bal;
-      let dd = ((peak - bal) / peak) * 100; if(dd > maxDD) maxDD = dd;
-      let dailyDip = ((p.config.bal - bal) / p.config.bal) * 100; if(dailyDip > maxDailyDD) maxDailyDD = dailyDip;
-      
-      if(t.strategy){ stratMap[t.strategy] = stratMap[t.strategy] || {w:0, l:0}; t.status==='win'?stratMap[t.strategy].w++:stratMap[t.strategy].l++; }
-      if(t.session){ sessMap[t.session] = sessMap[t.session] || {w:0, l:0}; t.status==='win'?sessMap[t.session].w++:sessMap[t.session].l++; }
+
+    if(t.status === 'win'){
+      pnl = t.pnlOverride != null ? t.pnlOverride : rewardAmt;
+      wins++; profit += pnl;
+      streak = streak > 0 ? streak+1 : 1;
+      if(pnl > maxSingleTradeProfit) maxSingleTradeProfit = pnl;
+    } else if(t.status === 'loss'){
+      pnl = t.pnlOverride != null ? t.pnlOverride : -riskAmt;
+      losses++; lossVal += Math.abs(pnl);
+      streak = streak < 0 ? streak-1 : -1;
     }
-    processed.push({...t, idx: i, riskAmt, rewardAmt, lotSize, pnl, endBal: bal});
+
+    if(t.status !== 'pending'){
+      bal += pnl;
+      equityCurve.push({x:i+1, y:bal});
+      if(bal > peak) peak = bal;
+      let dd = ((peak-bal)/peak)*100; if(dd > maxDD) maxDD = dd;
+      let dailyDip = ((p.config.bal-bal)/p.config.bal)*100; if(dailyDip > maxDailyDD) maxDailyDD = dailyDip;
+
+      if(t.strategy){ stratMap[t.strategy] = stratMap[t.strategy] || {w:0,l:0}; t.status==='win'?stratMap[t.strategy].w++:stratMap[t.strategy].l++; }
+      if(t.session){ sessMap[t.session] = sessMap[t.session] || {w:0,l:0}; t.status==='win'?sessMap[t.session].w++:sessMap[t.session].l++; }
+    }
+    processed.push({...t, idx:i, riskAmt, rewardAmt, lotSize, pnl, endBal:bal});
   });
 
-  let totalClosed = wins + losses; let wr = totalClosed > 0 ? (wins / totalClosed) * 100 : 0;
-  let pf = lossVal > 0 ? (profit / lossVal) : (profit > 0 ? 99.99 : 0);
+  let totalClosed = wins+losses;
+  let wr = totalClosed > 0 ? (wins/totalClosed)*100 : 0;
+  let pf = lossVal > 0 ? (profit/lossVal) : (profit > 0 ? 99.99 : 0);
   let ev = (wr/100 * p.config.rr) - (1 - wr/100);
-  let netProf = bal - p.config.bal; let consist = (netProf > 0 && maxSingleTradeProfit > 0) ? (maxSingleTradeProfit / netProf) * 100 : 0;
+  let netProf = bal - p.config.bal;
+  let consist = (netProf > 0 && maxSingleTradeProfit > 0) ? (maxSingleTradeProfit/netProf)*100 : 0;
+  let pending = p.trades.filter(t=>t.status==='pending').length;
 
-  return { bal, maxDD, maxDailyDD, wins, losses, totalClosed, wr, pf, ev, streak, equityCurve, consist, trades: processed, stratMap, sessMap };
+  return {bal, maxDD, maxDailyDD, wins, losses, totalClosed, pending, wr, pf, ev, streak, equityCurve, consist, trades:processed, stratMap, sessMap};
 }
 
-function renderAll() {
-  let s = computeStats(); let c = cur().config;
-  el('hdr-wr').textContent = pct(s.wr); el('hdr-pf').textContent = s.pf.toFixed(2);
-  el('hdr-equity').textContent = fmt(s.bal); el('hdr-equity').style.color = s.bal < c.bal ? 'var(--danger)' : s.bal > c.bal ? 'var(--success)' : 'var(--text-main)';
+/* ============================================================
+   RENDER ALL
+   ============================================================ */
+function renderAll(){
+  let s = computeStats(), c = cur().config;
 
-  el('sc-trades').textContent = s.totalClosed; el('sc-wr').textContent = pct(s.wr); el('sc-wl').textContent = `${s.wins} ชนะ / ${s.losses} แพ้`;
-  el('sc-pf').textContent = s.pf.toFixed(2); el('sc-ev').textContent = s.ev.toFixed(2) + 'R'; el('sc-streak').textContent = s.streak;
-  el('sc-daily-dd').textContent = '-' + pct(s.maxDailyDD); el('sc-max-dd').textContent = '-' + pct(s.maxDD);
+  // Header
+  el('hdr-wr').textContent = pct(s.wr);
+  el('hdr-pf').textContent = s.pf.toFixed(2);
+  el('hdr-equity').textContent = fmt(s.bal);
+  el('hdr-equity').style.color = s.bal < c.bal ? 'var(--danger)' : s.bal > c.bal ? 'var(--success)' : 'var(--text-main)';
+
+  // Stats
+  el('sc-trades').textContent = s.totalClosed;
+  // FIX: อัปเดต pending count ถูกต้อง
+  el('sub-trades').textContent = `รอผล: ${s.pending}`;
+  el('sc-wr').textContent = pct(s.wr);
+  el('sc-wl').textContent = `${s.wins}W / ${s.losses}L`;
+  el('sc-pf').textContent = s.pf.toFixed(2);
+  el('sc-ev').textContent = s.ev.toFixed(2)+'R';
+  el('sc-streak').textContent = Math.abs(s.streak);
+  el('sub-streak').textContent = s.streak > 0 ? `ชนะ ${s.streak} ไม้ติด` : s.streak < 0 ? `แพ้ ${Math.abs(s.streak)} ไม้ติด` : 'ไม่มีสถิติ';
+
+  el('sc-daily-dd').textContent = '-'+pct(s.maxDailyDD);
+  el('sc-max-dd').textContent = '-'+pct(s.maxDD);
   el('sc-daily-dd').style.color = s.maxDailyDD >= c.dailyDD ? 'var(--danger)' : s.maxDailyDD >= c.dailyDD*0.8 ? 'var(--warning)' : 'var(--success)';
   el('sc-max-dd').style.color = s.maxDD >= c.maxDD ? 'var(--danger)' : s.maxDD >= c.maxDD*0.8 ? 'var(--warning)' : 'var(--success)';
-  
-  el('sc-daily-dd').nextElementSibling.nextElementSibling.textContent = `ลิมิต: ${c.dailyDD}%`;
-  el('sc-max-dd').nextElementSibling.nextElementSibling.textContent = `ลิมิต: ${c.maxDD}%`;
 
-  el('sc-consist').textContent = pct(s.consist); el('sc-consist').style.color = s.consist > 50 ? 'var(--danger)' : s.consist > 40 ? 'var(--warning)' : 'var(--purple)';
+  // FIX: ใช้ IDs แทน .nextElementSibling.nextElementSibling
+  el('sub-daily-dd').textContent = `ลิมิต: ${c.dailyDD}%`;
+  el('sub-max-dd').textContent = `ลิมิต: ${c.maxDD}%`;
 
-  renderJournalTable(s.trades);
+  el('sc-consist').textContent = pct(s.consist);
+  el('sc-consist').style.color = s.consist > 50 ? 'var(--danger)' : s.consist > 40 ? 'var(--warning)' : 'var(--purple)';
+
+  // Alerts
+  if(s.maxDailyDD >= c.dailyDD) toast(`⚠️ ถึงลิมิต Daily DD ${c.dailyDD}% แล้ว! หยุดเทรดวันนี้`, 'danger');
+  else if(s.maxDD >= c.maxDD) toast(`⚠️ ถึงลิมิต Max DD ${c.maxDD}% แล้ว!`, 'danger');
+
+  // Render based on current view
+  if(currentView === 'journal') renderJournal();
+  else renderJournalTable(s.trades, false); // render with no filter for consistency
+
   if(currentView === 'terminal') renderEquityChart(s);
   if(currentView === 'analytics') renderAnalytics(s);
-  if(currentView === 'risk') { calcLot(); calcScaleOut(); }
+  if(currentView === 'risk'){ calcLot(); calcScaleOut(); }
   if(currentView === 'vault') renderVault();
 }
 
 /* ============================================================
-   JOURNAL & CSV
+   JOURNAL
    ============================================================ */
-function addTradeRow(silent=false) { cur().trades.push({ status: 'pending', asset: '', dir: '', strategy: '', session: '', mood: '', notes: '' }); if(!silent){saveState(); renderAll();} }
-function updateT(idx, field, val) { cur().trades[idx][field] = val; saveState(); renderAll(); }
-function setStatus(idx, status, e) { 
-  let t = cur().trades[idx]; 
-  if(status==='win' && t.status!=='win') { playFX('win'); if(window.setWarp){ setWarp(true); setTimeout(()=>setWarp(false),2000); } if(e) triggerExplosion(e.clientX, e.clientY); }
-  else if(status==='loss' && t.status!=='loss') playFX('loss');
-  t.status = status; saveState(); renderAll(); 
+function addTradeRow(silent=false){
+  cur().trades.push({status:'pending', asset:'', dir:'', strategy:'', session:'', mood:'', notes:'', entry:'', exit:'', sl:'', tp:'', img:''});
+  if(!silent){ saveState(); renderAll(); }
 }
-function mkOpts(arr, sel) { return arr.map(a => `<option value="${a}" ${a===sel?'selected':''}>${a}</option>`).join(''); }
 
-function renderJournalTable(trades) {
+function updateT(idx, field, val){ cur().trades[idx][field]=val; saveState(); renderAll(); }
+
+function setStatus(idx, status, e){
+  let t = cur().trades[idx];
+  if(status==='win' && t.status!=='win'){ playFX('win'); if(window.setWarp){setWarp(true); setTimeout(()=>setWarp(false),2000);} if(e) triggerExplosion(e.clientX,e.clientY); }
+  else if(status==='loss' && t.status!=='loss') playFX('loss');
+  t.status = status; saveState(); renderAll();
+}
+
+function mkOpts(arr, sel){ return arr.map(a=>`<option value="${a}" ${a===sel?'selected':''}>${a}</option>`).join(''); }
+
+// FIX: เพิ่มฟังก์ชัน renderJournal ที่รองรับ filter
+function renderJournal(){
+  let s = computeStats();
+  let filterAsset = el('filter-asset') ? el('filter-asset').value : '';
+  let filterOutcome = el('filter-outcome') ? el('filter-outcome').value : '';
+  let filterDir = el('filter-dir') ? el('filter-dir').value : '';
+
+  // Populate asset filter
+  if(el('filter-asset')){
+    let assets = [...new Set(cur().trades.map(t=>t.asset).filter(Boolean))].sort();
+    let current = el('filter-asset').value;
+    el('filter-asset').innerHTML = '<option value="">สินทรัพย์ทั้งหมด</option>' + assets.map(a=>`<option value="${a}" ${a===current?'selected':''}>${a}</option>`).join('');
+  }
+
+  let filtered = s.trades.filter(t=>{
+    if(filterAsset && t.asset !== filterAsset) return false;
+    if(filterOutcome && t.status !== filterOutcome) return false;
+    if(filterDir && t.dir !== filterDir) return false;
+    return true;
+  });
+
+  renderJournalTable(filtered, true);
+}
+
+function renderJournalTable(trades, reversed=true){
   let tbody = el('journal-body'); if(!tbody) return;
-  let html = ''; [...trades].reverse().forEach(t => {
-    let isW = t.status==='win', isL = t.status==='loss';
-    let bg = isW ? 'var(--success-bg)' : isL ? 'var(--danger-bg)' : 'transparent';
-    let pnlTxt = t.status!=='pending' ? (t.pnl>0 ? `+${fmt(t.pnl)}` : fmt(t.pnl)) : '...';
-    let pnlColor = isW ? 'var(--success)' : isL ? 'var(--danger)' : 'var(--text-muted)';
-    html += `<tr style="background:${bg}">
-      <td class="mono font-bold text-muted">#${t.idx+1}</td>
-      <td class="td-input"><div class="text-xs text-muted">เสี่ยง: ${fmt(t.riskAmt)}</div></td>
-      <td class="td-input"><select onchange="updateT(${t.idx}, 'asset', this.value)"><option value="">-</option>${mkOpts(ASSETS, t.asset)}</select></td>
-      <td class="td-input"><select onchange="updateT(${t.idx}, 'dir', this.value)"><option value="">-</option>${mkOpts(DIRS, t.dir)}</select></td>
-      <td class="td-input"><select onchange="updateT(${t.idx}, 'strategy', this.value)"><option value="">-</option>${mkOpts(STRATEGIES, t.strategy)}</select></td>
-      <td class="td-input"><select onchange="updateT(${t.idx}, 'session', this.value)"><option value="">-</option>${mkOpts(SESSIONS, t.session)}</select></td>
-      <td class="td-input"><select onchange="updateT(${t.idx}, 'mood', this.value)"><option value="">-</option>${mkOpts(MOODS, t.mood)}</select></td>
+  let arr = reversed ? [...trades].reverse() : trades;
+  let html = arr.map(t=>{
+    let isW=t.status==='win', isL=t.status==='loss';
+    let bg = isW?'var(--success-bg)':isL?'var(--danger-bg)':'transparent';
+    let pnlTxt = t.status!=='pending' ? (t.pnl>=0?`+${fmt(t.pnl)}`:fmt(t.pnl)) : '⏳';
+    let pnlColor = isW?'var(--success)':isL?'var(--danger)':'var(--text-muted)';
+    let hasNote = t.notes && t.notes.trim() ? '📝' : '✎';
+    return `<tr style="background:${bg}">
+      <td class="mono font-bold text-muted" style="font-size:11px">#${t.idx+1}</td>
+      <td class="td-input"><div style="font-size:11px; color:var(--text-muted)">${fmt(t.riskAmt)}</div><div style="font-size:10px; color:var(--text-dark)">Lot: ${t.lotSize.toFixed(2)}</div></td>
+      <td class="td-input"><select onchange="updateT(${t.idx},'asset',this.value)"><option value="">-</option>${mkOpts(ASSETS, t.asset)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx},'dir',this.value)"><option value="">-</option>${mkOpts(DIRS, t.dir)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx},'strategy',this.value)"><option value="">-</option>${mkOpts(STRATEGIES, t.strategy)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx},'session',this.value)"><option value="">-</option>${mkOpts(SESSIONS, t.session)}</select></td>
+      <td class="td-input"><select onchange="updateT(${t.idx},'mood',this.value)"><option value="">-</option>${mkOpts(MOODS, t.mood)}</select></td>
       <td style="text-align:center">
         <div style="display:flex;gap:4px;justify-content:center" data-html2canvas-ignore="true">
-          <button class="badge ${isW?'badge-success':'btn-outline'}" onclick="setStatus(${t.idx}, 'win', event)">ชนะ</button>
-          <button class="badge ${isL?'badge-danger':'btn-outline'}" onclick="setStatus(${t.idx}, 'loss')">แพ้</button>
+          <button class="badge ${isW?'badge-success':'btn-outline'}" style="cursor:pointer" onclick="setStatus(${t.idx},'win',event)">WIN</button>
+          <button class="badge ${isL?'badge-danger':'btn-outline'}" style="cursor:pointer" onclick="setStatus(${t.idx},'loss')">LOSS</button>
         </div>
         <div class="mono font-bold" style="color:${pnlColor};font-size:11px;margin-top:4px">${pnlTxt}</div>
       </td>
-      <td class="mono font-bold" style="text-align:right;color:${t.status!=='pending'?'var(--text-main)':'var(--text-muted)'}">${t.status!=='pending'?fmt(t.endBal):'-'}</td>
+      <td class="mono font-bold" style="text-align:right;font-size:12px;color:${t.status!=='pending'?'var(--text-main)':'var(--text-muted)'}">${t.status!=='pending'?fmt(t.endBal):'-'}</td>
       <td style="text-align:center" data-html2canvas-ignore="true">
-        <button class="btn btn-outline btn-sm text-primary" style="padding:4px 8px" onclick="openNotes(${t.idx})">✎</button>
-        <button class="btn btn-outline btn-sm text-danger" style="padding:4px 8px" onclick="if(confirm('ต้องการลบออเดอร์นี้หรือไม่?')){ cur().trades.splice(${t.idx},1); saveState(); renderAll(); }">✕</button>
+        <button class="btn btn-outline btn-sm text-primary" style="padding:4px 8px" onclick="openNotes(${t.idx})">${hasNote}</button>
+        <button class="btn btn-outline btn-sm text-danger" style="padding:4px 8px" onclick="if(confirm('ต้องการลบออเดอร์ #${t.idx+1} หรือไม่?')){cur().trades.splice(${t.idx},1);saveState();renderAll();}">✕</button>
       </td>
     </tr>`;
-  }); tbody.innerHTML = html;
+  }).join('');
+  tbody.innerHTML = html || `<tr><td colspan="10" style="text-align:center; color:var(--text-muted); padding:32px">ไม่พบออเดอร์ที่ตรงกับเงื่อนไข</td></tr>`;
 }
 
-let actNoteIdx=null;
-function openNotes(idx){ actNoteIdx=idx; let t=cur().trades[idx]; el('note-entry').value=t.entry||''; el('note-exit').value=t.exit||''; el('note-img').value=t.img||''; el('note-text').value=t.notes||''; el('note-modal').style.display='flex'; }
-function closeNoteModal(){ el('note-modal').style.display='none'; }
-function saveNote(){ if(actNoteIdx==null)return; let t=cur().trades[actNoteIdx]; t.entry=el('note-entry').value; t.exit=el('note-exit').value; t.img=el('note-img').value; t.notes=el('note-text').value; saveState(); renderAll(); closeNoteModal(); }
+let actNoteIdx = null;
+function openNotes(idx){
+  actNoteIdx = idx; let t = cur().trades[idx];
+  el('note-entry').value = t.entry||''; el('note-exit').value = t.exit||'';
+  el('note-sl').value = t.sl||''; el('note-tp').value = t.tp||'';
+  el('note-img').value = t.img||''; el('note-text').value = t.notes||'';
+  el('note-modal').style.display = 'flex';
+}
+function closeNoteModal(){ el('note-modal').style.display = 'none'; }
+function saveNote(){
+  if(actNoteIdx == null) return;
+  let t = cur().trades[actNoteIdx];
+  t.entry=el('note-entry').value; t.exit=el('note-exit').value;
+  t.sl=el('note-sl').value; t.tp=el('note-tp').value;
+  t.img=el('note-img').value; t.notes=el('note-text').value;
+  saveState(); renderAll(); closeNoteModal();
+  toast('บันทึกข้อมูลแล้ว ✓', 'success');
+}
 
+/* ============================================================
+   CSV IMPORT / EXPORT
+   ============================================================ */
 function importTradesCSV(e){
-  let f = e.target.files[0]; if(!f) return; let r = new FileReader();
+  let f = e.target.files[0]; if(!f) return;
+  let r = new FileReader();
   r.onload = ev => {
-    let lines = ev.target.result.split('\n'); let imp = 0;
-    for(let i=1; i<lines.length; i++){
+    let lines = ev.target.result.split('\n'), imp = 0;
+    for(let i=1;i<lines.length;i++){
       let c = lines[i].split(',');
-      if(c.length >= 3){
-        let pnl = parseFloat(c[3]||0); let s = c[2].toLowerCase(); let st = s.includes('w')?'win':(s.includes('l')?'loss':'pending');
-        cur().trades.push({ status:st, asset:c[0].trim()||'Other', dir:c[1].trim()||'LONG', strategy:c[4]?c[4].trim():'', pnlOverride:isNaN(pnl)?null:pnl, notes:'CSV Import' }); imp++;
+      if(c.length >= 2){
+        let pnl = parseFloat(c[3]||0);
+        let s = (c[2]||'').toLowerCase();
+        let status = s.includes('w')?'win':(s.includes('l')?'loss':'pending');
+        cur().trades.push({status, asset:(c[0]||'').trim(), dir:(c[1]||'').trim(), strategy:c[4]?(c[4]).trim():'', pnlOverride:isNaN(pnl)?null:pnl, notes:'CSV Import', entry:'', exit:'', sl:'', tp:'', img:'', session:'', mood:''});
+        imp++;
       }
-    } saveState(); renderAll(); alert(`นำเข้าออเดอร์สำเร็จ ${imp} รายการ!`); e.target.value='';
-  }; r.readAsText(f);
+    }
+    saveState(); renderAll();
+    toast(`นำเข้าออเดอร์สำเร็จ ${imp} รายการ ✓`, 'success');
+    e.target.value = '';
+  };
+  r.readAsText(f);
 }
+
 function exportCSV(){
-  let s = computeStats(); let csv = 'Trade,Asset,Dir,Status,PnL,Strategy,Session,Mood,Notes,Bal\n';
-  s.trades.forEach(t => csv += `${t.idx+1},${t.asset},${t.dir},${t.status},${t.pnl},${t.strategy},${t.session},${t.mood},"${(t.notes||'').replace(/"/g,"'")}",${t.endBal}\n`);
-  let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'})); a.download = 'RodeTo1Percent_Export.csv'; a.click();
+  let s = computeStats();
+  let csv = 'Trade,Asset,Dir,Status,PnL,Strategy,Session,Mood,Entry,Exit,Notes,Balance\n';
+  s.trades.forEach(t => csv += `${t.idx+1},${t.asset},${t.dir},${t.status},${t.pnl.toFixed(2)},${t.strategy},${t.session},${t.mood},${t.entry||''},${t.exit||''},"${(t.notes||'').replace(/"/g,"'")}",${t.endBal.toFixed(2)}\n`);
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = `RodeTo1Percent_${cur().name}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  toast('ส่งออก CSV สำเร็จ ✓', 'success');
 }
+
 function exportToPDF(){
-  el('pdf-header').style.display='block'; el('pdf-date').innerText=new Date().toLocaleString('th-TH');
-  html2pdf().set({margin:0.5, filename:'RodeTo1Percent_Report.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true, logging:false}, jsPDF:{unit:'in',format:'a3',orientation:'landscape'}}).from(el('content')).save().then(()=>el('pdf-header').style.display='none');
+  el('pdf-header').style.display = 'block';
+  el('pdf-date').innerText = `พอร์ต: ${cur().name} | วันที่: ${new Date().toLocaleString('th-TH')}`;
+  html2pdf().set({
+    margin: 0.5, filename: `RodeTo1Percent_${cur().name}.pdf`,
+    image:{type:'jpeg',quality:0.98},
+    html2canvas:{scale:2, useCORS:true, logging:false},
+    jsPDF:{unit:'in',format:'a3',orientation:'landscape'}
+  }).from(el('content')).save().then(()=>{
+    el('pdf-header').style.display = 'none';
+    toast('บันทึก PDF สำเร็จ ✓', 'success');
+  });
+}
+
+// FIX: เพิ่มฟังก์ชัน backup และ restoreBackup
+function backup(){
+  let data = JSON.stringify(state, null, 2);
+  let a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([data],{type:'application/json'}));
+  a.download = `RodeTo1Percent_Backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast('สำรองข้อมูลสำเร็จ ✓', 'success');
+}
+
+function restoreBackup(e){
+  let f = e.target.files[0]; if(!f) return;
+  let r = new FileReader();
+  r.onload = ev => {
+    try{
+      let data = JSON.parse(ev.target.result);
+      if(!data.portfolios) throw new Error('ไฟล์ไม่ถูกต้อง');
+      if(confirm('ต้องการโหลดข้อมูลสำรองนี้หรือไม่? ข้อมูลปัจจุบันทั้งหมดจะถูกแทนที่')){
+        state = data;
+        saveState();
+        renderPortSelect();
+        loadPortfolio();
+        toast('โหลดข้อมูลสำรองสำเร็จ ✓', 'success');
+      }
+    }catch(err){ toast('ไฟล์ไม่ถูกต้อง: '+err.message, 'danger'); }
+    e.target.value = '';
+  };
+  r.readAsText(f);
 }
 
 /* ============================================================
    CHARTS
    ============================================================ */
 let charts = {};
-function renderEquityChart(s) {
-  if(charts.equity) charts.equity.destroy();
-  charts.equity = new Chart(el('equity-chart').getContext('2d'), {
-    type: 'line', data: { labels: s.equityCurve.map(d=>d.x===0?'Start':`T${d.x}`), datasets: [{ label:'ยอดเงิน (Equity)', data:s.equityCurve.map(d=>d.y), borderColor:'#38bdf8', backgroundColor:'rgba(56,189,248,0.1)', borderWidth:2, fill:true, tension:0.1, pointRadius:2 }] },
-    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{grid:{color:'rgba(255,255,255,0.05)'}},y:{grid:{color:'rgba(255,255,255,0.05)'}}} }
+function destroyChart(name){ if(charts[name]){ charts[name].destroy(); charts[name]=null; } }
+
+function renderEquityChart(s){
+  destroyChart('equity');
+  let ctx = el('equity-chart'); if(!ctx) return;
+  let startBal = cur().config.bal;
+  charts.equity = new Chart(ctx.getContext('2d'), {
+    type:'line',
+    data:{
+      labels: s.equityCurve.map(d=>d.x===0?'Start':`T${d.x}`),
+      datasets:[{
+        label:'ยอดเงิน (Equity)',
+        data: s.equityCurve.map(d=>d.y),
+        borderColor: s.bal >= startBal ? '#10b981' : '#ef4444',
+        backgroundColor: s.bal >= startBal ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+        borderWidth: 2, fill: true, tension: 0.1, pointRadius: 2
+      }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label: ctx=>`${fmt(ctx.parsed.y)}`}}},
+      scales:{
+        x:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b'}},
+        y:{grid:{color:'rgba(255,255,255,0.05)'}, ticks:{color:'#64748b', callback:v=>fmt(v)}}
+      }
+    }
   });
 }
-function renderAnalytics(s) {
-  let closed = s.trades.filter(t => t.status!=='pending');
-  if(charts.bar) charts.bar.destroy();
-  charts.bar = new Chart(el('bar-chart'), { type:'bar', data:{ labels:closed.map(t=>`T${t.idx+1}`), datasets:[{ data:closed.map(t=>t.pnl), backgroundColor:closed.map(t=>t.pnl>=0?'#10b981':'#ef4444') }] }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}} });
-  if(charts.pie) charts.pie.destroy();
-  charts.pie = new Chart(el('pie-chart'), { type:'doughnut', data:{ labels:['ชนะ','แพ้'], datasets:[{ data:[s.wins, s.losses], backgroundColor:['#10b981','#ef4444'], borderWidth:0 }] }, options:{responsive:true, maintainAspectRatio:false, cutout:'75%', plugins:{legend:{display:false}}} });
-  
-  if(charts.radar) charts.radar.destroy();
-  charts.radar = new Chart(el('radar-chart'), { type:'radar', data:{ labels:['Win Rate','P.Factor','ความสม่ำเสมอ','EV'], datasets:[{ data:[s.wr, Math.min(100,s.pf*30), Math.max(0,100-s.consist), Math.min(100, (s.ev+0.5)*100)], borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.2)' }] }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{r:{min:0,max:100,ticks:{display:false}}}} });
 
-  function bHtml(m){ return Object.keys(m).sort((a,b)=>m[b].w-m[a].w).map(k=>{ let v=m[k], t=v.w+v.l, wr=t>0?(v.w/t)*100:0; return `<div style="margin-bottom:12px;font-size:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span>${k}</span><span class="mono">${v.w}W ${v.l}L (${wr.toFixed(0)}%)</span></div><div style="height:6px;background:var(--bg-sidebar);border-radius:3px"><div style="height:100%;background:${wr>=50?'var(--success)':'var(--danger)'};width:${wr}%"></div></div></div>`; }).join('') || 'ต้องการข้อมูลเพิ่มเติม...'; }
-  el('strat-breakdown').innerHTML = bHtml(s.stratMap); el('session-breakdown').innerHTML = bHtml(s.sessMap);
+function renderAnalytics(s){
+  let closed = s.trades.filter(t=>t.status!=='pending');
+  destroyChart('bar');
+  charts.bar = new Chart(el('bar-chart'), {
+    type:'bar',
+    data:{ labels:closed.map(t=>`#${t.idx+1}`), datasets:[{data:closed.map(t=>t.pnl), backgroundColor:closed.map(t=>t.pnl>=0?'rgba(16,185,129,0.8)':'rgba(239,68,68,0.8)'), borderRadius:4}] },
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{ticks:{color:'#64748b'}}, y:{ticks:{color:'#64748b'}}}}
+  });
+
+  destroyChart('pie');
+  charts.pie = new Chart(el('pie-chart'), {
+    type:'doughnut',
+    data:{labels:['ชนะ','แพ้'], datasets:[{data:[s.wins, s.losses], backgroundColor:['#10b981','#ef4444'], borderWidth:0}]},
+    options:{responsive:true, maintainAspectRatio:false, cutout:'75%', plugins:{legend:{display:true, position:'bottom', labels:{color:'#94a3b8', font:{size:11}}}}}
+  });
+
+  destroyChart('radar');
+  charts.radar = new Chart(el('radar-chart'), {
+    type:'radar',
+    data:{
+      labels:['Win Rate','P.Factor','ความสม่ำเสมอ','EV'],
+      datasets:[{data:[s.wr, Math.min(100,s.pf*30), Math.max(0,100-s.consist), Math.min(100,(s.ev+0.5)*100)], borderColor:'#8b5cf6', backgroundColor:'rgba(139,92,246,0.2)', pointBackgroundColor:'#8b5cf6'}]
+    },
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{r:{min:0,max:100,ticks:{display:false},grid:{color:'rgba(255,255,255,0.1)'}, pointLabels:{color:'#94a3b8'}}}}
+  });
+
+  function bHtml(m){
+    return Object.keys(m).sort((a,b)=>(m[b].w+m[b].l)-(m[a].w+m[a].l)).map(k=>{
+      let v=m[k], t=v.w+v.l, wr=t>0?(v.w/t)*100:0;
+      return `<div style="margin-bottom:12px;font-size:12px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+          <span>${k}</span>
+          <span class="mono">${v.w}W ${v.l}L (${wr.toFixed(0)}%)</span>
+        </div>
+        <div style="height:6px;background:var(--bg-sidebar);border-radius:3px">
+          <div style="height:100%;background:${wr>=50?'var(--success)':'var(--danger)'};width:${wr}%;border-radius:3px"></div>
+        </div>
+      </div>`;
+    }).join('') || '<div class="text-muted text-sm">ต้องการข้อมูลเพิ่มเติม...</div>';
+  }
+  el('strat-breakdown').innerHTML = bHtml(s.stratMap);
+  el('session-breakdown').innerHTML = bHtml(s.sessMap);
 }
 
 /* ============================================================
-   RISK, SCALE-OUT & MONTE CARLO
+   RISK CALCULATOR
    ============================================================ */
 let _currentLot = 0;
-function calcLot() {
-  let risk = parseFloat(el('r-risk').value)||100, sl = parseFloat(el('r-sl').value)||20, spread = parseFloat(el('r-spread').value)||0, comm = parseFloat(el('r-comm').value)||0, mul = parseFloat(el('r-pair').value)||10;
-  let lot = risk / (((sl + spread) * mul) + comm);
+
+function calcLot(){
+  let risk = parseFloat(el('r-risk').value)||100;
+  let sl = parseFloat(el('r-sl').value)||20;
+  let spread = parseFloat(el('r-spread').value)||0;
+  let comm = parseFloat(el('r-comm').value)||0;
+  let mul = parseFloat(el('r-pair').value)||10;
+  let lot = risk / (((sl+spread)*mul)+comm);
   _currentLot = (isFinite(lot)&&lot>0) ? lot : 0;
-  el('lot-result').textContent = _currentLot > 0 ? _currentLot.toFixed(2) : "0.00";
-  calcScaleOut(); 
+  el('lot-result').textContent = _currentLot > 0 ? _currentLot.toFixed(2) : '0.00';
+  calcScaleOut();
 }
-function calcScaleOut() {
+
+function calcScaleOut(){
   let tp1Pips = parseFloat(el('so-tp1').value)||20;
   let closePct = parseFloat(el('so-pct').value)||50;
   let tp2Pips = parseFloat(el('so-tp2').value)||40;
   let mul = parseFloat(el('r-pair').value)||10;
-  
   let lot1 = _currentLot * (closePct/100);
   let lot2 = _currentLot - lot1;
-  
   let pnl1 = lot1 * tp1Pips * mul;
   let pnl2 = lot2 * tp2Pips * mul;
   let totalPnl = pnl1 + pnl2;
-  
-  el('so-result').textContent = totalPnl > 0 ? `+${fmt(totalPnl)}` : "$0.00";
+  el('so-result').textContent = totalPnl > 0 ? `+${fmt(totalPnl)}` : '$0.00';
+  if(el('so-detail')) el('so-detail').textContent = totalPnl > 0 ? `TP1: +${fmt(pnl1)} | TP2: +${fmt(pnl2)}` : '';
 }
 
-function runMonteCarlo() {
-  let s = computeStats(); if(s.wr===0) return alert('ต้องมีออเดอร์ที่ปิดแล้วถึงจะจำลองได้');
-  let p = s.wr/100, rr = cur().config.rr, bal = cur().config.bal, rPct = cur().config.risk/100, res = [];
-  for(let i=0; i<500; i++){ let b=bal, c=[b]; for(let t=0; t<100; t++){ let ra=b*rPct; b+=Math.random()<p?(ra*rr):-ra; if(b<=0){b=0;c.push(b);break;} c.push(b); } res.push(c); }
-  let fin = res.map(r=>r[r.length-1]), surv = fin.filter(f=>f>bal*0.5).length;
-  el('mc-avg').textContent=fmt(fin.reduce((a,b)=>a+b,0)/500); el('mc-best').textContent=fmt(Math.max(...fin)); el('mc-worst').textContent=fmt(Math.min(...fin)); el('mc-survived').textContent=pct((surv/500)*100); el('mc-results').style.display='grid';
-  if(charts.monte) charts.monte.destroy();
-  charts.monte = new Chart(el('monte-chart').getContext('2d'), { type:'line', data:{ labels:Array.from({length:101},(_,i)=>i), datasets:res.slice(0,40).map(r=>({data:r, borderColor:'rgba(139,92,246,0.15)', borderWidth:1, fill:false, pointRadius:0})) }, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false}}} });
+// FIX: เพิ่มฟังก์ชันดึงค่า Risk จากพอร์ต
+function pullRiskFromPortfolio(){
+  let s = computeStats(), c = cur().config;
+  let riskAmt = s.bal * (c.risk/100);
+  el('r-risk').value = riskAmt.toFixed(2);
+  el('r-sl').value = c.slPips;
+  calcLot();
+  toast(`ดึงค่าจากพอร์ต: Risk ${fmt(riskAmt)}, SL ${c.slPips} pips`, 'info');
+}
+
+function runMonteCarlo(){
+  let s = computeStats();
+  if(s.wr===0){ toast('ต้องมีออเดอร์ที่ปิดแล้วอย่างน้อย 1 รายการ', 'danger'); return; }
+  let p=s.wr/100, rr=cur().config.rr, bal=cur().config.bal, rPct=cur().config.risk/100, res=[];
+  for(let i=0;i<500;i++){
+    let b=bal, c=[b];
+    for(let t=0;t<100;t++){ let ra=b*rPct; b+=Math.random()<p?(ra*rr):-ra; if(b<=0){b=0;c.push(b);break;} c.push(b); }
+    res.push(c);
+  }
+  let fin=res.map(r=>r[r.length-1]), surv=fin.filter(f=>f>bal*0.5).length;
+  el('mc-avg').textContent = fmt(fin.reduce((a,b)=>a+b,0)/500);
+  el('mc-best').textContent = fmt(Math.max(...fin));
+  el('mc-worst').textContent = fmt(Math.min(...fin));
+  el('mc-survived').textContent = pct((surv/500)*100);
+  el('mc-results').style.display = 'grid';
+
+  destroyChart('monte');
+  charts.monte = new Chart(el('monte-chart').getContext('2d'), {
+    type:'line',
+    data:{ labels:Array.from({length:101},(_,i)=>i), datasets:res.slice(0,50).map(r=>({data:r, borderColor:'rgba(139,92,246,0.12)', borderWidth:1, fill:false, pointRadius:0})) },
+    options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{display:false},y:{ticks:{color:'#64748b',callback:v=>fmt(v)}}}}
+  });
 }
 
 /* ============================================================
-   KNOWLEDGE VAULT (รองรับ PDF)
+   KNOWLEDGE VAULT
    ============================================================ */
-function mdToHtml(md){ return md.replace(/^# (.+)$/gm,'<h1 style="color:var(--primary);font-family:var(--font-cyber);margin:16px 0 8px;font-size:20px">$1</h1>').replace(/^## (.+)$/gm,'<h2 style="color:var(--text-main);margin:12px 0 8px;font-size:16px">$1</h2>').replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--primary)">$1</strong>').replace(/`([^`]+)`/g,'<code style="background:rgba(0,0,0,0.5);padding:2px 6px;color:#ff79c6;font-family:var(--font-mono)">$1</code>').replace(/^- (.+)$/gm,'<li style="margin-left:16px;margin-bottom:4px">$1</li>').replace(/\n\n/g,'<br><br>'); }
+function mdToHtml(md){
+  return md
+    .replace(/^### (.+)$/gm,'<h3 style="color:var(--text-main);margin:12px 0 6px;font-size:13px">$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2 style="color:var(--text-main);margin:16px 0 8px;font-size:15px">$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1 style="color:var(--primary);font-family:var(--font-cyber);margin:16px 0 8px;font-size:20px">$1</h1>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong style="color:var(--primary)">$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em style="color:var(--text-muted)">$1</em>')
+    .replace(/`([^`]+)`/g,'<code style="background:rgba(0,0,0,0.5);padding:2px 6px;color:#ff79c6;font-family:var(--font-mono);border-radius:3px">$1</code>')
+    .replace(/^- (.+)$/gm,'<li style="margin-left:16px;margin-bottom:4px;line-height:1.6">$1</li>')
+    .replace(/^\d+\. (.+)$/gm,'<li style="margin-left:16px;margin-bottom:4px;list-style-type:decimal;line-height:1.6">$1</li>')
+    .replace(/\n\n/g,'<br><br>');
+}
 
 function renderVault(){
-  el('vault-grid').innerHTML = state.articles.map(a => {
-    let icon = a.type === 'pdf' ? '📄 PDF' : '📝 Article';
-    let badgeColor = a.type === 'pdf' ? 'badge-danger' : 'badge-primary';
-    
-    return `<div class="card" style="padding:16px; display:flex; flex-direction:column;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-        <span class="badge ${badgeColor}">${icon}</span>
-        <span class="badge badge-primary" style="background:transparent; border-color:var(--border); color:var(--text-muted)">${a.category}</span>
+  if(!el('vault-grid')) return;
+  el('vault-grid').innerHTML = state.articles.map(a=>{
+    let icon = a.type === 'pdf' ? '📄' : '📝';
+    return `<div class="card" style="padding:16px;display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-size:18px">${icon}</span>
+        <span class="badge badge-primary" style="font-size:9px">${a.category||'ทั่วไป'}</span>
       </div>
-      <div class="font-bold text-main" style="font-size:14px;margin-bottom:8px">${a.title}</div>
-      <div class="text-xs text-muted mb-3" style="line-height:1.5; flex:1;">${a.excerpt}</div>
-      <div style="display:flex;gap:6px">
+      <div class="font-bold text-main" style="font-size:14px;line-height:1.4">${a.title}</div>
+      <div class="text-xs text-muted" style="line-height:1.6;flex:1">${a.excerpt||''}</div>
+      <div style="display:flex;gap:6px;margin-top:4px">
         <button class="btn btn-primary btn-sm" style="flex:1" onclick="openArticle('${a.id}')">เปิดอ่าน</button>
         <button class="btn btn-outline btn-sm" onclick="openArticleEditor('${a.id}')">✎</button>
-        <button class="btn btn-outline btn-sm text-danger" onclick="if(confirm('ต้องการลบข้อมูลนี้หรือไม่?')){state.articles=state.articles.filter(x=>x.id!=='${a.id}');saveState();renderVault();}">✕</button>
+        <button class="btn btn-outline btn-sm text-danger" onclick="if(confirm('ต้องการลบ?')){state.articles=state.articles.filter(x=>x.id!=='${a.id}');saveState();renderVault();}">✕</button>
       </div>
     </div>`;
-  }).join('');
+  }).join('') || '<div class="card text-muted text-sm" style="text-align:center">ยังไม่มีบทความ กดปุ่ม + เพิ่มบทความ</div>';
 }
 
-function openArticle(id){ 
-  let a = state.articles.find(x=>x.id===id); 
-  if(!a) return;
-  el('art-view-title').textContent = a.title; 
-  el('art-view-meta').textContent = `${a.category} | LVL ${a.levelRequired}`; 
-  
+function openArticle(id){
+  let a = state.articles.find(x=>x.id===id); if(!a) return;
+  el('art-view-title').textContent = a.title;
+  el('art-view-meta').textContent = `${a.category||'ทั่วไป'} | LVL ${a.levelRequired||1}`;
   let contentBox = el('art-view-content');
-  if (a.type === 'pdf') {
-    contentBox.innerHTML = `<iframe src="${a.pdfUrl}" style="width:100%; height:100%; border:none; flex:1; background:#fff;" title="${a.title}"></iframe>`;
+  if(a.type === 'pdf'){
+    contentBox.innerHTML = `<iframe src="${a.pdfUrl}" style="width:100%;height:100%;border:none;flex:1;background:#fff;" title="${a.title}"></iframe>`;
   } else {
-    contentBox.innerHTML = `<div style="padding: 24px;">${mdToHtml(a.content || '')}</div>`;
+    contentBox.innerHTML = `<div style="padding:24px;line-height:1.8;font-size:13px">${mdToHtml(a.content||'')}</div>`;
   }
-  el('article-modal').style.display = 'flex'; 
+  el('article-modal').style.display = 'flex';
 }
+function closeArticleModal(){ el('article-modal').style.display='none'; el('art-view-content').innerHTML=''; }
 
-function closeArticleModal(){ el('article-modal').style.display='none'; el('art-view-content').innerHTML = ''; }
-
-let editArtId=null;
-function toggleEditorType() {
+let editArtId = null;
+function toggleEditorType(){
   let type = el('art-type').value;
-  el('editor-markdown-section').style.display = type === 'markdown' ? 'block' : 'none';
-  el('editor-pdf-section').style.display = type === 'pdf' ? 'block' : 'none';
+  el('editor-markdown-section').style.display = type==='markdown'?'block':'none';
+  el('editor-pdf-section').style.display = type==='pdf'?'block':'none';
 }
 
-function openArticleEditor(id){ 
-  editArtId=id; 
-  let a = state.articles.find(x=>x.id===id) || {title:'', category:'', levelRequired:1, excerpt:'', type:'markdown', content:'', pdfUrl:''}; 
-  el('art-title').value = a.title; el('art-cat').value = a.category; el('art-lvl').value = a.levelRequired; 
-  el('art-excerpt').value = a.excerpt; el('art-type').value = a.type || 'markdown';
-  el('art-content').value = a.content || ''; el('art-pdf-url').value = a.pdfUrl || '';
-  toggleEditorType(); el('editor-modal').style.display='flex'; 
+function openArticleEditor(id){
+  editArtId = id;
+  let a = state.articles.find(x=>x.id===id) || {title:'',category:'',levelRequired:1,excerpt:'',type:'markdown',content:'',pdfUrl:''};
+  el('art-title').value=a.title; el('art-cat').value=a.category; el('art-lvl').value=a.levelRequired;
+  el('art-excerpt').value=a.excerpt; el('art-type').value=a.type||'markdown';
+  el('art-content').value=a.content||''; el('art-pdf-url').value=a.pdfUrl||'';
+  toggleEditorType(); el('editor-modal').style.display='flex';
 }
-
 function closeEditorModal(){ el('editor-modal').style.display='none'; }
 
-function saveArticle(){ 
+function saveArticle(){
   let d = {
-    title: el('art-title').value, category: el('art-cat').value, levelRequired: parseInt(el('art-lvl').value)||1, 
-    excerpt: el('art-excerpt').value, type: el('art-type').value, content: el('art-content').value, pdfUrl: el('art-pdf-url').value
-  }; 
-  if(editArtId){ Object.assign(state.articles.find(x=>x.id===editArtId), d); } 
-  else { d.id = 'a' + Date.now(); state.articles.unshift(d); } 
-  saveState(); renderVault(); closeEditorModal(); 
+    title:el('art-title').value.trim(), category:el('art-cat').value.trim(),
+    levelRequired:parseInt(el('art-lvl').value)||1,
+    excerpt:el('art-excerpt').value.trim(), type:el('art-type').value,
+    content:el('art-content').value, pdfUrl:el('art-pdf-url').value.trim()
+  };
+  if(!d.title){ toast('กรุณากรอกหัวข้อ', 'danger'); return; }
+  if(editArtId){ Object.assign(state.articles.find(x=>x.id===editArtId), d); }
+  else { d.id='a'+Date.now(); state.articles.unshift(d); }
+  saveState(); renderVault(); closeEditorModal();
+  toast('บันทึกบทความสำเร็จ ✓', 'success');
 }
 
 /* ============================================================
-   NEURAL LINK & AI (อัปเดตโมเดลเป็นรุ่นมาตรฐาน gemini-pro)
+   AI NEURAL LINK — FIX: อัปเดตโมเดล + System Prompt
    ============================================================ */
-async function callAI(messages, sys, key){
-  // เปลี่ยนชื่อโมเดลจาก 1.5-flash เป็น gemini-pro เพื่อให้รองรับทุก API Key
-  let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${key}`;
-  try {
-    let res = await fetch(url, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: messages, 
-        // gemini-pro รุ่นเก่าบางตัวอาจจะไม่รองรับ systemInstruction ตรงๆ เราจึงย้ายคำสั่งระบบไปรวมกับข้อความ
-        generationConfig: {temperature: 0.7, maxOutputTokens: 800}
-      })
-    });
-    
-    let d = await res.json();
-    if(!res.ok) throw new Error(d.error ? d.error.message : `HTTP Error ${res.status}`);
-    return d.candidates[0].content.parts[0].text;
-    
-  } catch(e) {
-    console.error("API Error:", e);
-    if(e.message.includes('Failed to fetch')) {
-      throw new Error('เบราว์เซอร์บล็อกการเชื่อมต่อ (CORS) ลองรันผ่าน Live Server ดูครับ');
-    }
-    throw new Error(`${e.message}`);
+// FIX: setNeuralPrompt ที่หายไป
+function setNeuralPrompt(text){
+  el('chat-input').value = text;
+  el('chat-input').focus();
+}
+
+async function callGemini(messages, apiKey){
+  // FIX: ใช้โมเดล gemini-1.5-flash ที่รองรับ API Key ฟรี
+  let url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  let res = await fetch(url, {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({
+      contents: messages,
+      generationConfig: {temperature:0.7, maxOutputTokens:1000}
+    })
+  });
+  let d = await res.json();
+  if(!res.ok) throw new Error(d.error?.message || `HTTP ${res.status}`);
+  if(!d.candidates?.[0]?.content?.parts?.[0]?.text) throw new Error('ไม่ได้รับข้อมูลจาก AI');
+  return d.candidates[0].content.parts[0].text;
+}
+
+async function sendChat(){
+  let input = el('chat-input'), msg = input.value.trim(), key = state.apiKey;
+  let box = el('chat-messages');
+  if(!msg) return;
+  input.value = '';
+
+  function appendMsg(html, isUser){
+    let d = document.createElement('div');
+    d.style.cssText = `display:flex;justify-content:${isUser?'flex-end':'flex-start'}`;
+    d.innerHTML = `<div style="max-width:80%;padding:12px;border-radius:${isUser?'12px 4px':'4px 12px'} 12px 12px;background:${isUser?'rgba(56,189,248,0.15)':'rgba(30,41,59,0.9)'};border:1px solid ${isUser?'rgba(56,189,248,0.3)':'var(--border)'};font-size:12px;line-height:1.8">${html}</div>`;
+    box.appendChild(d); box.scrollTop = box.scrollHeight; return d;
+  }
+
+  appendMsg(msg, true);
+
+  if(!key){
+    appendMsg('⚠️ กรุณาใส่ Gemini API Key ก่อน (รับได้ฟรีจาก Google AI Studio)', false);
+    return;
+  }
+
+  // Build system context from portfolio stats
+  let s = computeStats(), c = cur().config;
+  let sysPrompt = `คุณคือโค้ชเทรดผู้เชี่ยวชาญ ตอบเป็นภาษาไทยเสมอ ให้คำแนะนำที่เป็นประโยชน์และเฉพาะเจาะจง
+
+ข้อมูลพอร์ตปัจจุบัน:
+- ทุน: ${fmt(c.bal)}, ยอดปัจจุบัน: ${fmt(s.bal)}
+- Win Rate: ${pct(s.wr)}, Profit Factor: ${s.pf.toFixed(2)}
+- EV ต่อไม้: ${s.ev.toFixed(2)}R, Drawdown: ${pct(s.maxDD)}
+- ออเดอร์ทั้งหมด: ${s.totalClosed} ไม้ (ชนะ ${s.wins}, แพ้ ${s.losses})
+- ลิมิต DD วัน: ${c.dailyDD}%, ลิมิต DD รวม: ${c.maxDD}%`;
+
+  // Add system prompt as first user message if not yet in history
+  if(state.aiHistory.length === 0){
+    state.aiHistory.push({role:'user', parts:[{text: sysPrompt + '\n\n(กรุณาตอบรับเพื่อยืนยันว่าเข้าใจบริบทแล้ว)'}]});
+    state.aiHistory.push({role:'model', parts:[{text:'เข้าใจแล้วครับ พร้อมช่วยวิเคราะห์พอร์ตของคุณ'}]});
+  }
+
+  state.aiHistory.push({role:'user', parts:[{text: msg}]});
+
+  let loadEl = appendMsg('<span style="color:var(--text-muted)">⏳ AI กำลังคิด...</span>', false);
+  try{
+    let reply = await callGemini(state.aiHistory, key);
+    loadEl.remove();
+    appendMsg(mdToHtml(reply), false);
+    state.aiHistory.push({role:'model', parts:[{text:reply}]});
+    // Keep history manageable (max 20 turns)
+    if(state.aiHistory.length > 22) state.aiHistory = state.aiHistory.slice(-20);
+    saveState();
+  } catch(err){
+    loadEl.remove();
+    appendMsg(`❌ Error: ${err.message}`, false);
   }
 }
 
-// อัปเดตฟังก์ชันส่งข้อความเพื่อแนบคำสั่งระบบ (System Prompt) เข้าไปในข้อความเลย
-async function sendChat(){
-  let input=el('chat-input'), msg=input.value.trim(), key=state.apiKey, box=el('chat-messages'); if(!msg)return; input.value='';
-  function append(html, user){ let d=document.createElement('div'); d.style.cssText=`display:flex;justify-content:${user?'flex-end':'flex-start'}`; d.innerHTML=`<div style="max-width:80%;padding:12px;border-radius:8px;background:${user?'rgba(56,189,248,0.15)':'rgba(30,41,59,0.9)'};border:1px solid ${user?'rgba(56,189,248,0.3)':'var(--border)'};font-size:12px;line-height:1.6">${html}</div>`; box.appendChild(d); box.scrollTop=box.scrollHeight; return d; }
-  append(msg, true); 
-  
-  let s=computeStats(); 
-  // ฝังคำสั่งควบคุม AI ลงไปในประวัติแชทเลย
-  let sysCtx = `(System: You are an expert trading tutor. Context - Bal:${s.bal}, WR:${s.wr.toFixed(1)}%, PF:${s.pf.toFixed(2)}. Answer in Thai concisely.)\n\n`;
-  
-  state.aiHistory.push({role:'user',parts:[{text: sysCtx + msg}]});
-  if(!key) return append('กรุณาใส่ Gemini API Key ก่อนครับ', false);
-  let load = append('กำลังประมวลผล...', false);
-  try{ 
-    let r=await callAI(state.aiHistory, "", key); 
-    load.remove(); 
-    append(mdToHtml(r), false); 
-    state.aiHistory.push({role:'model',parts:[{text:r}]}); 
-  }catch(e){ load.remove(); append('Error: '+e.message, false); }
+/* ============================================================
+   SWARM AI
+   ============================================================ */
+async function generateSwarm(){
+  let asset = el('swarm-asset').value;
+  let tf = el('swarm-tf').value;
+  el('swarm-empty').style.display = 'none';
+  el('swarm-models').innerHTML = '<div style="grid-column:span 2;text-align:center;padding:20px;color:var(--text-muted)">⏳ กำลังประมวลผล...</div>';
+
+  let models = ['Alpha (Trend)', 'Beta (Mean Rev)', 'Gamma (Breakout)', 'Delta (Sentiment)'];
+  let results;
+
+  // Try real AI if key available
+  if(state.apiKey){
+    try{
+      let s = computeStats();
+      let prompt = `วิเคราะห์ ${asset} ใน Timeframe ${tf} จาก 4 มุมมอง:
+1. Alpha: เทรนด์ (Trend Following)
+2. Beta: Mean Reversion
+3. Gamma: Breakout
+4. Delta: Sentiment/Order Flow
+
+สำหรับแต่ละโมเดล ให้ตอบในรูปแบบ JSON array ดังนี้:
+[{"model":"Alpha","dir":"BULL","conf":75,"reason":"เหตุผลสั้นๆ"},...]
+
+ตอบ JSON อย่างเดียว ไม่ต้องมีข้อความอื่น`;
+
+      let aiResp = await callGemini([{role:'user',parts:[{text:prompt}]}], state.apiKey);
+      let clean = aiResp.replace(/```json|```/g,'').trim();
+      results = JSON.parse(clean);
+    } catch(e){
+      results = null; // fallback to mock
+    }
+  }
+
+  if(!results){
+    results = models.map((n,i)=>({
+      model:n,
+      dir:Math.random()>0.45?'BULL':'BEAR',
+      conf:Math.floor(52+Math.random()*40),
+      reason:['โครงสร้างราคา Bullish','RSI Oversold','แนวต้านสำคัญ','Volume เพิ่มขึ้น','EMA ทอดข้าม','Order Block สำคัญ'][Math.floor(Math.random()*6)]
+    }));
+  }
+
+  let bullCount = results.filter(r=>r.dir==='BULL').length;
+  let cons = bullCount >= 3 ? 'BULL' : bullCount <= 1 ? 'BEAR' : 'NEUTRAL';
+  let avgConf = Math.round(results.reduce((a,b)=>a+b.conf,0)/results.length);
+
+  el('swarm-consensus').style.display = 'block';
+  el('consensus-text').textContent = cons;
+  el('consensus-text').className = `cyber text-xl font-bold ${cons==='BULL'?'text-success':cons==='BEAR'?'text-danger':'text-muted'}`;
+  el('consensus-conf').textContent = `ความมั่นใจ: ${avgConf}% | ${asset} ${tf} | ${bullCount}/4 โมเดล Bull`;
+
+  el('swarm-models').innerHTML = results.map(r=>`
+    <div class="card" style="padding:12px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <span class="cyber text-xs text-primary">${r.model}</span>
+        <span class="badge ${r.dir==='BULL'?'badge-success':'badge-danger'}">${r.dir}</span>
+      </div>
+      <div style="height:4px;background:var(--bg-sidebar);border-radius:2px;margin-bottom:8px">
+        <div style="height:100%;width:${r.conf}%;background:${r.dir==='BULL'?'var(--success)':'var(--danger)'};border-radius:2px"></div>
+      </div>
+      <div class="text-xs text-muted">Conf: ${r.conf}%</div>
+      <div class="text-xs" style="color:var(--text-dark);margin-top:4px">${r.reason||''}</div>
+    </div>
+  `).join('');
 }
 
 /* ============================================================
-   MOCK INTELLIGENCE
+   ORDER FLOW SIMULATOR
    ============================================================ */
-function generateSwarm(){
-  let m = [0,1,2,3].map(i=>({n:['Alpha','Beta','Gamma','Delta'][i], d:Math.random()>0.5?'BULL':'BEAR', c:Math.floor(50+Math.random()*45)}));
-  let bc = m.filter(x=>x.d==='BULL').length, cons = bc>=3?'BULL':bc<=1?'BEAR':'NEUTRAL';
-  el('swarm-empty').style.display='none'; el('swarm-consensus').style.display='block'; el('consensus-text').textContent=cons; el('consensus-text').className=`cyber text-xl font-bold ${cons==='BULL'?'text-success':cons==='BEAR'?'text-danger':'text-muted'}`; el('consensus-conf').textContent=`ความมั่นใจ: ${Math.round(m.reduce((a,b)=>a+b.c,0)/4)}%`;
-  el('swarm-models').innerHTML = m.map(x=>`<div class="card" style="padding:12px"><div style="display:flex;justify-content:space-between;margin-bottom:8px"><span class="cyber text-xs">${x.n}</span><span class="badge ${x.d==='BULL'?'badge-success':'badge-danger'}">${x.d}</span></div><div class="text-xs text-muted">Conf: ${x.c}%</div></div>`).join('');
-}
 function renderFlow(){
-  let f = ASSETS.map(a=>{ let r=Math.floor(20+Math.random()*60); return `<tr><td class="font-bold text-primary">${a}</td><td>${r}%</td><td>${100-r}%</td><td><span class="badge ${Math.random()>0.5?'badge-success':'badge-danger'}">${Math.random()>0.5?'LONG':'SHORT'}</span></td><td>${Math.floor(40+Math.random()*50)}%</td><td><span class="text-${Math.random()>0.5?'success':'danger'}">${Math.random()>0.5?'Risk-On':'Risk-Off'}</span></td></tr>`; }); el('flow-body').innerHTML=f.join('');
+  let rows = ASSETS.map(a=>{
+    let retail = Math.floor(20+Math.random()*60);
+    let instDir = Math.random()>0.5?'LONG':'SHORT';
+    let conf = Math.floor(40+Math.random()*55);
+    let isRiskOn = Math.random()>0.5;
+    return `<tr style="cursor:pointer" onclick="showFlowDetail('${a}')">
+      <td class="font-bold text-primary">${a}</td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="height:4px;width:${retail}px;max-width:80px;background:var(--success);border-radius:2px"></div>${retail}%</div></td>
+      <td><div style="display:flex;align-items:center;gap:8px"><div style="height:4px;width:${100-retail}px;max-width:80px;background:var(--danger);border-radius:2px"></div>${100-retail}%</div></td>
+      <td><span class="badge ${instDir==='LONG'?'badge-success':'badge-danger'}">${instDir}</span></td>
+      <td><div style="display:flex;align-items:center;gap:6px"><div style="width:${conf}px;max-width:80px;height:4px;background:var(--primary);border-radius:2px"></div>${conf}%</div></td>
+      <td><span style="color:${isRiskOn?'var(--success)':'var(--danger)'}">${isRiskOn?'Risk-On ↑':'Risk-Off ↓'}</span></td>
+    </tr>`;
+  });
+  el('flow-body').innerHTML = rows.join('');
 }
-function renderGod(){
-  let a=['XAUUSD','EURUSD','GBPUSD','USDJPY','US30','NAS100','BTCUSD'];
-  let mt = a.map(x=>`<div class="card" style="padding:8px 16px;flex-shrink:0"><div class="cyber text-xs text-primary">${x}</div><div class="mono font-bold">${(Math.random()*1000).toFixed(2)}</div></div>`).join(''); el('market-ticker').innerHTML=mt;
-  let r = `<div></div>`+a.map(x=>`<div class="cyber text-xs text-muted" style="padding:4px;text-align:center">${x.slice(0,3)}</div>`).join('');
-  a.forEach(x=>{ r+=`<div class="cyber text-xs text-primary" style="display:flex;align-items:center">${x.slice(0,3)}</div>`; a.forEach(y=>{ let v=(x===y)?1:(Math.random()*2-1); let c=v>0.5?'var(--success)':v<-0.5?'var(--danger)':'var(--border)'; r+=`<div class="corr-cell" style="background:rgba(255,255,255,0.05);color:${c};border:1px solid ${c}">${v.toFixed(2)}</div>`; }); });
-  el('corr-matrix').innerHTML = `<div style="display:grid;grid-template-columns:50px repeat(7,1fr);gap:4px">${r}</div>`;
-  el('god-signals').innerHTML = ['DXY ทรงตัว','VIX ผันผวน','เงินทุนไหลเข้าเสี่ยงสูง','สถาบันสะสมของ'].map(x=>`<div style="padding:8px;border-bottom:1px solid var(--border);font-size:12px">${x}</div>`).join('');
+
+function showFlowDetail(asset){
+  let detail = el('flow-detail-content');
+  let bias = Math.random()>0.5?'Bullish':'Bearish';
+  detail.innerHTML = `
+    <div style="margin-bottom:12px"><span class="cyber text-primary font-bold">${asset}</span></div>
+    <div style="margin-bottom:8px;padding:8px;background:rgba(0,0,0,0.3);border-radius:6px">
+      <div class="text-xs text-muted">มุมมองสถาบัน</div>
+      <div class="font-bold" style="color:${bias==='Bullish'?'var(--success)':'var(--danger)'}">${bias}</div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);line-height:1.8">
+      • CoT: ${Math.random()>0.5?'Net Long':'Net Short'}<br>
+      • Options OI: ${(Math.random()*1000).toFixed(0)}K<br>
+      • Funding Rate: ${(Math.random()*0.1-0.05).toFixed(4)}%<br>
+      • Volume: ${bias==='Bullish'?'เพิ่มขึ้น ↑':'ลดลง ↓'}
+    </div>`;
 }
 
 /* ============================================================
-   FOCUS TIMER & CHECKLIST
+   GODMODE / MACRO
    ============================================================ */
-let focusTime = 45 * 60; 
-let isFocusRunning = false;
-let isBreak = false;
-let focusInterval;
+function renderGod(){
+  let assets = ['XAU','EUR','GBP','JPY','US30','NAS','BTC'];
+  let ticker = ASSETS.map(x=>`
+    <div class="card" style="padding:8px 16px;flex-shrink:0">
+      <div class="cyber text-xs text-primary">${x}</div>
+      <div class="mono font-bold">${(Math.random()>0.5?'+':'-')}${(Math.random()*0.5).toFixed(2)}%</div>
+    </div>`).join('');
+  el('market-ticker').innerHTML = ticker;
 
-function toggleTimer() {
-  if(isFocusRunning) { clearInterval(focusInterval); isFocusRunning = false; el('focus-timer').classList.remove('active'); el('focus-timer').classList.remove('break'); }
-  else { 
-    isFocusRunning = true; 
-    el('focus-timer').classList.add(isBreak ? 'break' : 'active');
-    focusInterval = setInterval(() => {
+  let r = `<div></div>` + assets.map(x=>`<div class="cyber text-xs text-muted" style="padding:4px;text-align:center">${x}</div>`).join('');
+  assets.forEach(x=>{
+    r += `<div class="cyber text-xs text-primary" style="display:flex;align-items:center;padding:2px 4px">${x}</div>`;
+    assets.forEach(y=>{
+      let v = x===y ? 1 : parseFloat((Math.random()*2-1).toFixed(2));
+      let c = v>0.5?'var(--success)':v<-0.5?'var(--danger)':'var(--border)';
+      r += `<div class="corr-cell" style="background:rgba(255,255,255,0.04);color:${c};border:1px solid rgba(255,255,255,0.05)">${v.toFixed(2)}</div>`;
+    });
+  });
+  el('corr-matrix').innerHTML = `<div style="display:grid;grid-template-columns:50px repeat(${assets.length},1fr);gap:3px">${r}</div>`;
+
+  let signals = [
+    {icon:'📈', text:'DXY อ่อนตัว', col:'var(--success)'},
+    {icon:'⚡', text:'VIX สูงกว่าค่าเฉลี่ย', col:'var(--warning)'},
+    {icon:'💰', text:'เงินไหลเข้าสินทรัพย์เสี่ยง', col:'var(--success)'},
+    {icon:'🏛️', text:'Fed คงดอกเบี้ย', col:'var(--primary)'},
+    {icon:'🥇', text:'ทองคำแนวโน้มขาขึ้น', col:'var(--success)'},
+    {icon:'📊', text:'PCE ต่ำกว่าคาด', col:'var(--success)'},
+  ];
+  el('god-signals').innerHTML = signals.map(s=>`
+    <div style="padding:10px;border-bottom:1px solid var(--border-light);font-size:12px;display:flex;align-items:center;gap:8px">
+      <span>${s.icon}</span>
+      <span style="color:${s.col}">${s.text}</span>
+    </div>`).join('');
+}
+
+/* ============================================================
+   FOCUS TIMER
+   ============================================================ */
+let focusTime = 45*60, isFocusRunning = false, isBreak = false, focusInterval;
+
+function toggleTimer(){
+  if(isFocusRunning){
+    clearInterval(focusInterval); isFocusRunning = false;
+    el('focus-timer').classList.remove('active','break');
+  } else {
+    isFocusRunning = true;
+    el('focus-timer').classList.add(isBreak?'break':'active');
+    focusInterval = setInterval(()=>{
       focusTime--;
-      let m = Math.floor(focusTime / 60).toString().padStart(2, '0');
-      let s = (focusTime % 60).toString().padStart(2, '0');
+      let m = Math.floor(focusTime/60).toString().padStart(2,'0');
+      let s = (focusTime%60).toString().padStart(2,'0');
       el('timer-display').textContent = `${m}:${s}`;
-      if(focusTime <= 0) {
-        clearInterval(focusInterval); isFocusRunning = false;
-        playFX('win'); 
-        if(!isBreak) { alert("หมดเวลาโฟกัส! พักสายตา 15 นาที"); focusTime = 15 * 60; isBreak = true; el('focus-timer').classList.remove('active'); }
-        else { alert("หมดเวลาพัก! พร้อมลุยต่อไหม?"); focusTime = 45 * 60; isBreak = false; el('focus-timer').classList.remove('break'); }
+      if(focusTime <= 0){
+        clearInterval(focusInterval); isFocusRunning = false; playFX('win');
+        if(!isBreak){ toast('⏱ หมดเวลาโฟกัส! พักสายตา 15 นาที', 'info'); focusTime=15*60; isBreak=true; el('focus-timer').classList.remove('active'); }
+        else { toast('⏱ หมดเวลาพัก! พร้อมลุยต่อ?', 'success'); focusTime=45*60; isBreak=false; el('focus-timer').classList.remove('break'); }
       }
     }, 1000);
   }
 }
 
-function openChecklist() {
-  document.querySelectorAll('.check-item input').forEach(cb => cb.checked = false);
-  verifyChecklist(); el('checklist-modal').style.display = 'flex';
+/* ============================================================
+   CHECKLIST
+   ============================================================ */
+function openChecklist(){
+  document.querySelectorAll('.check-item input').forEach(cb=>cb.checked=false);
+  verifyChecklist();
+  el('checklist-modal').style.display = 'flex';
 }
-function closeChecklist() { el('checklist-modal').style.display = 'none'; }
+function closeChecklist(){ el('checklist-modal').style.display='none'; }
 
-function verifyChecklist() {
-  let allChecked = true;
-  document.querySelectorAll('.check-item input').forEach(cb => { if(!cb.checked) allChecked = false; });
+function verifyChecklist(){
+  let cbs = document.querySelectorAll('.check-item input');
+  let allChecked = Array.from(cbs).every(cb=>cb.checked);
   let btn = el('btn-execute-trade');
-  if(allChecked) {
-    btn.style.pointerEvents = 'auto'; btn.style.background = 'var(--success)'; btn.style.color = '#000'; btn.textContent = 'ไปที่ MT4 / เปิดออเดอร์';
+  if(allChecked){
+    btn.style.pointerEvents='auto'; btn.style.background='var(--success)';
+    btn.style.color='#000'; btn.style.borderColor='var(--success)';
+    btn.textContent='✓ ผ่านทุกเงื่อนไข — ไปเปิดออเดอร์ได้เลย!';
   } else {
-    btn.style.pointerEvents = 'none'; btn.style.background = 'var(--bg-sidebar)'; btn.style.color = 'var(--text-muted)'; btn.textContent = 'กรุณาทำเช็คลิสต์ให้ครบ';
+    let done = Array.from(cbs).filter(cb=>cb.checked).length;
+    btn.style.pointerEvents='none'; btn.style.background='var(--bg-sidebar)';
+    btn.style.color='var(--text-muted)'; btn.style.borderColor='var(--border)';
+    btn.textContent=`กรุณาทำเช็คลิสต์ให้ครบ (${done}/${cbs.length})`;
   }
 }
-function approveTrade() { closeChecklist(); addTradeRow(false); switchView('journal', document.querySelectorAll('.nav-item')[1]); }
+
+function approveTrade(){ closeChecklist(); addTradeRow(false); switchView('journal', document.querySelectorAll('.nav-item')[1]); }
 
 /* ============================================================
-   TRADINGVIEW & PANIC
+   TRADINGVIEW
    ============================================================ */
-function loadTV(id, type) {
-  let c = el(id); if(!c)return; c.innerHTML='';
-  let w = document.createElement('div'); w.className='tradingview-widget-container'; w.style.height='100%';
-  let s = document.createElement('script'); s.src=`https://s3.tradingview.com/external-embedding/embed-widget-${type}.js`; s.async=true;
-  if(type==='advanced-chart') s.innerHTML = JSON.stringify({autosize:true, symbol:el('chart-symbol')?el('chart-symbol').value:'OANDA:XAUUSD', interval:el('chart-interval')?el('chart-interval').value:'15', timezone:'Asia/Bangkok', theme:'dark', style:'1', locale:'en', backgroundColor:'rgba(15,23,42,0)'});
-  else s.innerHTML = JSON.stringify({colorTheme:'dark', isTransparent:true, width:'100%', height:'100%', locale:'en', importanceFilter:'-1,0,1'});
-  w.appendChild(s); c.appendChild(w);
+function loadTV(id, type){
+  let c = el(id); if(!c) return; c.innerHTML='';
+  let w = document.createElement('div');
+  w.className='tradingview-widget-container__widget';
+  w.style.height='100%';
+  let s = document.createElement('script');
+  s.src=`https://s3.tradingview.com/external-embedding/embed-widget-${type}.js`;
+  s.async=true;
+  if(type==='advanced-chart'){
+    s.innerHTML = JSON.stringify({
+      autosize:true,
+      symbol: el('chart-symbol')?el('chart-symbol').value:'OANDA:XAUUSD',
+      interval: el('chart-interval')?el('chart-interval').value:'15',
+      timezone:'Asia/Bangkok', theme:'dark', style:'1', locale:'th',
+      backgroundColor:'rgba(15,23,42,0)',
+      gridColor:'rgba(71,85,105,0.3)',
+      hide_top_toolbar:false,
+      studies:['RSI@tv-basicstudies','MACD@tv-basicstudies']
+    });
+  } else {
+    s.innerHTML = JSON.stringify({colorTheme:'dark', isTransparent:true, width:'100%', height:'100%', locale:'en', importanceFilter:'-1,0,1', countryFilter:'us,eu,gb,jp,cn,au,ca'});
+  }
+  let wrapper = document.createElement('div');
+  wrapper.style.height='100%';
+  wrapper.appendChild(w);
+  wrapper.appendChild(s);
+  c.appendChild(wrapper);
 }
-function reloadChart() { loadTV('tv-chart-container', 'advanced-chart'); }
 
-let pInt; function openPanic(){ el('panic-overlay').classList.add('show'); let c=4; pInt=setInterval(()=>{ c--; if(c<=0)c=4; el('breath-count').textContent=c; el('breath-phase').textContent=c>2?'หายใจเข้า':'หายใจออก'; el('breath-circle').style.borderColor=c>2?'var(--primary)':'var(--success)'; },1000); }
-function closePanic(){ el('panic-overlay').classList.remove('show'); clearInterval(pInt); }
+function reloadChart(){ loadTV('tv-chart-container','advanced-chart'); }
 
 /* ============================================================
-   INIT & ROUTER
+   PANIC PROTOCOL
+   ============================================================ */
+let pInt;
+function openPanic(){
+  el('panic-overlay').classList.add('show');
+  let c = 4;
+  pInt = setInterval(()=>{
+    c--; if(c<=0) c=4;
+    el('breath-count').textContent = c;
+    el('breath-phase').textContent = c>2?'หายใจเข้า':'หายใจออก';
+    el('breath-circle').style.borderColor = c>2?'var(--primary)':'var(--success)';
+    el('breath-circle').style.transform = c>2?'scale(1.1)':'scale(0.9)';
+  }, 1000);
+}
+function closePanic(){ el('panic-overlay').classList.remove('show'); clearInterval(pInt); el('breath-circle').style.transform='scale(1)'; }
+
+/* ============================================================
+   ROUTER
    ============================================================ */
 let currentView = 'terminal';
 function switchView(id, nav){
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  el('view-'+id).classList.add('active'); nav.classList.add('active'); currentView = id;
-  const t = {terminal:'ภาพรวมพอร์ต (Dashboard)', journal:'บันทึกการเทรด (Journal)', analytics:'วิเคราะห์สถิติ (Analytics)', risk:'คำนวณความเสี่ยง (Risk Calc)', neural:'ผู้ช่วย AI (Gemini)', vault:'คลังความรู้ (Vault)', swarm:'สัญญาณ AI (Swarm)', flow:'กระแสเงินสถาบัน (Flow)', godmode:'มุมมองภาพรวม (Macro)', chart:'กราฟสด (Live Chart)', news:'ข่าวเศรษฐกิจ (News)'};
-  el('view-title').textContent = t[id]||id;
-  setTimeout(()=>{ renderAll(); if(id==='chart')reloadChart(); if(id==='news')loadTV('tv-news-container','events'); if(id==='flow')renderFlow(); if(id==='godmode')renderGod(); }, 50);
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el('view-'+id).classList.add('active');
+  if(nav) nav.classList.add('active');
+  currentView = id;
+  const titles = {
+    terminal:'ภาพรวมพอร์ต (Dashboard)', journal:'บันทึกการเทรด (Journal)',
+    analytics:'วิเคราะห์สถิติ (Analytics)', risk:'คำนวณความเสี่ยง (Risk Calc)',
+    neural:'ผู้ช่วย AI (Gemini)', vault:'คลังความรู้ (Vault)',
+    swarm:'สัญญาณ AI (Swarm)', flow:'กระแสเงินสถาบัน (Flow)',
+    godmode:'มุมมองภาพรวม (Macro)', chart:'กราฟสด (Live Chart)', news:'ข่าวเศรษฐกิจ (News)'
+  };
+  el('view-title').textContent = titles[id] || id;
+
+  setTimeout(()=>{
+    renderAll();
+    if(id==='chart') reloadChart();
+    if(id==='news') loadTV('tv-news-container','events');
+    if(id==='flow') renderFlow();
+    if(id==='godmode') renderGod();
+  }, 50);
 }
 
-document.addEventListener('DOMContentLoaded', initData);
+/* ============================================================
+   INIT
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', ()=>{
+  initData();
+  // Initial chart render after a brief delay
+  setTimeout(()=>{ let s=computeStats(); renderEquityChart(s); }, 200);
+});
 </script>
 </body>
 </html>
